@@ -1,0 +1,74 @@
+{
+  "manifest_version": "1.0.0",
+  "experiment_id": "exp-pilot-llama3-2-1b-s12b",
+  "timestamp_utc": "2026-10-27T10:08:43.694469Z",
+  "runtime_name": "ollama",
+  "runtime_version": "0.40.11",
+  "adapter_version": "1.0.0",
+  "engine_version": "1.0.0",
+  "model_id": "llama3.2:1b",
+  "model_digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+  "quantization": "q8_0",
+  "context_window": 131072,
+  "gpu_layers": null,
+  "extra_engine_args": {},
+  "hardware_profile_id": "hw-report-104e1b59879d",
+  "device_name": "CPU",
+  "cpu_model": "Intel(R) Core(TM) i7-14700 (14 threads active)",
+  "host_ram_gb": 31.69,
+  "gpu_vram_gb": null,
+  "workload_suite": [
+    {
+      "prompt_tokens": 32,
+      "output_tokens": 48,
+      "prompt_text": "Explain the principle of locality in computer memory hierarchies in two concise sentences.",
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "stop_sequences": [],
+      "seed": 42
+    },
+    {
+      "prompt_tokens": 128,
+      "output_tokens": 96,
+      "prompt_text": "Describe the architectural difference between the prefill and decode phases in autoregressive transformer inference. Discuss operational intensity and memory bandwidth bottlenecks.",
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "stop_sequences": [],
+      "seed": 43
+    },
+    {
+      "prompt_tokens": 384,
+      "output_tokens": 128,
+      "prompt_text": "Summarize the key engineering trade-offs between dense model inference and mixture-of-experts (MoE) architectures. Specifically compare total parameter memory storage, active parameter footprint per token, KV-cache memory scaling, and communication overhead under tensor parallelism across multi-accelerator nodes. Highlight why MoE models often achieve lower latency per token while requiring substantially higher aggregate VRAM.",
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "stop_sequences": [],
+      "seed": 44
+    }
+  ],
+  "warmup_repetitions": 1,
+  "measured_repetitions": 3,
+  "concurrency": 1,
+  "sampling_temperature": 0.0,
+  "sampling_top_p": 1.0,
+  "seed": 42,
+  "timeout_seconds": 120.0,
+  "failure_policy": "continue_on_error",
+  "consecutive_failure_limit": 3,
+  "execution_mode": "REAL",
+  "clock_source": "MONOTONIC_REAL",
+  "metric_provenance": "MEASURED",
+  "environmental_caveats": [
+    "CPU-only execution via ggml-cpu-alderlake.dll",
+    "Intel UHD 770 integrated GPU disabled by Ollama (OLLAMA_IGPU_ENABLE not set)",
+    "Local loopback communication bypassing corporate proxy via NO_PROXY=localhost,127.0.0.1"
+  ],
+  "metadata": {
+    "session": "12B",
+    "purpose": "First live local-model empirical baseline",
+    "pilot_workload_count": 3,
+    "warmup_requests_count": 3,
+    "measured_requests_count": 9,
+    "total_requests_count": 12
+  }
+}

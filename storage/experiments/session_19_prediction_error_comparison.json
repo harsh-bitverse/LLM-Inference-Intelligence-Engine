@@ -1,0 +1,58 @@
+{
+  "timestamp_utc": "2026-10-27T18:40:09.678048+00:00",
+  "scenarios": {
+    "SCENARIO_1_SHORT_BURST": {
+      "name": "Short Output Workload (O=16)",
+      "operating_regime": "WARM_SHORT_BURST",
+      "observed_median_e2e_ms": 761.62,
+      "session_18_nominal_forecast_ms": 849.64,
+      "session_18_absolute_error_ms": 88.02,
+      "session_18_relative_error_pct": 11.56,
+      "session_19_nominal_forecast_ms": 849.64,
+      "session_19_worst_case_bound_ms": 1147.0,
+      "session_19_within_regime_bound": false,
+      "session_19_risk_flag": "ELEVATED_SUSTAINED_LOAD_RISK"
+    },
+    "SCENARIO_2_SUSTAINED_GEN": {
+      "name": "Long Output Workload (O=128) \u2014 Critical SLA Target",
+      "operating_regime": "WARM_SUSTAINED_GENERATION",
+      "observed_median_e2e_ms": 5694.84,
+      "session_18_nominal_forecast_ms": 5657.3125,
+      "session_18_absolute_error_ms": 37.53,
+      "session_18_relative_error_pct": 0.66,
+      "session_19_nominal_forecast_ms": 5657.3125,
+      "session_19_worst_case_bound_ms": 10242.7,
+      "session_19_within_regime_bound": true,
+      "session_19_risk_flag": "ELEVATED_SUSTAINED_LOAD_RISK"
+    },
+    "SCENARIO_3_PREFIX_REUSE": {
+      "name": "Long Prompt Warm Prefix Replay (P=677, O=32)",
+      "operating_regime": "PROMPT_PREFIX_REUSE",
+      "observed_median_e2e_ms": 1484.31,
+      "session_18_nominal_forecast_ms": 1544.851,
+      "session_18_absolute_error_ms": 60.54,
+      "session_18_relative_error_pct": 4.08,
+      "session_19_nominal_forecast_ms": 1544.851,
+      "session_19_worst_case_bound_ms": 2008.3,
+      "session_19_within_regime_bound": false,
+      "session_19_risk_flag": "ELEVATED_SUSTAINED_LOAD_RISK"
+    },
+    "SCENARIO_4_COLD_START": {
+      "name": "Cold Start Disk Load Workload (O=32)",
+      "operating_regime": "COLD_START",
+      "observed_median_e2e_ms": 2965.84,
+      "session_18_nominal_forecast_ms": 3006.964,
+      "session_18_absolute_error_ms": 41.12,
+      "session_18_relative_error_pct": 1.39,
+      "session_19_nominal_forecast_ms": 3006.964,
+      "session_19_worst_case_bound_ms": 3237.7,
+      "session_19_within_regime_bound": false,
+      "session_19_risk_flag": null
+    }
+  },
+  "aggregate": {
+    "session_18_mean_absolute_error_ms": 56.8,
+    "session_19_mean_interval_residual_ms": 47.42,
+    "session_19_regime_interval_coverage_pct": 25.0
+  }
+}

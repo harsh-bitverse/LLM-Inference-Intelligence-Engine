@@ -1,0 +1,67 @@
+{
+  "COLD_START": {
+    "observation_count": 5,
+    "e2e_latency_mean_ms": 3051.29,
+    "e2e_latency_median_ms": 3062.53,
+    "e2e_latency_std_ms": 110.38,
+    "e2e_latency_iqr_ms": 200.96,
+    "e2e_latency_min_ms": 2889.02,
+    "e2e_latency_max_ms": 3173.81,
+    "decode_throughput_mean_tok_s": 21.62,
+    "decode_throughput_median_tok_s": 21.0,
+    "decode_throughput_min_tok_s": 20.39,
+    "decode_throughput_max_tok_s": 23.79
+  },
+  "WARM_SHORT_BURST": {
+    "observation_count": 15,
+    "e2e_latency_mean_ms": 1809.27,
+    "e2e_latency_median_ms": 1545.01,
+    "e2e_latency_std_ms": 1012.03,
+    "e2e_latency_iqr_ms": 375.75,
+    "e2e_latency_min_ms": 851.89,
+    "e2e_latency_max_ms": 4754.48,
+    "decode_throughput_mean_tok_s": 21.83,
+    "decode_throughput_median_tok_s": 21.82,
+    "decode_throughput_min_tok_s": 18.68,
+    "decode_throughput_max_tok_s": 24.13
+  },
+  "WARM_SUSTAINED_GENERATION": {
+    "observation_count": 15,
+    "e2e_latency_mean_ms": 4379.9,
+    "e2e_latency_median_ms": 4972.63,
+    "e2e_latency_std_ms": 1606.13,
+    "e2e_latency_iqr_ms": 2301.6,
+    "e2e_latency_min_ms": 2324.94,
+    "e2e_latency_max_ms": 7149.57,
+    "decode_throughput_mean_tok_s": 21.2,
+    "decode_throughput_median_tok_s": 20.71,
+    "decode_throughput_min_tok_s": 18.28,
+    "decode_throughput_max_tok_s": 23.79
+  },
+  "PROMPT_PREFIX_REUSE": {
+    "observation_count": 49,
+    "e2e_latency_mean_ms": 3180.24,
+    "e2e_latency_median_ms": 2829.56,
+    "e2e_latency_std_ms": 1966.48,
+    "e2e_latency_iqr_ms": 4161.61,
+    "e2e_latency_min_ms": 719.02,
+    "e2e_latency_max_ms": 5995.86,
+    "decode_throughput_mean_tok_s": 22.71,
+    "decode_throughput_median_tok_s": 22.79,
+    "decode_throughput_min_tok_s": 20.13,
+    "decode_throughput_max_tok_s": 24.08
+  },
+  "CONSECUTIVE_SATURATED": {
+    "observation_count": 9,
+    "e2e_latency_mean_ms": 5471.1,
+    "e2e_latency_median_ms": 2738.62,
+    "e2e_latency_std_ms": 3515.14,
+    "e2e_latency_iqr_ms": 6991.27,
+    "e2e_latency_min_ms": 2626.69,
+    "e2e_latency_max_ms": 10302.9,
+    "decode_throughput_mean_tok_s": 12.92,
+    "decode_throughput_median_tok_s": 12.56,
+    "decode_throughput_min_tok_s": 12.25,
+    "decode_throughput_max_tok_s": 14.76
+  }
+}

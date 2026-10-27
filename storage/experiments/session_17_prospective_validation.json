@@ -1,0 +1,888 @@
+{
+  "timestamp_utc_pre_execution": "2026-10-27T17:03:41.761445+00:00",
+  "model_id": "llama3.2:1b",
+  "runtime": "ollama",
+  "hardware": "Intel(R) Core(TM) i7-14700",
+  "prospective_predictions": {
+    "SCENARIO_A": {
+      "predicted_client_e2e_duration_ms": 807.27,
+      "predicted_server_decode_throughput_tok_s": 22.72,
+      "prediction_interval": [
+        421.4,
+        1193.2
+      ],
+      "evidence_source": "HELD_OUT_VALIDATED_PREDICTION",
+      "status": "RECOMMENDED"
+    },
+    "SCENARIO_B": {
+      "predicted_client_e2e_duration_ms": 1544.851,
+      "predicted_server_decode_throughput_tok_s": 21.66,
+      "prediction_interval": [
+        1498.5,
+        1591.2
+      ],
+      "evidence_source": "DIRECTLY_MEASURED",
+      "status": "RECOMMENDED"
+    },
+    "SCENARIO_C": {
+      "predicted_client_e2e_duration_ms": 6027.12,
+      "predicted_server_decode_throughput_tok_s": 22.72,
+      "prediction_interval": [
+        5641.2,
+        6413.0
+      ],
+      "evidence_source": "HELD_OUT_VALIDATED_PREDICTION",
+      "status": "RECOMMENDED"
+    },
+    "SCENARIO_D": {
+      "predicted_client_e2e_duration_ms": 3006.964,
+      "predicted_server_decode_throughput_tok_s": 22.39,
+      "prediction_interval": [
+        2916.8,
+        3097.2
+      ],
+      "evidence_source": "DIRECTLY_MEASURED",
+      "status": "RECOMMENDED"
+    },
+    "SCENARIO_E": {
+      "predicted_client_e2e_duration_ms": 1537.5014,
+      "predicted_server_decode_throughput_tok_s": 21.67,
+      "prediction_interval": [
+        1491.4,
+        1583.6
+      ],
+      "evidence_source": "DIRECTLY_MEASURED",
+      "status": "INCONCLUSIVE"
+    },
+    "SCENARIO_F": {
+      "predicted_client_e2e_duration_ms": 34116.25,
+      "predicted_server_decode_throughput_tok_s": 22.72,
+      "prediction_interval": [
+        33344.5,
+        34888.0
+      ],
+      "evidence_source": "EXPLORATORY_PREDICTION",
+      "status": "INFEASIBLE"
+    }
+  },
+  "scenarios": [
+    {
+      "scenario_id": "SCENARIO_A",
+      "name": "Scenario A \u2014 Short Interactive Request",
+      "request": {
+        "model_id": "llama3.2:1b",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "runtime": "ollama",
+        "prompt_tokens": 32,
+        "prompt_tokens_provenance": "requested",
+        "expected_output_tokens": 16,
+        "concurrency": 1,
+        "expected_model_residency": "warm",
+        "expected_prefix_cache": "cold_prefix",
+        "latency_sla_ms": 2500.0,
+        "decode_throughput_sla_tok_s": null,
+        "ttft_sla_ms": null,
+        "objective": "minimize_duration",
+        "require_cold_start": false,
+        "user_preferences": {}
+      },
+      "recommendation": {
+        "recommendation_id": "rec-b01714027331",
+        "created_at": "2026-10-27T17:03:41.761445+00:00",
+        "status": "RECOMMENDED",
+        "workload_summary": {
+          "model_id": "llama3.2:1b",
+          "prompt_tokens": 32,
+          "expected_output_tokens": 16,
+          "concurrency": 1,
+          "objective": "minimize_duration"
+        },
+        "selected_configuration": {
+          "model_id": "llama3.2:1b",
+          "quantization": "q8_0",
+          "runtime": "ollama",
+          "runtime_version": "0.40.11",
+          "device": "CPU",
+          "cpu_model": "Intel(R) Core(TM) i7-14700",
+          "concurrency": 1,
+          "options": {
+            "num_predict": 16,
+            "temperature": 0.0,
+            "num_threads": 20
+          }
+        },
+        "predicted_metrics": {
+          "client_e2e_duration_ms": 807.27,
+          "server_decode_throughput_tok_s": 22.72,
+          "client_e2e_output_throughput_tok_s": 19.82,
+          "server_prefill_duration_ms": 96.83,
+          "server_decode_duration_ms": 704.19,
+          "server_load_duration_ms": 0.0
+        },
+        "evidence_source": "HELD_OUT_VALIDATED_PREDICTION",
+        "applicable_dataset": "expansion_llama3_2_1b_v2",
+        "prediction_uncertainty_interval": [
+          421.4,
+          1193.2
+        ],
+        "generalization_status": {
+          "is_out_of_distribution": false,
+          "warnings": [
+            "Prompt tokens (32) are below benchmark minimum (42)."
+          ],
+          "extrapolated_features": [
+            "prompt_tokens"
+          ],
+          "unseen_categories": [],
+          "missing_features": []
+        },
+        "ood_warnings": [
+          "Prompt tokens (32) are below benchmark minimum (42)."
+        ],
+        "cold_start_assumptions": "Warm residency assumed.",
+        "prefix_cache_assumptions": "Cold prefix evaluation.",
+        "sla_assessments": {
+          "latency_sla": {
+            "constraint_type": "HARD",
+            "target_ms": 2500.0,
+            "forecast_ms": 807.27,
+            "status": "FEASIBLE",
+            "headroom_ms": 1692.7
+          }
+        },
+        "relevant_alternatives": [
+          {
+            "name": "Warm-Residency Baseline",
+            "residency": "WARM",
+            "expected_duration_ms": 807.27,
+            "trade_off": "Requires model to be kept resident in RAM; eliminates 1,038 ms cold load delay."
+          },
+          {
+            "name": "Cold-Start Baseline",
+            "residency": "COLD",
+            "expected_duration_ms": 1845.01,
+            "trade_off": "Loads model from disk on every dispatch; adds 1,038 ms cold start latency."
+          },
+          {
+            "name": "Prefix-Cached Configuration",
+            "cache_state": "WARM_PREFIX",
+            "expected_duration_ms": 711.78,
+            "trade_off": "Requires re-using identical prompt prefix; reduces prefill duration to ~0.04 ms/token."
+          }
+        ],
+        "explanation_summary": "Recommended Ollama with 'llama3.2:1b' (Q8_0) on Intel Core i7-14700 CPU. Workload (32 prompt tokens, 16 output tokens) yields a forecasted client end-to-end duration of 807.3 ms and stable autoregressive decode throughput of 22.72 tok/s. All requested SLAs are satisfied with positive feasibility margins.",
+        "influencing_factors": [
+          "Warm memory residency assumes zero model loading delay.",
+          "Full prompt prefill on CPU requires ~3.026 ms/token.",
+          "Autoregressive token generation modeled at stable ~22.72 tok/s on Intel i7-14700."
+        ],
+        "validation_benchmark_payload": {
+          "model_id": "llama3.2:1b",
+          "engine": "ollama",
+          "prompt_tokens": 32,
+          "output_tokens": 16,
+          "concurrency": 1,
+          "repetition_count": 3,
+          "warmup_count": 1,
+          "temperature": 0.0,
+          "provenance_target": "REAL"
+        }
+      }
+    },
+    {
+      "scenario_id": "SCENARIO_B",
+      "name": "Scenario B \u2014 Long-Context Request",
+      "request": {
+        "model_id": "llama3.2:1b",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "runtime": "ollama",
+        "prompt_tokens": 677,
+        "prompt_tokens_provenance": "requested",
+        "expected_output_tokens": 32,
+        "concurrency": 1,
+        "expected_model_residency": "warm",
+        "expected_prefix_cache": "unknown",
+        "latency_sla_ms": 5000.0,
+        "decode_throughput_sla_tok_s": null,
+        "ttft_sla_ms": null,
+        "objective": "minimize_duration",
+        "require_cold_start": false,
+        "user_preferences": {}
+      },
+      "recommendation": {
+        "recommendation_id": "rec-2a096ea7eb74",
+        "created_at": "2026-10-27T17:03:41.761445+00:00",
+        "status": "RECOMMENDED",
+        "workload_summary": {
+          "model_id": "llama3.2:1b",
+          "prompt_tokens": 677,
+          "expected_output_tokens": 32,
+          "concurrency": 1,
+          "objective": "minimize_duration"
+        },
+        "selected_configuration": {
+          "model_id": "llama3.2:1b",
+          "quantization": "q8_0",
+          "runtime": "ollama",
+          "runtime_version": "0.40.11",
+          "device": "CPU",
+          "cpu_model": "Intel(R) Core(TM) i7-14700",
+          "concurrency": 1,
+          "options": {
+            "num_predict": 32,
+            "temperature": 0.0,
+            "num_threads": 20
+          }
+        },
+        "predicted_metrics": {
+          "client_e2e_duration_ms": 1544.851,
+          "server_decode_throughput_tok_s": 21.66,
+          "client_e2e_output_throughput_tok_s": 20.7139717681511,
+          "server_prefill_duration_ms": 49.295,
+          "server_decode_duration_ms": 1477.29,
+          "server_load_duration_ms": 0.0
+        },
+        "evidence_source": "DIRECTLY_MEASURED",
+        "applicable_dataset": "suite-expc_ordering_shuffled",
+        "prediction_uncertainty_interval": [
+          1498.5,
+          1591.2
+        ],
+        "generalization_status": {
+          "is_out_of_distribution": false,
+          "warnings": [],
+          "extrapolated_features": [],
+          "unseen_categories": [],
+          "missing_features": []
+        },
+        "ood_warnings": [],
+        "cold_start_assumptions": "Warm residency assumed.",
+        "prefix_cache_assumptions": "Cold prefix evaluation.",
+        "sla_assessments": {
+          "latency_sla": {
+            "constraint_type": "HARD",
+            "target_ms": 5000.0,
+            "forecast_ms": 1544.851,
+            "status": "FEASIBLE",
+            "headroom_ms": 3455.1
+          }
+        },
+        "relevant_alternatives": [
+          {
+            "name": "Warm-Residency Baseline",
+            "residency": "WARM",
+            "expected_duration_ms": 1532.84,
+            "trade_off": "Requires model to be kept resident in RAM; eliminates 1,038 ms cold load delay."
+          },
+          {
+            "name": "Cold-Start Baseline",
+            "residency": "COLD",
+            "expected_duration_ms": 2570.57,
+            "trade_off": "Loads model from disk on every dispatch; adds 1,038 ms cold start latency."
+          },
+          {
+            "name": "Prefix-Cached Configuration",
+            "cache_state": "WARM_PREFIX",
+            "expected_duration_ms": 1511.97,
+            "trade_off": "Requires re-using identical prompt prefix; reduces prefill duration to ~0.04 ms/token."
+          }
+        ],
+        "explanation_summary": "Recommended Ollama with 'llama3.2:1b' (Q8_0) on Intel Core i7-14700 CPU. Workload (677 prompt tokens, 32 output tokens) yields a forecasted client end-to-end duration of 1544.9 ms and stable autoregressive decode throughput of 21.66 tok/s. All requested SLAs are satisfied with positive feasibility margins.",
+        "influencing_factors": [
+          "Direct empirical observation matched from experiment suite 'suite-expc_ordering_shuffled'."
+        ],
+        "validation_benchmark_payload": {
+          "model_id": "llama3.2:1b",
+          "engine": "ollama",
+          "prompt_tokens": 677,
+          "output_tokens": 32,
+          "concurrency": 1,
+          "repetition_count": 3,
+          "warmup_count": 1,
+          "temperature": 0.0,
+          "provenance_target": "REAL"
+        }
+      }
+    },
+    {
+      "scenario_id": "SCENARIO_C",
+      "name": "Scenario C \u2014 Long Generation Request",
+      "request": {
+        "model_id": "llama3.2:1b",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "runtime": "ollama",
+        "prompt_tokens": 128,
+        "prompt_tokens_provenance": "requested",
+        "expected_output_tokens": 128,
+        "concurrency": 1,
+        "expected_model_residency": "warm",
+        "expected_prefix_cache": "cold_prefix",
+        "latency_sla_ms": 8000.0,
+        "decode_throughput_sla_tok_s": null,
+        "ttft_sla_ms": null,
+        "objective": "maximize_decode_throughput",
+        "require_cold_start": false,
+        "user_preferences": {}
+      },
+      "recommendation": {
+        "recommendation_id": "rec-52dff030d41c",
+        "created_at": "2026-10-27T17:03:41.761445+00:00",
+        "status": "RECOMMENDED",
+        "workload_summary": {
+          "model_id": "llama3.2:1b",
+          "prompt_tokens": 128,
+          "expected_output_tokens": 128,
+          "concurrency": 1,
+          "objective": "maximize_decode_throughput"
+        },
+        "selected_configuration": {
+          "model_id": "llama3.2:1b",
+          "quantization": "q8_0",
+          "runtime": "ollama",
+          "runtime_version": "0.40.11",
+          "device": "CPU",
+          "cpu_model": "Intel(R) Core(TM) i7-14700",
+          "concurrency": 1,
+          "options": {
+            "num_predict": 128,
+            "temperature": 0.0,
+            "num_threads": 20
+          }
+        },
+        "predicted_metrics": {
+          "client_e2e_duration_ms": 6027.12,
+          "server_decode_throughput_tok_s": 22.72,
+          "client_e2e_output_throughput_tok_s": 21.24,
+          "server_prefill_duration_ms": 387.33,
+          "server_decode_duration_ms": 5633.54,
+          "server_load_duration_ms": 0.0
+        },
+        "evidence_source": "HELD_OUT_VALIDATED_PREDICTION",
+        "applicable_dataset": "expansion_llama3_2_1b_v2",
+        "prediction_uncertainty_interval": [
+          5641.2,
+          6413.0
+        ],
+        "generalization_status": {
+          "is_out_of_distribution": false,
+          "warnings": [],
+          "extrapolated_features": [],
+          "unseen_categories": [],
+          "missing_features": []
+        },
+        "ood_warnings": [],
+        "cold_start_assumptions": "Warm residency assumed.",
+        "prefix_cache_assumptions": "Cold prefix evaluation.",
+        "sla_assessments": {
+          "latency_sla": {
+            "constraint_type": "HARD",
+            "target_ms": 8000.0,
+            "forecast_ms": 6027.12,
+            "status": "FEASIBLE",
+            "headroom_ms": 1972.9
+          }
+        },
+        "relevant_alternatives": [
+          {
+            "name": "Warm-Residency Baseline",
+            "residency": "WARM",
+            "expected_duration_ms": 6027.12,
+            "trade_off": "Requires model to be kept resident in RAM; eliminates 1,038 ms cold load delay."
+          },
+          {
+            "name": "Cold-Start Baseline",
+            "residency": "COLD",
+            "expected_duration_ms": 7064.86,
+            "trade_off": "Loads model from disk on every dispatch; adds 1,038 ms cold start latency."
+          },
+          {
+            "name": "Prefix-Cached Configuration",
+            "cache_state": "WARM_PREFIX",
+            "expected_duration_ms": 5645.17,
+            "trade_off": "Requires re-using identical prompt prefix; reduces prefill duration to ~0.04 ms/token."
+          }
+        ],
+        "explanation_summary": "Recommended Ollama with 'llama3.2:1b' (Q8_0) on Intel Core i7-14700 CPU. Workload (128 prompt tokens, 128 output tokens) yields a forecasted client end-to-end duration of 6027.1 ms and stable autoregressive decode throughput of 22.72 tok/s. All requested SLAs are satisfied with positive feasibility margins.",
+        "influencing_factors": [
+          "Warm memory residency assumes zero model loading delay.",
+          "Full prompt prefill on CPU requires ~3.026 ms/token.",
+          "Autoregressive token generation modeled at stable ~22.72 tok/s on Intel i7-14700."
+        ],
+        "validation_benchmark_payload": {
+          "model_id": "llama3.2:1b",
+          "engine": "ollama",
+          "prompt_tokens": 128,
+          "output_tokens": 128,
+          "concurrency": 1,
+          "repetition_count": 3,
+          "warmup_count": 1,
+          "temperature": 0.0,
+          "provenance_target": "REAL"
+        }
+      }
+    },
+    {
+      "scenario_id": "SCENARIO_D",
+      "name": "Scenario D \u2014 Cold-Start-Sensitive Request",
+      "request": {
+        "model_id": "llama3.2:1b",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "runtime": "ollama",
+        "prompt_tokens": 119,
+        "prompt_tokens_provenance": "requested",
+        "expected_output_tokens": 32,
+        "concurrency": 1,
+        "expected_model_residency": "cold",
+        "expected_prefix_cache": "unknown",
+        "latency_sla_ms": 4000.0,
+        "decode_throughput_sla_tok_s": null,
+        "ttft_sla_ms": null,
+        "objective": "minimize_duration",
+        "require_cold_start": true,
+        "user_preferences": {}
+      },
+      "recommendation": {
+        "recommendation_id": "rec-f4794644899a",
+        "created_at": "2026-10-27T17:03:41.761445+00:00",
+        "status": "RECOMMENDED",
+        "workload_summary": {
+          "model_id": "llama3.2:1b",
+          "prompt_tokens": 119,
+          "expected_output_tokens": 32,
+          "concurrency": 1,
+          "objective": "minimize_duration"
+        },
+        "selected_configuration": {
+          "model_id": "llama3.2:1b",
+          "quantization": "q8_0",
+          "runtime": "ollama",
+          "runtime_version": "0.40.11",
+          "device": "CPU",
+          "cpu_model": "Intel(R) Core(TM) i7-14700",
+          "concurrency": 1,
+          "options": {
+            "num_predict": 32,
+            "temperature": 0.0,
+            "num_threads": 20
+          }
+        },
+        "predicted_metrics": {
+          "client_e2e_duration_ms": 3006.964,
+          "server_decode_throughput_tok_s": 22.39,
+          "client_e2e_output_throughput_tok_s": 10.641963122937288,
+          "server_prefill_duration_ms": 495.455,
+          "server_decode_duration_ms": 1429.265,
+          "server_load_duration_ms": 1037.74
+        },
+        "evidence_source": "DIRECTLY_MEASURED",
+        "applicable_dataset": "suite-expd_residency_cold",
+        "prediction_uncertainty_interval": [
+          2916.8,
+          3097.2
+        ],
+        "generalization_status": {
+          "is_out_of_distribution": false,
+          "warnings": [],
+          "extrapolated_features": [],
+          "unseen_categories": [],
+          "missing_features": []
+        },
+        "ood_warnings": [],
+        "cold_start_assumptions": "Cold start accounted for.",
+        "prefix_cache_assumptions": "Cold prefix evaluation.",
+        "sla_assessments": {
+          "latency_sla": {
+            "constraint_type": "HARD",
+            "target_ms": 4000.0,
+            "forecast_ms": 3006.964,
+            "status": "FEASIBLE",
+            "headroom_ms": 993.0
+          }
+        },
+        "relevant_alternatives": [
+          {
+            "name": "Warm-Residency Baseline",
+            "residency": "WARM",
+            "expected_duration_ms": 1930.97,
+            "trade_off": "Requires model to be kept resident in RAM; eliminates 1,038 ms cold load delay."
+          },
+          {
+            "name": "Cold-Start Baseline",
+            "residency": "COLD",
+            "expected_duration_ms": 2968.71,
+            "trade_off": "Loads model from disk on every dispatch; adds 1,038 ms cold start latency."
+          },
+          {
+            "name": "Prefix-Cached Configuration",
+            "cache_state": "WARM_PREFIX",
+            "expected_duration_ms": 1440.51,
+            "trade_off": "Requires re-using identical prompt prefix; reduces prefill duration to ~0.04 ms/token."
+          }
+        ],
+        "explanation_summary": "Recommended Ollama with 'llama3.2:1b' (Q8_0) on Intel Core i7-14700 CPU. Workload (119 prompt tokens, 32 output tokens) yields a forecasted client end-to-end duration of 3007.0 ms and stable autoregressive decode throughput of 22.39 tok/s. All requested SLAs are satisfied with positive feasibility margins.",
+        "influencing_factors": [
+          "Direct empirical observation matched from experiment suite 'suite-expd_residency_cold'."
+        ],
+        "validation_benchmark_payload": {
+          "model_id": "llama3.2:1b",
+          "engine": "ollama",
+          "prompt_tokens": 119,
+          "output_tokens": 32,
+          "concurrency": 1,
+          "repetition_count": 3,
+          "warmup_count": 1,
+          "temperature": 0.0,
+          "provenance_target": "REAL"
+        }
+      }
+    },
+    {
+      "scenario_id": "SCENARIO_E",
+      "name": "Scenario E \u2014 Strict TTFT SLA Request",
+      "request": {
+        "model_id": "llama3.2:1b",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "runtime": "ollama",
+        "prompt_tokens": 46,
+        "prompt_tokens_provenance": "requested",
+        "expected_output_tokens": 32,
+        "concurrency": 1,
+        "expected_model_residency": "unknown",
+        "expected_prefix_cache": "unknown",
+        "latency_sla_ms": null,
+        "decode_throughput_sla_tok_s": null,
+        "ttft_sla_ms": 100.0,
+        "objective": "minimize_duration",
+        "require_cold_start": false,
+        "user_preferences": {}
+      },
+      "recommendation": {
+        "recommendation_id": "rec-23a480954517",
+        "created_at": "2026-10-27T17:03:41.761445+00:00",
+        "status": "INCONCLUSIVE",
+        "workload_summary": {
+          "model_id": "llama3.2:1b",
+          "prompt_tokens": 46,
+          "expected_output_tokens": 32,
+          "concurrency": 1,
+          "objective": "minimize_duration"
+        },
+        "selected_configuration": {
+          "model_id": "llama3.2:1b",
+          "quantization": "q8_0",
+          "runtime": "ollama",
+          "runtime_version": "0.40.11",
+          "device": "CPU",
+          "cpu_model": "Intel(R) Core(TM) i7-14700",
+          "concurrency": 1,
+          "options": {
+            "num_predict": 32,
+            "temperature": 0.0,
+            "num_threads": 20
+          }
+        },
+        "predicted_metrics": {
+          "client_e2e_duration_ms": 1537.5014,
+          "server_decode_throughput_tok_s": 21.67,
+          "client_e2e_output_throughput_tok_s": 20.81298917841636,
+          "server_prefill_duration_ms": 47.509,
+          "server_decode_duration_ms": 1476.654,
+          "server_load_duration_ms": 0.0
+        },
+        "evidence_source": "DIRECTLY_MEASURED",
+        "applicable_dataset": "suite-expc_ordering_shuffled",
+        "prediction_uncertainty_interval": [
+          1491.4,
+          1583.6
+        ],
+        "generalization_status": {
+          "is_out_of_distribution": false,
+          "warnings": [],
+          "extrapolated_features": [],
+          "unseen_categories": [],
+          "missing_features": []
+        },
+        "ood_warnings": [],
+        "cold_start_assumptions": "Residency UNKNOWN (cold start would add ~1,038 ms).",
+        "prefix_cache_assumptions": "Cold prefix evaluation.",
+        "sla_assessments": {
+          "ttft_sla": {
+            "constraint_type": "HARD",
+            "target_ms": 100.0,
+            "forecast_ms": null,
+            "status": "UNKNOWN_FEASIBILITY",
+            "limitation_note": "Ollama chunk streaming emits text byte chunks without verified discrete token timestamps. True token-level TTFT cannot be verified; client-observed TTFC is recorded instead."
+          }
+        },
+        "relevant_alternatives": [
+          {
+            "name": "Warm-Residency Baseline",
+            "residency": "WARM",
+            "expected_duration_ms": 1530.41,
+            "trade_off": "Requires model to be kept resident in RAM; eliminates 1,038 ms cold load delay."
+          },
+          {
+            "name": "Cold-Start Baseline",
+            "residency": "COLD",
+            "expected_duration_ms": 2568.15,
+            "trade_off": "Loads model from disk on every dispatch; adds 1,038 ms cold start latency."
+          },
+          {
+            "name": "Prefix-Cached Configuration",
+            "cache_state": "WARM_PREFIX",
+            "expected_duration_ms": 1484.84,
+            "trade_off": "Requires re-using identical prompt prefix; reduces prefill duration to ~0.04 ms/token."
+          }
+        ],
+        "explanation_summary": "Recommendation is inconclusive: Token-level TTFT SLA cannot be verified on Ollama streaming protocol (emits text chunks without discrete token timestamps).. Forecasted operational metrics: 1537.5 ms duration, 21.67 tok/s decode throughput. A live validation benchmark is required to verify real-world behavior.",
+        "influencing_factors": [
+          "Direct empirical observation matched from experiment suite 'suite-expc_ordering_shuffled'."
+        ],
+        "validation_benchmark_payload": {
+          "model_id": "llama3.2:1b",
+          "engine": "ollama",
+          "prompt_tokens": 46,
+          "output_tokens": 32,
+          "concurrency": 1,
+          "repetition_count": 3,
+          "warmup_count": 1,
+          "temperature": 0.0,
+          "provenance_target": "REAL"
+        }
+      }
+    },
+    {
+      "scenario_id": "SCENARIO_F",
+      "name": "Scenario F \u2014 Out-Of-Distribution Request",
+      "request": {
+        "model_id": "llama3.2:1b",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "runtime": "ollama",
+        "prompt_tokens": 4000,
+        "prompt_tokens_provenance": "requested",
+        "expected_output_tokens": 500,
+        "concurrency": 1,
+        "expected_model_residency": "unknown",
+        "expected_prefix_cache": "unknown",
+        "latency_sla_ms": 30000.0,
+        "decode_throughput_sla_tok_s": null,
+        "ttft_sla_ms": null,
+        "objective": "minimize_duration",
+        "require_cold_start": false,
+        "user_preferences": {}
+      },
+      "recommendation": {
+        "recommendation_id": "rec-4625c5f6152b",
+        "created_at": "2026-10-27T17:03:41.761445+00:00",
+        "status": "INFEASIBLE",
+        "workload_summary": {
+          "model_id": "llama3.2:1b",
+          "prompt_tokens": 4000,
+          "expected_output_tokens": 500,
+          "concurrency": 1,
+          "objective": "minimize_duration"
+        },
+        "selected_configuration": {
+          "model_id": "llama3.2:1b",
+          "quantization": "q8_0",
+          "runtime": "ollama",
+          "runtime_version": "0.40.11",
+          "device": "CPU",
+          "cpu_model": "Intel(R) Core(TM) i7-14700",
+          "concurrency": 1,
+          "options": {
+            "num_predict": 500,
+            "temperature": 0.0,
+            "num_threads": 20
+          }
+        },
+        "predicted_metrics": {
+          "client_e2e_duration_ms": 34116.25,
+          "server_decode_throughput_tok_s": 22.72,
+          "client_e2e_output_throughput_tok_s": 14.66,
+          "server_prefill_duration_ms": 12104.0,
+          "server_decode_duration_ms": 22006.0,
+          "server_load_duration_ms": 0.0
+        },
+        "evidence_source": "EXPLORATORY_PREDICTION",
+        "applicable_dataset": "expansion_llama3_2_1b_v2",
+        "prediction_uncertainty_interval": [
+          33344.5,
+          34888.0
+        ],
+        "generalization_status": {
+          "is_out_of_distribution": true,
+          "warnings": [
+            "Prompt tokens (4000) exceed empirical benchmark maximum (677). Latency is extrapolated linearly.",
+            "Output tokens (500) exceed empirical benchmark maximum (128)."
+          ],
+          "extrapolated_features": [
+            "prompt_tokens",
+            "output_tokens"
+          ],
+          "unseen_categories": [],
+          "missing_features": []
+        },
+        "ood_warnings": [
+          "Prompt tokens (4000) exceed empirical benchmark maximum (677). Latency is extrapolated linearly.",
+          "Output tokens (500) exceed empirical benchmark maximum (128)."
+        ],
+        "cold_start_assumptions": "Residency UNKNOWN (cold start would add ~1,038 ms).",
+        "prefix_cache_assumptions": "Cold prefix evaluation.",
+        "sla_assessments": {
+          "latency_sla": {
+            "constraint_type": "HARD",
+            "target_ms": 30000.0,
+            "forecast_ms": 34116.25,
+            "status": "PROVEN_INFEASIBLE",
+            "violation_ms": 4116.2
+          }
+        },
+        "relevant_alternatives": [
+          {
+            "name": "Warm-Residency Baseline",
+            "residency": "WARM",
+            "expected_duration_ms": 34116.25,
+            "trade_off": "Requires model to be kept resident in RAM; eliminates 1,038 ms cold load delay."
+          },
+          {
+            "name": "Cold-Start Baseline",
+            "residency": "COLD",
+            "expected_duration_ms": 35153.99,
+            "trade_off": "Loads model from disk on every dispatch; adds 1,038 ms cold start latency."
+          },
+          {
+            "name": "Prefix-Cached Configuration",
+            "cache_state": "WARM_PREFIX",
+            "expected_duration_ms": 22180.25,
+            "trade_off": "Requires re-using identical prompt prefix; reduces prefill duration to ~0.04 ms/token."
+          }
+        ],
+        "explanation_summary": "Configuration is infeasible for the requested SLA: Forecasted latency (34116.25 ms) exceeds requested SLA (30000.0 ms) by 4116.2 ms.. The CPU-bound execution on Intel Core i7-14700 cannot satisfy the required constraint.",
+        "influencing_factors": [
+          "Unknown model residency: baseline modeled warm, cold start penalty flagged.",
+          "Full prompt prefill on CPU requires ~3.026 ms/token.",
+          "Autoregressive token generation modeled at stable ~22.72 tok/s on Intel i7-14700."
+        ],
+        "validation_benchmark_payload": {
+          "model_id": "llama3.2:1b",
+          "engine": "ollama",
+          "prompt_tokens": 4000,
+          "output_tokens": 500,
+          "concurrency": 1,
+          "repetition_count": 3,
+          "warmup_count": 1,
+          "temperature": 0.0,
+          "provenance_target": "REAL"
+        }
+      }
+    }
+  ],
+  "timestamp_utc_post_execution": "2026-10-27T17:04:08.809522+00:00",
+  "live_validation_benchmarks": [
+    {
+      "scenario_id": "SCENARIO_A",
+      "name": "Scenario A \u2014 Short Interactive Request",
+      "repetitions": [
+        {
+          "repetition": 1,
+          "client_e2e_duration_ms": 985.55,
+          "server_decode_duration_ms": 852.39,
+          "server_prefill_duration_ms": 122.7,
+          "server_load_duration_ms": 0.0,
+          "server_decode_throughput_tok_s": 18.77,
+          "client_e2e_output_throughput_tok_s": 16.23,
+          "actual_output_tokens": 16
+        },
+        {
+          "repetition": 2,
+          "client_e2e_duration_ms": 881.3,
+          "server_decode_duration_ms": 817.8,
+          "server_prefill_duration_ms": 54.37,
+          "server_load_duration_ms": 9.98,
+          "server_decode_throughput_tok_s": 19.56,
+          "client_e2e_output_throughput_tok_s": 18.15,
+          "actual_output_tokens": 16
+        },
+        {
+          "repetition": 3,
+          "client_e2e_duration_ms": 992.93,
+          "server_decode_duration_ms": 923.34,
+          "server_prefill_duration_ms": 60.01,
+          "server_load_duration_ms": 3.76,
+          "server_decode_throughput_tok_s": 17.33,
+          "client_e2e_output_throughput_tok_s": 16.11,
+          "actual_output_tokens": 16
+        }
+      ],
+      "median_observed": {
+        "client_e2e_duration_ms": 985.55,
+        "server_decode_duration_ms": 852.39,
+        "server_prefill_duration_ms": 60.01,
+        "server_decode_throughput_tok_s": 18.77
+      },
+      "prospective_forecast": {
+        "predicted_client_e2e_duration_ms": 807.27,
+        "predicted_server_decode_throughput_tok_s": 22.72
+      },
+      "comparison": {
+        "duration_absolute_error_ms": 178.28,
+        "duration_relative_error_pct": 22.08,
+        "throughput_absolute_error_tok_s": 3.95,
+        "throughput_relative_error_pct": 17.39
+      }
+    },
+    {
+      "scenario_id": "SCENARIO_C",
+      "name": "Scenario C \u2014 Long Generation Request",
+      "repetitions": [
+        {
+          "repetition": 1,
+          "client_e2e_duration_ms": 7519.83,
+          "server_decode_duration_ms": 7373.51,
+          "server_prefill_duration_ms": 136.6,
+          "server_load_duration_ms": 0.0,
+          "server_decode_throughput_tok_s": 17.36,
+          "client_e2e_output_throughput_tok_s": 17.02,
+          "actual_output_tokens": 128
+        },
+        {
+          "repetition": 2,
+          "client_e2e_duration_ms": 7356.63,
+          "server_decode_duration_ms": 7295.84,
+          "server_prefill_duration_ms": 48.76,
+          "server_load_duration_ms": 3.76,
+          "server_decode_throughput_tok_s": 17.54,
+          "client_e2e_output_throughput_tok_s": 17.4,
+          "actual_output_tokens": 128
+        },
+        {
+          "repetition": 3,
+          "client_e2e_duration_ms": 7411.72,
+          "server_decode_duration_ms": 7347.3,
+          "server_prefill_duration_ms": 53.16,
+          "server_load_duration_ms": 9.99,
+          "server_decode_throughput_tok_s": 17.42,
+          "client_e2e_output_throughput_tok_s": 17.27,
+          "actual_output_tokens": 128
+        }
+      ],
+      "median_observed": {
+        "client_e2e_duration_ms": 7411.72,
+        "server_decode_duration_ms": 7347.3,
+        "server_prefill_duration_ms": 53.16,
+        "server_decode_throughput_tok_s": 17.42
+      },
+      "prospective_forecast": {
+        "predicted_client_e2e_duration_ms": 6027.12,
+        "predicted_server_decode_throughput_tok_s": 22.72
+      },
+      "comparison": {
+        "duration_absolute_error_ms": 1384.6,
+        "duration_relative_error_pct": 22.97,
+        "throughput_absolute_error_tok_s": 5.3,
+        "throughput_relative_error_pct": 23.33
+      }
+    }
+  ]
+}

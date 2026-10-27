@@ -1,0 +1,187 @@
+{
+  "evaluation_name": "Session 16 Configuration-Grouped Predictor Benchmark",
+  "total_records": 62,
+  "warm_records_count": 28,
+  "cold_records_count": 4,
+  "split_strategy": "leave_one_configuration_out_grouped",
+  "full_population_evaluation": {
+    "client_e2e_duration_ms": {
+      "constant_median": {
+        "mean_mae": 1439.38,
+        "mean_rmse": 1454.55,
+        "fold_count": 17
+      },
+      "ridge_regression": {
+        "mean_mae": 573.29,
+        "mean_rmse": 598.5,
+        "fold_count": 17
+      },
+      "workload_aware_prospective": {
+        "mean_mae": 385.88,
+        "mean_rmse": 418.14,
+        "fold_count": 17
+      },
+      "workload_aware_retrospective": {
+        "mean_mae": 385.88,
+        "mean_rmse": 418.14,
+        "fold_count": 17
+      }
+    },
+    "server_decode_duration_ms": {
+      "constant_median": {
+        "mean_mae": 1786.42,
+        "mean_rmse": 1788.2,
+        "fold_count": 17
+      },
+      "ridge_regression": {
+        "mean_mae": 188.91,
+        "mean_rmse": 199.52,
+        "fold_count": 17
+      },
+      "workload_aware_prospective": {
+        "mean_mae": 162.6,
+        "mean_rmse": 173.53,
+        "fold_count": 17
+      },
+      "workload_aware_retrospective": {
+        "mean_mae": 162.6,
+        "mean_rmse": 173.53,
+        "fold_count": 17
+      }
+    },
+    "client_e2e_output_throughput_tok_s": {
+      "constant_median": {
+        "mean_mae": 2.44,
+        "mean_rmse": 2.76,
+        "fold_count": 17
+      },
+      "ridge_regression": {
+        "mean_mae": 3.05,
+        "mean_rmse": 3.22,
+        "fold_count": 17
+      },
+      "workload_aware_prospective": {
+        "mean_mae": 2.24,
+        "mean_rmse": 2.37,
+        "fold_count": 17
+      },
+      "workload_aware_retrospective": {
+        "mean_mae": 2.24,
+        "mean_rmse": 2.37,
+        "fold_count": 17
+      }
+    },
+    "server_decode_throughput_tok_s": {
+      "constant_median": {
+        "mean_mae": 0.89,
+        "mean_rmse": 0.98,
+        "fold_count": 17
+      },
+      "ridge_regression": {
+        "mean_mae": 0.93,
+        "mean_rmse": 1.02,
+        "fold_count": 17
+      },
+      "workload_aware_prospective": {
+        "mean_mae": 1.0,
+        "mean_rmse": 1.08,
+        "fold_count": 17
+      },
+      "workload_aware_retrospective": {
+        "mean_mae": 1.0,
+        "mean_rmse": 1.08,
+        "fold_count": 17
+      }
+    }
+  },
+  "warm_population_evaluation": {
+    "client_e2e_duration_ms": {
+      "constant_median": {
+        "mean_mae": 801.44,
+        "mean_rmse": 843.35,
+        "fold_count": 10
+      },
+      "ridge_regression": {
+        "mean_mae": 252.38,
+        "mean_rmse": 263.44,
+        "fold_count": 10
+      },
+      "workload_aware_prospective": {
+        "mean_mae": 211.65,
+        "mean_rmse": 244.51,
+        "fold_count": 10
+      },
+      "workload_aware_retrospective": {
+        "mean_mae": 211.65,
+        "mean_rmse": 244.51,
+        "fold_count": 10
+      }
+    },
+    "server_decode_duration_ms": {
+      "constant_median": {
+        "mean_mae": 664.88,
+        "mean_rmse": 667.33,
+        "fold_count": 10
+      },
+      "ridge_regression": {
+        "mean_mae": 60.64,
+        "mean_rmse": 65.2,
+        "fold_count": 10
+      },
+      "workload_aware_prospective": {
+        "mean_mae": 64.12,
+        "mean_rmse": 68.78,
+        "fold_count": 10
+      },
+      "workload_aware_retrospective": {
+        "mean_mae": 64.12,
+        "mean_rmse": 68.78,
+        "fold_count": 10
+      }
+    },
+    "client_e2e_output_throughput_tok_s": {
+      "constant_median": {
+        "mean_mae": 1.99,
+        "mean_rmse": 2.26,
+        "fold_count": 10
+      },
+      "ridge_regression": {
+        "mean_mae": 2.03,
+        "mean_rmse": 2.08,
+        "fold_count": 10
+      },
+      "workload_aware_prospective": {
+        "mean_mae": 1.84,
+        "mean_rmse": 2.0,
+        "fold_count": 10
+      },
+      "workload_aware_retrospective": {
+        "mean_mae": 1.84,
+        "mean_rmse": 2.0,
+        "fold_count": 10
+      }
+    },
+    "server_decode_throughput_tok_s": {
+      "constant_median": {
+        "mean_mae": 0.81,
+        "mean_rmse": 0.86,
+        "fold_count": 10
+      },
+      "ridge_regression": {
+        "mean_mae": 0.88,
+        "mean_rmse": 0.93,
+        "fold_count": 10
+      },
+      "workload_aware_prospective": {
+        "mean_mae": 0.81,
+        "mean_rmse": 0.86,
+        "fold_count": 10
+      },
+      "workload_aware_retrospective": {
+        "mean_mae": 0.81,
+        "mean_rmse": 0.86,
+        "fold_count": 10
+      }
+    }
+  }
+}

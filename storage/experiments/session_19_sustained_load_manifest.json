@@ -1,0 +1,37 @@
+{
+  "manifest_version": "1.0.0",
+  "experiment_id": "exp-session-19-sustained-load",
+  "title": "Session 19 Controlled Sustained-Load & Operating Regimes Benchmark",
+  "description": "Controlled benchmark matrix isolating generation length scaling, consecutive request bursts, idle recovery, cold vs warm model loading, and prefix cache sensitivity under real CPU execution.",
+  "created_at_utc": "2026-10-27T18:30:45.540222+00:00",
+  "completed_at_utc": "2026-10-27T18:32:25.108970+00:00",
+  "runtime": {
+    "name": "ollama",
+    "version": "0.40.11",
+    "model_id": "llama3.2:1b",
+    "model_digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+    "quantization": "Q8_0",
+    "parameter_count": "1.2B",
+    "backend": "llamacpp (AVX2 CPU)"
+  },
+  "hardware": {
+    "device": "CPU",
+    "cpu_model": "Intel(R) Core(TM) i7-14700",
+    "cores": 20,
+    "threads": 28,
+    "host_ram_gb": 31.69
+  },
+  "concurrency": 1,
+  "total_observations": 19,
+  "parts_evaluated": [
+    "Part A: Generation Length Scaling (O=16, 32, 64, 128)",
+    "Part B: Consecutive Burst Sustained Load (5x back-to-back O=128)",
+    "Part C: Idle Recovery (10s idle sleep vs back-to-back)",
+    "Part D: Cold vs Warm Model Residency (explicit keep_alive=0 unload)",
+    "Part E: Cache Sensitivity (Cold Prefix vs Warm Prefix Replay)"
+  ],
+  "dataset_files": {
+    "jsonl": "storage/datasets/session_19_sustained_load_measurements.jsonl",
+    "csv": "storage/datasets/session_19_sustained_load_measurements.csv"
+  }
+}

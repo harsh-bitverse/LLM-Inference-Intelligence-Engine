@@ -1,0 +1,167 @@
+{
+  "experiment_id": "exp-pilot-llama3-2-1b-s12b",
+  "model_id": "llama3.2:1b",
+  "runtime_name": "ollama",
+  "total_measured_requests": 9,
+  "total_warmup_requests": 3,
+  "workload_stats": [
+    {
+      "workload_index": 0,
+      "prompt_tokens": 42,
+      "requested_output_tokens": 48,
+      "measured_repetitions_count": 3,
+      "duration_stats": {
+        "metric_name": "duration_ms",
+        "unit": "ms",
+        "count": 3,
+        "mean": 2498.09,
+        "std_dev": 196.93,
+        "min_value": 2324.94,
+        "max_value": 2712.32,
+        "cv_percent": 7.88
+      },
+      "ttfc_stats": {
+        "metric_name": "ttfc_ms",
+        "unit": "ms",
+        "count": 3,
+        "mean": 92.9,
+        "std_dev": 27.71,
+        "min_value": 67.81,
+        "max_value": 122.65,
+        "cv_percent": 29.83
+      },
+      "throughput_stats": {
+        "metric_name": "output_tokens_per_second",
+        "unit": "tok/s",
+        "count": 3,
+        "mean": 19.3,
+        "std_dev": 1.49,
+        "min_value": 17.7,
+        "max_value": 20.65,
+        "cv_percent": 7.72
+      },
+      "output_tokens_stats": {
+        "metric_name": "actual_output_tokens",
+        "unit": "tokens",
+        "count": 3,
+        "mean": 48.0,
+        "std_dev": 0.0,
+        "min_value": 48.0,
+        "max_value": 48.0,
+        "cv_percent": 0.0
+      },
+      "warmup_duration_ms": 2284.7953,
+      "warmup_overhead_percent": -8.54,
+      "client_server_divergence_ms": 59.28
+    },
+    {
+      "workload_index": 1,
+      "prompt_tokens": 53,
+      "requested_output_tokens": 96,
+      "measured_repetitions_count": 3,
+      "duration_stats": {
+        "metric_name": "duration_ms",
+        "unit": "ms",
+        "count": 3,
+        "mean": 4991.03,
+        "std_dev": 22.66,
+        "min_value": 4972.63,
+        "max_value": 5016.34,
+        "cv_percent": 0.45
+      },
+      "ttfc_stats": {
+        "metric_name": "ttfc_ms",
+        "unit": "ms",
+        "count": 3,
+        "mean": 152.32,
+        "std_dev": 80.12,
+        "min_value": 68.79,
+        "max_value": 228.51,
+        "cv_percent": 52.6
+      },
+      "throughput_stats": {
+        "metric_name": "output_tokens_per_second",
+        "unit": "tok/s",
+        "count": 3,
+        "mean": 19.24,
+        "std_dev": 0.09,
+        "min_value": 19.14,
+        "max_value": 19.31,
+        "cv_percent": 0.45
+      },
+      "output_tokens_stats": {
+        "metric_name": "actual_output_tokens",
+        "unit": "tokens",
+        "count": 3,
+        "mean": 96.0,
+        "std_dev": 0.0,
+        "min_value": 96.0,
+        "max_value": 96.0,
+        "cv_percent": 0.0
+      },
+      "warmup_duration_ms": 4758.6827,
+      "warmup_overhead_percent": -4.66,
+      "client_server_divergence_ms": 84.9
+    },
+    {
+      "workload_index": 2,
+      "prompt_tokens": 99,
+      "requested_output_tokens": 128,
+      "measured_repetitions_count": 3,
+      "duration_stats": {
+        "metric_name": "duration_ms",
+        "unit": "ms",
+        "count": 3,
+        "mean": 6623.1,
+        "std_dev": 467.22,
+        "min_value": 6257.79,
+        "max_value": 7149.57,
+        "cv_percent": 7.05
+      },
+      "ttfc_stats": {
+        "metric_name": "ttfc_ms",
+        "unit": "ms",
+        "count": 3,
+        "mean": 138.76,
+        "std_dev": 54.04,
+        "min_value": 76.38,
+        "max_value": 171.47,
+        "cv_percent": 38.94
+      },
+      "throughput_stats": {
+        "metric_name": "output_tokens_per_second",
+        "unit": "tok/s",
+        "count": 3,
+        "mean": 19.39,
+        "std_dev": 1.33,
+        "min_value": 17.9,
+        "max_value": 20.45,
+        "cv_percent": 6.84
+      },
+      "output_tokens_stats": {
+        "metric_name": "actual_output_tokens",
+        "unit": "tokens",
+        "count": 3,
+        "mean": 128.0,
+        "std_dev": 0.0,
+        "min_value": 128.0,
+        "max_value": 128.0,
+        "cv_percent": 0.0
+      },
+      "warmup_duration_ms": 6577.5051,
+      "warmup_overhead_percent": -0.69,
+      "client_server_divergence_ms": 67.98
+    }
+  ],
+  "average_duration_cv_percent": 5.13,
+  "average_throughput_cv_percent": 5.0,
+  "average_warmup_penalty_percent": -4.63,
+  "average_client_server_divergence_ms": 70.72,
+  "memory_telemetry_available": false,
+  "is_statistically_validated": false,
+  "disclaimers": [
+    "Descriptive pilot dataset with limited sample repetitions per prompt.",
+    "Results reflect local workstation execution and cannot be generalized to multi-socket servers or accelerators.",
+    "Operating system scheduling jitter and background process activity may contribute to dispersion."
+  ]
+}

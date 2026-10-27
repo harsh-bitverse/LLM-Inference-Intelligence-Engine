@@ -1,0 +1,136 @@
+{
+  "workload": "Long Output Workload (P=119, O=128)",
+  "timestamp_utc": "2026-10-27T18:27:44.114613+00:00",
+  "sla_target_ms": 8000.0,
+  "forecast_e2e_ms": 5999.88,
+  "forecast_decode_tps": 22.72,
+  "session_18_observed_median_ms": 10282.98,
+  "session_19_reproduced_median_ms": 5744.93,
+  "reproduction_delta_ms": -4538.05,
+  "median_decomposition": {
+    "client_e2e_duration_ms": 5744.93,
+    "server_decode_duration_ms": 5619.71,
+    "server_prefill_duration_ms": 47.29,
+    "server_load_duration_ms": 2.78,
+    "other_server_duration_ms": 4.89,
+    "client_server_divergence_ms": 2.21,
+    "server_decode_throughput_tok_s": 22.78,
+    "cpu_utilization_pct": 57.6
+  },
+  "phase_share_pct": {
+    "decode_share_pct": 97.82,
+    "prefill_share_pct": 0.82,
+    "load_share_pct": 0.05,
+    "other_server_share_pct": 0.09,
+    "client_divergence_share_pct": 0.04
+  },
+  "primary_slowdown_phase": "DECODE",
+  "telemetry": {
+    "pre_memory": {
+      "total_gb": 31.69,
+      "available_gb": 9.95,
+      "used_gb": 21.75,
+      "memory_load_pct": 68.0
+    },
+    "post_memory": {
+      "total_gb": 31.69,
+      "available_gb": 9.9,
+      "used_gb": 21.8,
+      "memory_load_pct": 68.0
+    },
+    "processes": {
+      "processes": [
+        {
+          "Id": 251964,
+          "ProcessName": "llama-server",
+          "WorkingSet64": 1546194944,
+          "PrivateMemorySize64": 1627303936,
+          "CPU": 254.125,
+          "Threads": 45
+        },
+        {
+          "Id": 192396,
+          "ProcessName": "ollama",
+          "WorkingSet64": 34082816,
+          "PrivateMemorySize64": 68435968,
+          "CPU": 51.671875,
+          "Threads": 24
+        }
+      ]
+    }
+  },
+  "repetitions": [
+    {
+      "repetition": 1,
+      "client_e2e_duration_ms": 5939.65,
+      "server_total_duration_ms": 5937.44,
+      "server_load_duration_ms": 1.56,
+      "server_prefill_duration_ms": 344.81,
+      "server_decode_duration_ms": 5589.28,
+      "other_server_duration_ms": 1.79,
+      "client_server_divergence_ms": 2.21,
+      "phase_percentages": {
+        "load_pct": 0.03,
+        "prefill_pct": 5.81,
+        "decode_pct": 94.1,
+        "other_server_pct": 0.03,
+        "client_divergence_pct": 0.04
+      },
+      "server_decode_throughput_tok_s": 22.9,
+      "actual_prompt_tokens": 119,
+      "actual_output_tokens": 128,
+      "cpu_utilization_pct": 55.1,
+      "sla_target_ms": 8000.0,
+      "sla_violated": false,
+      "violation_margin_ms": 0.0
+    },
+    {
+      "repetition": 2,
+      "client_e2e_duration_ms": 5744.93,
+      "server_total_duration_ms": 5742.97,
+      "server_load_duration_ms": 2.78,
+      "server_prefill_duration_ms": 47.29,
+      "server_decode_duration_ms": 5687.7,
+      "other_server_duration_ms": 5.2,
+      "client_server_divergence_ms": 1.96,
+      "phase_percentages": {
+        "load_pct": 0.05,
+        "prefill_pct": 0.82,
+        "decode_pct": 99.0,
+        "other_server_pct": 0.09,
+        "client_divergence_pct": 0.03
+      },
+      "server_decode_throughput_tok_s": 22.5,
+      "actual_prompt_tokens": 119,
+      "actual_output_tokens": 128,
+      "cpu_utilization_pct": 57.9,
+      "sla_target_ms": 8000.0,
+      "sla_violated": false,
+      "violation_margin_ms": 0.0
+    },
+    {
+      "repetition": 3,
+      "client_e2e_duration_ms": 5679.44,
+      "server_total_duration_ms": 5677.16,
+      "server_load_duration_ms": 5.27,
+      "server_prefill_duration_ms": 47.29,
+      "server_decode_duration_ms": 5619.71,
+      "other_server_duration_ms": 4.89,
+      "client_server_divergence_ms": 2.28,
+      "phase_percentages": {
+        "load_pct": 0.09,
+        "prefill_pct": 0.83,
+        "decode_pct": 98.95,
+        "other_server_pct": 0.09,
+        "client_divergence_pct": 0.04
+      },
+      "server_decode_throughput_tok_s": 22.78,
+      "actual_prompt_tokens": 119,
+      "actual_output_tokens": 128,
+      "cpu_utilization_pct": 57.6,
+      "sla_target_ms": 8000.0,
+      "sla_violated": false,
+      "violation_margin_ms": 0.0
+    }
+  ]
+}

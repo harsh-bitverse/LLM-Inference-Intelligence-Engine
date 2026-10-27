@@ -1,0 +1,47 @@
+{
+  "experiment_id": "exp-session-15-cache-controlled",
+  "session": "Session 15",
+  "title": "Cache-State-Controlled Benchmarking & Reproducible Performance Modeling",
+  "created_at_utc": "2026-10-27T13:20:32Z",
+  "model_id": "llama3.2:1b",
+  "model_digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+  "runtime_name": "ollama",
+  "runtime_version": "0.40.11",
+  "total_observations": 32,
+  "experiments": [
+    {
+      "experiment_key": "ExpA",
+      "name": "Identical Prompt Repetition",
+      "description": "Consecutive execution of identical prompt to measure prefix KV-cache reuse.",
+      "observation_count": 3
+    },
+    {
+      "experiment_key": "ExpB",
+      "name": "Shared Prefix vs Different Suffix",
+      "description": "Branching prompts sharing a 300-token prefix followed by different suffixes vs unrelated prompt.",
+      "observation_count": 3
+    },
+    {
+      "experiment_key": "ExpC",
+      "name": "Request Ordering Effects",
+      "description": "Forward, reverse, and shuffled execution of varying prompt sizes (P46, P119, P300, P677).",
+      "observation_count": 12
+    },
+    {
+      "experiment_key": "ExpD",
+      "name": "Model Residency Transitions",
+      "description": "Explicit cold unload (keep_alive: 0 verified via /api/ps) followed by warm resident execution (3 pairs).",
+      "observation_count": 6
+    },
+    {
+      "experiment_key": "ExpE",
+      "name": "Output Length Scaling",
+      "description": "Fixed prompt with varying output token limits (16, 32, 64, 128) under resident model state.",
+      "observation_count": 8
+    }
+  ],
+  "exported_files": {
+    "jsonl": "storage\\datasets\\session_15_cache_controlled_measurements.jsonl",
+    "csv": "storage\\datasets\\session_15_cache_controlled_measurements.csv"
+  }
+}

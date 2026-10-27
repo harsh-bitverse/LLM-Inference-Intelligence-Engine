@@ -1,0 +1,1414 @@
+{
+  "dataset_size": 21,
+  "configurations": [
+    "P119_O128",
+    "P119_O64",
+    "P300_O64",
+    "P46_O32",
+    "P46_O64",
+    "P677_O128",
+    "P677_O64"
+  ],
+  "target_evaluations": {
+    "output_throughput_tok_s": {
+      "eligible_records": 21,
+      "constant_median": {
+        "mae": 1.87,
+        "rmse": 3.69,
+        "mape_percent": 12.98,
+        "mean_bias": -1.34,
+        "max_error": 9.74,
+        "group_mae_std": 3.17
+      },
+      "ridge_regression": {
+        "mae": 3.98,
+        "rmse": 5.21,
+        "mape_percent": 22.23,
+        "mean_bias": -0.67,
+        "max_error": 9.2,
+        "group_mae_std": 3.34
+      },
+      "ridge_features": [
+        "prompt_tokens",
+        "requested_output_tokens"
+      ],
+      "per_configuration_constant": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 22.25,
+          "pred_mean": 22.35,
+          "mae": 0.53,
+          "rmse": 0.58,
+          "mape_percent": 2.4,
+          "baseline_mae": null,
+          "residuals": [
+            0.65,
+            -0.75,
+            -0.2
+          ],
+          "max_error": 0.75,
+          "mean_bias": -0.1
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 22.73,
+          "pred_mean": 22.16,
+          "mae": 0.57,
+          "rmse": 0.61,
+          "mape_percent": 2.51,
+          "baseline_mae": null,
+          "residuals": [
+            0.78,
+            0.66,
+            0.28
+          ],
+          "max_error": 0.78,
+          "mean_bias": 0.57
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 22.23,
+          "pred_mean": 22.27,
+          "mae": 0.24,
+          "rmse": 0.29,
+          "mape_percent": 1.1,
+          "baseline_mae": null,
+          "residuals": [
+            0.05,
+            0.25,
+            -0.43
+          ],
+          "max_error": 0.43,
+          "mean_bias": -0.04
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 21.75,
+          "pred_mean": 22.35,
+          "mae": 0.92,
+          "rmse": 1.13,
+          "mape_percent": 4.38,
+          "baseline_mae": null,
+          "residuals": [
+            -0.45,
+            0.48,
+            -1.84
+          ],
+          "max_error": 1.84,
+          "mean_bias": -0.6
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 22.96,
+          "pred_mean": 22.16,
+          "mae": 0.8,
+          "rmse": 0.83,
+          "mape_percent": 3.47,
+          "baseline_mae": null,
+          "residuals": [
+            0.67,
+            0.61,
+            1.12
+          ],
+          "max_error": 1.12,
+          "mean_bias": 0.8
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 21.96,
+          "pred_mean": 22.38,
+          "mae": 0.42,
+          "rmse": 0.61,
+          "mape_percent": 1.94,
+          "baseline_mae": null,
+          "residuals": [
+            -0.22,
+            -1.03,
+            0.0
+          ],
+          "max_error": 1.03,
+          "mean_bias": -0.42
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 12.8,
+          "pred_mean": 22.41,
+          "mae": 9.61,
+          "rmse": 9.61,
+          "mape_percent": 75.09,
+          "baseline_mae": null,
+          "residuals": [
+            -9.74,
+            -9.56,
+            -9.53
+          ],
+          "max_error": 9.74,
+          "mean_bias": -9.61
+        }
+      ],
+      "per_configuration_ridge": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 22.25,
+          "pred_mean": 29.24,
+          "mae": 6.99,
+          "rmse": 7.01,
+          "mape_percent": 31.5,
+          "baseline_mae": null,
+          "residuals": [
+            -6.24,
+            -7.64,
+            -7.09
+          ],
+          "max_error": 7.64,
+          "mean_bias": -6.99
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 22.73,
+          "pred_mean": 21.8,
+          "mae": 0.93,
+          "rmse": 0.96,
+          "mape_percent": 4.1,
+          "baseline_mae": null,
+          "residuals": [
+            1.14,
+            1.02,
+            0.64
+          ],
+          "max_error": 1.14,
+          "mean_bias": 0.93
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 22.23,
+          "pred_mean": 19.83,
+          "mae": 2.4,
+          "rmse": 2.41,
+          "mape_percent": 10.77,
+          "baseline_mae": null,
+          "residuals": [
+            2.49,
+            2.69,
+            2.01
+          ],
+          "max_error": 2.69,
+          "mean_bias": 2.4
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 21.75,
+          "pred_mean": 21.11,
+          "mae": 1.04,
+          "rmse": 1.15,
+          "mape_percent": 4.69,
+          "baseline_mae": null,
+          "residuals": [
+            0.79,
+            1.72,
+            -0.6
+          ],
+          "max_error": 1.72,
+          "mean_bias": 0.64
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 22.96,
+          "pred_mean": 22.62,
+          "mae": 0.34,
+          "rmse": 0.41,
+          "mape_percent": 1.47,
+          "baseline_mae": null,
+          "residuals": [
+            0.21,
+            0.15,
+            0.66
+          ],
+          "max_error": 0.66,
+          "mean_bias": 0.34
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 21.96,
+          "pred_mean": 14.88,
+          "mae": 7.08,
+          "rmse": 7.1,
+          "mape_percent": 32.22,
+          "baseline_mae": null,
+          "residuals": [
+            7.28,
+            6.47,
+            7.5
+          ],
+          "max_error": 7.5,
+          "mean_bias": 7.08
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 12.8,
+          "pred_mean": 21.87,
+          "mae": 9.07,
+          "rmse": 9.07,
+          "mape_percent": 70.87,
+          "baseline_mae": null,
+          "residuals": [
+            -9.2,
+            -9.02,
+            -8.99
+          ],
+          "max_error": 9.2,
+          "mean_bias": -9.07
+        }
+      ],
+      "analytical_roofline": {
+        "mae": 47.35,
+        "rmse": 47.48,
+        "mape_percent": 238.98,
+        "mean_bias": -47.35,
+        "max_error": 55.89,
+        "group_mae_std": 3.46
+      }
+    },
+    "duration_ms": {
+      "eligible_records": 21,
+      "constant_median": {
+        "mae": 1978.0,
+        "rmse": 2133.64,
+        "mape_percent": 61.55,
+        "mean_bias": 320.75,
+        "max_error": 3148.84,
+        "group_mae_std": 795.97
+      },
+      "ridge_regression": {
+        "mae": 896.21,
+        "rmse": 1153.3,
+        "mape_percent": 21.02,
+        "mean_bias": 143.92,
+        "max_error": 1948.4,
+        "group_mae_std": 721.54
+      },
+      "ridge_features": [
+        "prompt_tokens",
+        "requested_output_tokens"
+      ],
+      "per_configuration_constant": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 5756.83,
+          "pred_mean": 2847.02,
+          "mae": 2909.81,
+          "rmse": 2913.57,
+          "mape_percent": 50.51,
+          "baseline_mae": null,
+          "residuals": [
+            2718.74,
+            3079.3,
+            2931.39
+          ],
+          "max_error": 3079.3,
+          "mean_bias": 2909.81
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2815.82,
+          "pred_mean": 3949.44,
+          "mae": 1133.62,
+          "rmse": 1133.93,
+          "mape_percent": 40.27,
+          "baseline_mae": null,
+          "residuals": [
+            -1159.1,
+            -1144.93,
+            -1096.83
+          ],
+          "max_error": 1159.1,
+          "mean_bias": -1133.62
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2880.12,
+          "pred_mean": 3910.22,
+          "mae": 1030.1,
+          "rmse": 1030.79,
+          "mape_percent": 35.79,
+          "baseline_mae": null,
+          "residuals": [
+            -1042.35,
+            -1068.78,
+            -979.18
+          ],
+          "max_error": 1068.78,
+          "mean_bias": -1030.1
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 1474.28,
+          "pred_mean": 3949.44,
+          "mae": 2475.16,
+          "rmse": 2476.02,
+          "mape_percent": 168.41,
+          "baseline_mae": null,
+          "residuals": [
+            -2488.11,
+            -2548.06,
+            -2389.3
+          ],
+          "max_error": 2548.06,
+          "mean_bias": -2475.16
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2787.95,
+          "pred_mean": 3949.44,
+          "mae": 1161.49,
+          "rmse": 1161.82,
+          "mape_percent": 41.68,
+          "baseline_mae": null,
+          "residuals": [
+            -1145.83,
+            -1138.18,
+            -1200.45
+          ],
+          "max_error": 1200.45,
+          "mean_bias": -1161.49
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 5830.52,
+          "pred_mean": 2847.02,
+          "mae": 2983.5,
+          "rmse": 2985.88,
+          "mape_percent": 51.15,
+          "baseline_mae": null,
+          "residuals": [
+            2929.5,
+            3148.84,
+            2872.15
+          ],
+          "max_error": 3148.84,
+          "mean_bias": 2983.5
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 4999.32,
+          "pred_mean": 2847.02,
+          "mae": 2152.3,
+          "rmse": 2152.61,
+          "mape_percent": 43.05,
+          "baseline_mae": null,
+          "residuals": [
+            2203.57,
+            2132.5,
+            2120.82
+          ],
+          "max_error": 2203.57,
+          "mean_bias": 2152.3
+        }
+      ],
+      "per_configuration_ridge": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 5756.83,
+          "pred_mean": 3977.92,
+          "mae": 1778.91,
+          "rmse": 1785.05,
+          "mape_percent": 30.85,
+          "baseline_mae": null,
+          "residuals": [
+            1587.84,
+            1948.4,
+            1800.49
+          ],
+          "max_error": 1948.4,
+          "mean_bias": 1778.91
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2815.82,
+          "pred_mean": 2993.44,
+          "mae": 177.62,
+          "rmse": 179.61,
+          "mape_percent": 6.32,
+          "baseline_mae": null,
+          "residuals": [
+            -203.1,
+            -188.93,
+            -140.83
+          ],
+          "max_error": 203.1,
+          "mean_bias": -177.62
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2880.12,
+          "pred_mean": 3469.86,
+          "mae": 589.74,
+          "rmse": 590.94,
+          "mape_percent": 20.5,
+          "baseline_mae": null,
+          "residuals": [
+            -601.99,
+            -628.42,
+            -538.82
+          ],
+          "max_error": 628.42,
+          "mean_bias": -589.74
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 1474.28,
+          "pred_mean": 1859.47,
+          "mae": 385.19,
+          "rmse": 390.71,
+          "mape_percent": 26.37,
+          "baseline_mae": null,
+          "residuals": [
+            -398.14,
+            -458.09,
+            -299.33
+          ],
+          "max_error": 458.09,
+          "mean_bias": -385.19
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2787.95,
+          "pred_mean": 2790.12,
+          "mae": 25.25,
+          "rmse": 27.81,
+          "mape_percent": 0.91,
+          "baseline_mae": null,
+          "residuals": [
+            13.49,
+            21.14,
+            -41.13
+          ],
+          "max_error": 41.13,
+          "mean_bias": -2.17
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 5830.52,
+          "pred_mean": 7297.26,
+          "mae": 1466.74,
+          "rmse": 1471.58,
+          "mape_percent": 25.21,
+          "baseline_mae": null,
+          "residuals": [
+            -1520.74,
+            -1301.4,
+            -1578.09
+          ],
+          "max_error": 1578.09,
+          "mean_bias": -1466.74
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 4999.32,
+          "pred_mean": 3149.32,
+          "mae": 1850.0,
+          "rmse": 1850.36,
+          "mape_percent": 37.0,
+          "baseline_mae": null,
+          "residuals": [
+            1901.27,
+            1830.2,
+            1818.52
+          ],
+          "max_error": 1901.27,
+          "mean_bias": 1850.0
+        }
+      ]
+    },
+    "ttfc_ms": {
+      "eligible_records": 21,
+      "constant_median": {
+        "mae": 332.32,
+        "rmse": 770.31,
+        "mape_percent": 65.62,
+        "mean_bias": 265.3,
+        "max_error": 2100.94,
+        "group_mae_std": 694.28
+      },
+      "ridge_regression": {
+        "mae": 622.92,
+        "rmse": 1010.81,
+        "mape_percent": 344.33,
+        "mean_bias": 15.23,
+        "max_error": 2086.64,
+        "group_mae_std": 794.99
+      },
+      "ridge_features": [
+        "prompt_tokens"
+      ],
+      "per_configuration_constant": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 116.25,
+          "pred_mean": 150.72,
+          "mae": 37.84,
+          "rmse": 54.23,
+          "mape_percent": 57.87,
+          "baseline_mae": null,
+          "residuals": [
+            5.06,
+            -92.4,
+            -16.05
+          ],
+          "max_error": 92.4,
+          "mean_bias": -34.46
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 137.04,
+          "pred_mean": 141.27,
+          "mae": 45.73,
+          "rmse": 50.63,
+          "mape_percent": 49.58,
+          "baseline_mae": null,
+          "residuals": [
+            22.93,
+            39.32,
+            -74.95
+          ],
+          "max_error": 74.95,
+          "mean_bias": -4.23
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 128.01,
+          "pred_mean": 150.72,
+          "mae": 65.49,
+          "rmse": 65.57,
+          "mape_percent": 62.35,
+          "baseline_mae": null,
+          "residuals": [
+            -70.04,
+            -62.25,
+            64.17
+          ],
+          "max_error": 70.04,
+          "mean_bias": -22.71
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 128.34,
+          "pred_mean": 141.27,
+          "mae": 35.11,
+          "rmse": 43.87,
+          "mape_percent": 41.69,
+          "baseline_mae": null,
+          "residuals": [
+            20.44,
+            -72.06,
+            12.84
+          ],
+          "max_error": 72.06,
+          "mean_bias": -12.93
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 75.3,
+          "pred_mean": 153.85,
+          "mae": 78.55,
+          "rmse": 79.36,
+          "mape_percent": 108.6,
+          "baseline_mae": null,
+          "residuals": [
+            -87.51,
+            -85.56,
+            -62.59
+          ],
+          "max_error": 87.51,
+          "mean_bias": -78.55
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 121.84,
+          "pred_mean": 144.39,
+          "mae": 30.99,
+          "rmse": 46.71,
+          "mape_percent": 44.55,
+          "baseline_mae": null,
+          "residuals": [
+            3.47,
+            9.19,
+            -80.3
+          ],
+          "max_error": 80.3,
+          "mean_bias": -22.55
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2145.46,
+          "pred_mean": 112.96,
+          "mae": 2032.5,
+          "rmse": 2033.1,
+          "mape_percent": 94.73,
+          "baseline_mae": null,
+          "residuals": [
+            2010.25,
+            2100.94,
+            1986.3
+          ],
+          "max_error": 2100.94,
+          "mean_bias": 2032.5
+        }
+      ],
+      "per_configuration_ridge": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 116.25,
+          "pred_mean": 150.51,
+          "mae": 37.77,
+          "rmse": 54.09,
+          "mape_percent": 57.74,
+          "baseline_mae": null,
+          "residuals": [
+            5.27,
+            -92.19,
+            -15.84
+          ],
+          "max_error": 92.19,
+          "mean_bias": -34.25
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 137.04,
+          "pred_mean": 145.42,
+          "mae": 44.35,
+          "rmse": 51.14,
+          "mape_percent": 50.06,
+          "baseline_mae": null,
+          "residuals": [
+            18.78,
+            35.17,
+            -79.1
+          ],
+          "max_error": 79.1,
+          "mean_bias": -8.38
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 128.01,
+          "pred_mean": 485.16,
+          "mae": 357.15,
+          "rmse": 362.41,
+          "mape_percent": 358.5,
+          "baseline_mae": null,
+          "residuals": [
+            -404.48,
+            -396.69,
+            -270.27
+          ],
+          "max_error": 404.48,
+          "mean_bias": -357.15
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 128.34,
+          "pred_mean": 0.0,
+          "mae": 128.34,
+          "rmse": 135.02,
+          "mape_percent": 100.0,
+          "baseline_mae": null,
+          "residuals": [
+            161.71,
+            69.21,
+            154.11
+          ],
+          "max_error": 161.71,
+          "mean_bias": 128.34
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 75.3,
+          "pred_mean": 8.06,
+          "mae": 67.24,
+          "rmse": 68.18,
+          "mape_percent": 89.07,
+          "baseline_mae": null,
+          "residuals": [
+            58.28,
+            60.23,
+            83.2
+          ],
+          "max_error": 83.2,
+          "mean_bias": 67.24
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 121.84,
+          "pred_mean": 1829.23,
+          "mae": 1707.39,
+          "rmse": 1707.88,
+          "mape_percent": 1660.84,
+          "baseline_mae": null,
+          "residuals": [
+            -1681.37,
+            -1675.65,
+            -1765.14
+          ],
+          "max_error": 1765.14,
+          "mean_bias": -1707.39
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2145.46,
+          "pred_mean": 127.26,
+          "mae": 2018.2,
+          "rmse": 2018.8,
+          "mape_percent": 94.07,
+          "baseline_mae": null,
+          "residuals": [
+            1995.95,
+            2086.64,
+            1972.0
+          ],
+          "max_error": 2086.64,
+          "mean_bias": 2018.2
+        }
+      ]
+    },
+    "server_prompt_eval_duration_ms": {
+      "eligible_records": 21,
+      "constant_median": {
+        "mae": 289.57,
+        "rmse": 756.17,
+        "mape_percent": 21.42,
+        "mean_bias": 285.84,
+        "max_error": 2024.8,
+        "group_mae_std": 698.47
+      },
+      "ridge_regression": {
+        "mae": 599.36,
+        "rmse": 997.6,
+        "mape_percent": 654.44,
+        "mean_bias": -2.93,
+        "max_error": 2021.57,
+        "group_mae_std": 797.43
+      },
+      "ridge_features": [
+        "prompt_tokens"
+      ],
+      "per_configuration_constant": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 46.72,
+          "pred_mean": 49.4,
+          "mae": 2.68,
+          "rmse": 3.2,
+          "mape_percent": 5.88,
+          "baseline_mae": null,
+          "residuals": [
+            -0.42,
+            -4.69,
+            -2.93
+          ],
+          "max_error": 4.69,
+          "mean_bias": -2.68
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 49.27,
+          "pred_mean": 48.68,
+          "mae": 0.62,
+          "rmse": 0.82,
+          "mape_percent": 1.25,
+          "baseline_mae": null,
+          "residuals": [
+            -0.05,
+            1.35,
+            0.47
+          ],
+          "max_error": 1.35,
+          "mean_bias": 0.59
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 60.69,
+          "pred_mean": 48.5,
+          "mae": 12.19,
+          "rmse": 12.35,
+          "mape_percent": 20.0,
+          "baseline_mae": null,
+          "residuals": [
+            10.35,
+            11.31,
+            14.92
+          ],
+          "max_error": 14.92,
+          "mean_bias": 12.19
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 43.19,
+          "pred_mean": 49.4,
+          "mae": 6.21,
+          "rmse": 6.32,
+          "mape_percent": 14.47,
+          "baseline_mae": null,
+          "residuals": [
+            -7.81,
+            -5.02,
+            -5.8
+          ],
+          "max_error": 7.81,
+          "mean_bias": -6.21
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 47.1,
+          "pred_mean": 49.06,
+          "mae": 2.9,
+          "rmse": 3.55,
+          "mape_percent": 6.44,
+          "baseline_mae": null,
+          "residuals": [
+            1.41,
+            -1.47,
+            -5.81
+          ],
+          "max_error": 5.81,
+          "mean_bias": -1.96
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 47.52,
+          "pred_mean": 49.06,
+          "mae": 1.93,
+          "rmse": 2.66,
+          "mape_percent": 4.25,
+          "baseline_mae": null,
+          "residuals": [
+            0.59,
+            -4.53,
+            -0.68
+          ],
+          "max_error": 4.53,
+          "mean_bias": -1.54
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2048.95,
+          "pred_mean": 48.5,
+          "mae": 2000.45,
+          "rmse": 2000.57,
+          "mape_percent": 97.63,
+          "baseline_mae": null,
+          "residuals": [
+            2004.45,
+            1972.11,
+            2024.8
+          ],
+          "max_error": 2024.8,
+          "mean_bias": 2000.45
+        }
+      ],
+      "per_configuration_ridge": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 46.72,
+          "pred_mean": 83.41,
+          "mae": 36.69,
+          "rmse": 36.73,
+          "mape_percent": 78.78,
+          "baseline_mae": null,
+          "residuals": [
+            -34.43,
+            -38.7,
+            -36.94
+          ],
+          "max_error": 38.7,
+          "mean_bias": -36.69
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 49.27,
+          "pred_mean": 82.78,
+          "mae": 33.51,
+          "rmse": 33.52,
+          "mape_percent": 68.04,
+          "baseline_mae": null,
+          "residuals": [
+            -34.16,
+            -32.75,
+            -33.63
+          ],
+          "max_error": 34.16,
+          "mean_bias": -33.51
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 60.69,
+          "pred_mean": 410.98,
+          "mae": 350.29,
+          "rmse": 350.29,
+          "mape_percent": 577.87,
+          "baseline_mae": null,
+          "residuals": [
+            -352.13,
+            -351.17,
+            -347.56
+          ],
+          "max_error": 352.13,
+          "mean_bias": -350.29
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 43.19,
+          "pred_mean": 0.0,
+          "mae": 43.19,
+          "rmse": 43.2,
+          "mape_percent": 100.0,
+          "baseline_mae": null,
+          "residuals": [
+            41.59,
+            44.38,
+            43.6
+          ],
+          "max_error": 44.38,
+          "mean_bias": 43.19
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 47.1,
+          "pred_mean": 0.0,
+          "mae": 47.1,
+          "rmse": 47.2,
+          "mape_percent": 100.0,
+          "baseline_mae": null,
+          "residuals": [
+            50.47,
+            47.59,
+            43.25
+          ],
+          "max_error": 50.47,
+          "mean_bias": 47.1
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 47.52,
+          "pred_mean": 1735.05,
+          "mae": 1687.53,
+          "rmse": 1687.53,
+          "mape_percent": 3558.93,
+          "baseline_mae": null,
+          "residuals": [
+            -1685.4,
+            -1690.52,
+            -1686.67
+          ],
+          "max_error": 1690.52,
+          "mean_bias": -1687.53
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2048.95,
+          "pred_mean": 51.73,
+          "mae": 1997.22,
+          "rmse": 1997.34,
+          "mape_percent": 97.48,
+          "baseline_mae": null,
+          "residuals": [
+            2001.22,
+            1968.88,
+            2021.57
+          ],
+          "max_error": 2021.57,
+          "mean_bias": 1997.22
+        }
+      ]
+    },
+    "server_eval_duration_ms": {
+      "eligible_records": 21,
+      "constant_median": {
+        "mae": 1070.86,
+        "rmse": 1645.1,
+        "mape_percent": 31.61,
+        "mean_bias": 611.53,
+        "max_error": 3043.44,
+        "group_mae_std": 1247.62
+      },
+      "ridge_regression": {
+        "mae": 93.31,
+        "rmse": 120.35,
+        "mape_percent": 3.21,
+        "mean_bias": 0.9,
+        "max_error": 267.61,
+        "group_mae_std": 55.84
+      },
+      "ridge_features": [
+        "requested_output_tokens"
+      ],
+      "per_configuration_constant": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 5606.9,
+          "pred_mean": 2745.27,
+          "mae": 2861.63,
+          "rmse": 2864.53,
+          "mape_percent": 51.01,
+          "baseline_mae": null,
+          "residuals": [
+            2758.59,
+            3043.44,
+            2782.84
+          ],
+          "max_error": 3043.44,
+          "mean_bias": 2861.62
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2716.33,
+          "pred_mean": 2787.76,
+          "mae": 71.43,
+          "rmse": 74.34,
+          "mape_percent": 2.64,
+          "baseline_mae": null,
+          "residuals": [
+            -98.86,
+            -49.21,
+            -66.23
+          ],
+          "max_error": 98.86,
+          "mean_bias": -71.43
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2781.94,
+          "pred_mean": 2762.44,
+          "mae": 26.46,
+          "rmse": 30.72,
+          "mape_percent": 0.95,
+          "baseline_mae": null,
+          "residuals": [
+            21.31,
+            -10.44,
+            47.63
+          ],
+          "max_error": 47.63,
+          "mean_bias": 19.5
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 1329.2,
+          "pred_mean": 2787.76,
+          "mae": 1458.56,
+          "rmse": 1458.56,
+          "mape_percent": 109.73,
+          "baseline_mae": null,
+          "residuals": [
+            -1458.13,
+            -1455.7,
+            -1461.85
+          ],
+          "max_error": 1461.85,
+          "mean_bias": -1458.56
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2713.59,
+          "pred_mean": 2787.76,
+          "mae": 74.17,
+          "rmse": 76.52,
+          "mape_percent": 2.74,
+          "baseline_mae": null,
+          "residuals": [
+            -51.7,
+            -73.04,
+            -97.77
+          ],
+          "max_error": 97.77,
+          "mean_bias": -74.17
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 5676.17,
+          "pred_mean": 2745.27,
+          "mae": 2930.9,
+          "rmse": 2931.23,
+          "mape_percent": 51.63,
+          "baseline_mae": null,
+          "residuals": [
+            2893.19,
+            2992.67,
+            2906.84
+          ],
+          "max_error": 2992.67,
+          "mean_bias": 2930.9
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2818.14,
+          "pred_mean": 2745.27,
+          "mae": 72.87,
+          "rmse": 84.59,
+          "mape_percent": 2.56,
+          "baseline_mae": null,
+          "residuals": [
+            133.61,
+            43.92,
+            41.07
+          ],
+          "max_error": 133.61,
+          "mean_bias": 72.87
+        }
+      ],
+      "per_configuration_ridge": [
+        {
+          "group_id": "P119_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 5606.9,
+          "pred_mean": 5527.52,
+          "mae": 95.15,
+          "rmse": 151.42,
+          "mape_percent": 1.65,
+          "baseline_mae": null,
+          "residuals": [
+            -23.66,
+            261.19,
+            0.59
+          ],
+          "max_error": 261.19,
+          "mean_bias": 79.37
+        },
+        {
+          "group_id": "P119_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2716.33,
+          "pred_mean": 2807.2,
+          "mae": 90.87,
+          "rmse": 93.18,
+          "mape_percent": 3.35,
+          "baseline_mae": null,
+          "residuals": [
+            -118.3,
+            -68.65,
+            -85.67
+          ],
+          "max_error": 118.3,
+          "mean_bias": -90.87
+        },
+        {
+          "group_id": "P300_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2781.94,
+          "pred_mean": 2794.19,
+          "mae": 22.84,
+          "rmse": 26.72,
+          "mape_percent": 0.82,
+          "baseline_mae": null,
+          "residuals": [
+            -10.44,
+            -42.19,
+            15.88
+          ],
+          "max_error": 42.19,
+          "mean_bias": -12.25
+        },
+        {
+          "group_id": "P46_O32",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 1329.2,
+          "pred_mean": 1441.97,
+          "mae": 112.77,
+          "rmse": 112.8,
+          "mape_percent": 8.48,
+          "baseline_mae": null,
+          "residuals": [
+            -112.34,
+            -109.91,
+            -116.06
+          ],
+          "max_error": 116.06,
+          "mean_bias": -112.77
+        },
+        {
+          "group_id": "P46_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2713.59,
+          "pred_mean": 2807.74,
+          "mae": 94.15,
+          "rmse": 96.01,
+          "mape_percent": 3.47,
+          "baseline_mae": null,
+          "residuals": [
+            -71.67,
+            -93.02,
+            -117.75
+          ],
+          "max_error": 117.75,
+          "mean_bias": -94.15
+        },
+        {
+          "group_id": "P677_O128",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 5676.17,
+          "pred_mean": 5470.33,
+          "mae": 205.84,
+          "rmse": 210.5,
+          "mape_percent": 3.62,
+          "baseline_mae": null,
+          "residuals": [
+            168.13,
+            267.61,
+            181.78
+          ],
+          "max_error": 267.61,
+          "mean_bias": 205.84
+        },
+        {
+          "group_id": "P677_O64",
+          "n_train": 18,
+          "n_test": 3,
+          "actual_mean": 2818.14,
+          "pred_mean": 2787.01,
+          "mae": 31.57,
+          "rmse": 53.06,
+          "mape_percent": 1.1,
+          "baseline_mae": null,
+          "residuals": [
+            91.87,
+            2.18,
+            -0.67
+          ],
+          "max_error": 91.87,
+          "mean_bias": 31.13
+        }
+      ]
+    }
+  }
+}

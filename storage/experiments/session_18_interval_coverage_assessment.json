@@ -1,0 +1,792 @@
+{
+  "total_records": 62,
+  "fold_count": 17,
+  "mean_mae_ms": 385.88,
+  "interval_1x_mae": {
+    "margin_ms": 385.88,
+    "width_ms": 771.76,
+    "covered_count": 46,
+    "coverage_percent": 74.19
+  },
+  "interval_2x_mae": {
+    "margin_ms": 771.76,
+    "width_ms": 1543.52,
+    "covered_count": 56,
+    "coverage_percent": 90.32
+  },
+  "empirical_margins": {
+    "empirical_90_pct_margin_ms": 699.81,
+    "empirical_95_pct_margin_ms": 1481.25
+  },
+  "group_statistics": [
+    {
+      "group_id": "P119_O128",
+      "count": 5,
+      "fold_mae": 144.38
+    },
+    {
+      "group_id": "P119_O16",
+      "count": 2,
+      "fold_mae": 66.88
+    },
+    {
+      "group_id": "P119_O32",
+      "count": 14,
+      "fold_mae": 231.06
+    },
+    {
+      "group_id": "P119_O64",
+      "count": 5,
+      "fold_mae": 182.72
+    },
+    {
+      "group_id": "P300_O32",
+      "count": 3,
+      "fold_mae": 27.1
+    },
+    {
+      "group_id": "P300_O64",
+      "count": 3,
+      "fold_mae": 153.32
+    },
+    {
+      "group_id": "P311_O32",
+      "count": 1,
+      "fold_mae": 900.59
+    },
+    {
+      "group_id": "P317_O32",
+      "count": 1,
+      "fold_mae": 25.26
+    },
+    {
+      "group_id": "P42_O48",
+      "count": 3,
+      "fold_mae": 319.29
+    },
+    {
+      "group_id": "P46_O32",
+      "count": 6,
+      "fold_mae": 69.27
+    },
+    {
+      "group_id": "P46_O64",
+      "count": 3,
+      "fold_mae": 134.18
+    },
+    {
+      "group_id": "P53_O32",
+      "count": 1,
+      "fold_mae": 74.79
+    },
+    {
+      "group_id": "P53_O96",
+      "count": 3,
+      "fold_mae": 671.99
+    },
+    {
+      "group_id": "P677_O128",
+      "count": 3,
+      "fold_mae": 244.06
+    },
+    {
+      "group_id": "P677_O32",
+      "count": 3,
+      "fold_mae": 623.11
+    },
+    {
+      "group_id": "P677_O64",
+      "count": 3,
+      "fold_mae": 1831.05
+    },
+    {
+      "group_id": "P99_O128",
+      "count": 3,
+      "fold_mae": 860.98
+    }
+  ],
+  "evaluated_records": [
+    {
+      "request_id": "req-0012",
+      "group_id": "P677_O64",
+      "actual": 5050.59,
+      "pred": 3168.27,
+      "err": 1882.32,
+      "p": 677,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0019",
+      "group_id": "P677_O64",
+      "actual": 4979.52,
+      "pred": 3168.27,
+      "err": 1811.25,
+      "p": 677,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0026",
+      "group_id": "P677_O64",
+      "actual": 4967.84,
+      "pred": 3168.27,
+      "err": 1799.57,
+      "p": 677,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expC-forward-p677",
+      "group_id": "P677_O32",
+      "actual": 3234.97,
+      "pred": 1753.72,
+      "err": 1481.25,
+      "p": 677,
+      "o": 32,
+      "cache": "partial_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0008",
+      "group_id": "P99_O128",
+      "actual": 7149.57,
+      "pred": 5762.12,
+      "err": 1387.45,
+      "p": 99,
+      "o": 128,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expB-b1",
+      "group_id": "P311_O32",
+      "actual": 2484.02,
+      "pred": 1583.43,
+      "err": 900.59,
+      "p": 311,
+      "o": 32,
+      "cache": "partial_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0011",
+      "group_id": "P99_O128",
+      "actual": 6461.93,
+      "pred": 5762.12,
+      "err": 699.81,
+      "p": 99,
+      "o": 128,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0004",
+      "group_id": "P53_O96",
+      "actual": 5016.34,
+      "pred": 4319.04,
+      "err": 697.3,
+      "p": 53,
+      "o": 96,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expD-pair1-cold",
+      "group_id": "P119_O32",
+      "actual": 3173.81,
+      "pred": 2494.84,
+      "err": 678.97,
+      "p": 119,
+      "o": 32,
+      "cache": "cold_prefix",
+      "residency": "cold"
+    },
+    {
+      "request_id": "req-0007",
+      "group_id": "P53_O96",
+      "actual": 4984.12,
+      "pred": 4319.04,
+      "err": 665.08,
+      "p": 53,
+      "o": 96,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0010",
+      "group_id": "P53_O96",
+      "actual": 4972.63,
+      "pred": 4319.04,
+      "err": 653.59,
+      "p": 53,
+      "o": 96,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expD-pair2-cold",
+      "group_id": "P119_O32",
+      "actual": 3124.1,
+      "pred": 2494.84,
+      "err": 629.26,
+      "p": 119,
+      "o": 32,
+      "cache": "cold_prefix",
+      "residency": "cold"
+    },
+    {
+      "request_id": "s15-expA-rep1",
+      "group_id": "P119_O32",
+      "actual": 3062.53,
+      "pred": 2494.84,
+      "err": 567.69,
+      "p": 119,
+      "o": 32,
+      "cache": "cold_prefix",
+      "residency": "cold"
+    },
+    {
+      "request_id": "req-0003",
+      "group_id": "P42_O48",
+      "actual": 2712.32,
+      "pred": 2178.8,
+      "err": 533.52,
+      "p": 42,
+      "o": 48,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expD-pair3-cold",
+      "group_id": "P119_O32",
+      "actual": 3006.96,
+      "pred": 2494.84,
+      "err": 512.12,
+      "p": 119,
+      "o": 32,
+      "cache": "cold_prefix",
+      "residency": "cold"
+    },
+    {
+      "request_id": "req-0005",
+      "group_id": "P99_O128",
+      "actual": 6257.79,
+      "pred": 5762.12,
+      "err": 495.67,
+      "p": 99,
+      "o": 128,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0027",
+      "group_id": "P677_O128",
+      "actual": 5719.17,
+      "pred": 6074.58,
+      "err": 355.41,
+      "p": 677,
+      "o": 128,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0013",
+      "group_id": "P677_O128",
+      "actual": 5776.52,
+      "pred": 6074.58,
+      "err": 298.06,
+      "p": 677,
+      "o": 128,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expC-forward-p119",
+      "group_id": "P119_O32",
+      "actual": 1777.14,
+      "pred": 1494.84,
+      "err": 282.3,
+      "p": 119,
+      "o": 32,
+      "cache": "partial_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0009",
+      "group_id": "P42_O48",
+      "actual": 2456.99,
+      "pred": 2178.8,
+      "err": 278.19,
+      "p": 42,
+      "o": 48,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0010",
+      "group_id": "P119_O128",
+      "actual": 5565.76,
+      "pred": 5831.7,
+      "err": 265.94,
+      "p": 119,
+      "o": 128,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expE-O128-rep2",
+      "group_id": "P119_O128",
+      "actual": 5605.12,
+      "pred": 5831.7,
+      "err": 226.58,
+      "p": 119,
+      "o": 128,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0009",
+      "group_id": "P119_O64",
+      "actual": 2790.34,
+      "pred": 3016.86,
+      "err": 226.52,
+      "p": 119,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0016",
+      "group_id": "P119_O64",
+      "actual": 2804.51,
+      "pred": 3016.86,
+      "err": 212.35,
+      "p": 119,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expC-shuffled-p677",
+      "group_id": "P677_O32",
+      "actual": 1544.85,
+      "pred": 1753.72,
+      "err": 208.87,
+      "p": 677,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0018",
+      "group_id": "P300_O64",
+      "actual": 2841.44,
+      "pred": 3033.44,
+      "err": 192.0,
+      "p": 300,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expE-O64-rep2",
+      "group_id": "P119_O64",
+      "actual": 2829.56,
+      "pred": 3016.86,
+      "err": 187.3,
+      "p": 119,
+      "o": 64,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expC-reverse-p677",
+      "group_id": "P677_O32",
+      "actual": 1574.5,
+      "pred": 1753.72,
+      "err": 179.22,
+      "p": 677,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0022",
+      "group_id": "P46_O64",
+      "actual": 2748.99,
+      "pred": 2922.13,
+      "err": 173.14,
+      "p": 46,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0011",
+      "group_id": "P300_O64",
+      "actual": 2867.87,
+      "pred": 3033.44,
+      "err": 165.57,
+      "p": 300,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0023",
+      "group_id": "P119_O64",
+      "actual": 2852.61,
+      "pred": 3016.86,
+      "err": 164.25,
+      "p": 119,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expD-pair1-warm",
+      "group_id": "P119_O32",
+      "actual": 1653.65,
+      "pred": 1494.84,
+      "err": 158.81,
+      "p": 119,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0006",
+      "group_id": "P42_O48",
+      "actual": 2324.94,
+      "pred": 2178.8,
+      "err": 146.14,
+      "p": 42,
+      "o": 48,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expE-O64-rep1",
+      "group_id": "P119_O64",
+      "actual": 2893.67,
+      "pred": 3016.86,
+      "err": 123.19,
+      "p": 119,
+      "o": 64,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0008",
+      "group_id": "P46_O64",
+      "actual": 2803.61,
+      "pred": 2922.13,
+      "err": 118.52,
+      "p": 46,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expC-forward-p46",
+      "group_id": "P46_O32",
+      "actual": 1587.85,
+      "pred": 1469.92,
+      "err": 117.93,
+      "p": 46,
+      "o": 32,
+      "cache": "partial_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0015",
+      "group_id": "P46_O64",
+      "actual": 2811.26,
+      "pred": 2922.13,
+      "err": 110.87,
+      "p": 46,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0025",
+      "group_id": "P300_O64",
+      "actual": 2931.04,
+      "pred": 3033.44,
+      "err": 102.4,
+      "p": 300,
+      "o": 64,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expA-rep2",
+      "group_id": "P119_O32",
+      "actual": 1591.27,
+      "pred": 1494.84,
+      "err": 96.43,
+      "p": 119,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0017",
+      "group_id": "P119_O128",
+      "actual": 5926.32,
+      "pred": 5831.7,
+      "err": 94.62,
+      "p": 119,
+      "o": 128,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "req-0021",
+      "group_id": "P46_O32",
+      "actual": 1560.14,
+      "pred": 1469.92,
+      "err": 90.22,
+      "p": 46,
+      "o": 32,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expE-O32-rep1",
+      "group_id": "P119_O32",
+      "actual": 1407.87,
+      "pred": 1494.84,
+      "err": 86.97,
+      "p": 119,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expD-pair3-warm",
+      "group_id": "P119_O32",
+      "actual": 1413.19,
+      "pred": 1494.84,
+      "err": 81.65,
+      "p": 119,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expE-O32-rep2",
+      "group_id": "P119_O32",
+      "actual": 1413.19,
+      "pred": 1494.84,
+      "err": 81.65,
+      "p": 119,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expE-O128-rep1",
+      "group_id": "P119_O128",
+      "actual": 5750.25,
+      "pred": 5831.7,
+      "err": 81.45,
+      "p": 119,
+      "o": 128,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0020",
+      "group_id": "P677_O128",
+      "actual": 5995.86,
+      "pred": 6074.58,
+      "err": 78.72,
+      "p": 677,
+      "o": 128,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expB-b3",
+      "group_id": "P53_O32",
+      "actual": 1545.01,
+      "pred": 1470.22,
+      "err": 74.79,
+      "p": 53,
+      "o": 32,
+      "cache": "partial_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expE-O16-rep2",
+      "group_id": "P119_O16",
+      "actual": 719.02,
+      "pred": 789.26,
+      "err": 70.24,
+      "p": 119,
+      "o": 16,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0014",
+      "group_id": "P46_O32",
+      "actual": 1401.38,
+      "pred": 1469.92,
+      "err": 68.54,
+      "p": 46,
+      "o": 32,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expC-shuffled-p46",
+      "group_id": "P46_O32",
+      "actual": 1537.5,
+      "pred": 1469.92,
+      "err": 67.58,
+      "p": 46,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expE-O16-rep1",
+      "group_id": "P119_O16",
+      "actual": 725.74,
+      "pred": 789.26,
+      "err": 63.52,
+      "p": 119,
+      "o": 16,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expC-reverse-p46",
+      "group_id": "P46_O32",
+      "actual": 1532.69,
+      "pred": 1469.92,
+      "err": 62.77,
+      "p": 46,
+      "o": 32,
+      "cache": "partial_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expC-shuffled-p300",
+      "group_id": "P300_O32",
+      "actual": 1529.67,
+      "pred": 1588.35,
+      "err": 58.68,
+      "p": 300,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0024",
+      "group_id": "P119_O128",
+      "actual": 5778.41,
+      "pred": 5831.7,
+      "err": 53.29,
+      "p": 119,
+      "o": 128,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expB-b2",
+      "group_id": "P317_O32",
+      "actual": 1565.64,
+      "pred": 1590.9,
+      "err": 25.26,
+      "p": 317,
+      "o": 32,
+      "cache": "partial_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expC-shuffled-p119",
+      "group_id": "P119_O32",
+      "actual": 1471.5,
+      "pred": 1494.84,
+      "err": 23.34,
+      "p": 119,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expC-reverse-p119",
+      "group_id": "P119_O32",
+      "actual": 1513.38,
+      "pred": 1494.84,
+      "err": 18.54,
+      "p": 119,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expC-forward-p300",
+      "group_id": "P300_O32",
+      "actual": 1575.39,
+      "pred": 1588.35,
+      "err": 12.96,
+      "p": 300,
+      "o": 32,
+      "cache": "partial_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expD-pair2-warm",
+      "group_id": "P119_O32",
+      "actual": 1507.74,
+      "pred": 1494.84,
+      "err": 12.9,
+      "p": 119,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "s15-expC-reverse-p300",
+      "group_id": "P300_O32",
+      "actual": 1578.7,
+      "pred": 1588.35,
+      "err": 9.65,
+      "p": 300,
+      "o": 32,
+      "cache": "partial_prefix",
+      "residency": "warm"
+    },
+    {
+      "request_id": "req-0007",
+      "group_id": "P46_O32",
+      "actual": 1461.33,
+      "pred": 1469.92,
+      "err": 8.59,
+      "p": 46,
+      "o": 32,
+      "cache": null,
+      "residency": null
+    },
+    {
+      "request_id": "s15-expA-rep3",
+      "group_id": "P119_O32",
+      "actual": 1499.09,
+      "pred": 1494.84,
+      "err": 4.25,
+      "p": 119,
+      "o": 32,
+      "cache": "warm_prefix",
+      "residency": "warm"
+    }
+  ]
+}
