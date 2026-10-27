@@ -20,6 +20,10 @@ import {
   OptimizationResult,
   PaginatedResponse,
   TokenStreamEvent,
+  BenchmarkWorkloadTask,
+  CandidateModelSpec,
+  MultiModelCompareRequest,
+  MultiModelComparisonReport,
   ValidationRequest,
   ValidationResponse,
   ValidationScenario,
@@ -451,6 +455,31 @@ export class EngineApiClient {
     signal?: AbortSignal
   ): Promise<ValidationResponse> {
     return this.request<ValidationResponse>('/api/v1/recommendation/validate', {
+      method: 'POST',
+      body: JSON.stringify(request),
+      signal,
+    });
+  }
+
+  public async getModelCatalog(signal?: AbortSignal): Promise<CandidateModelSpec[]> {
+    return this.request<CandidateModelSpec[]>('/api/v1/models/catalog', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async getWorkloadSuite(signal?: AbortSignal): Promise<BenchmarkWorkloadTask[]> {
+    return this.request<BenchmarkWorkloadTask[]>('/api/v1/models/workloads', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async compareModels(
+    request: MultiModelCompareRequest,
+    signal?: AbortSignal
+  ): Promise<MultiModelComparisonReport> {
+    return this.request<MultiModelComparisonReport>('/api/v1/models/compare', {
       method: 'POST',
       body: JSON.stringify(request),
       signal,

@@ -164,4 +164,50 @@ describe('RecommendationsPage Component', () => {
     const naElements = await screen.findAllByText('N/A');
     expect(naElements.length).toBeGreaterThanOrEqual(1);
   });
+
+  it('switches to multi-model comparison tab and displays multi-model view', async () => {
+    vi.spyOn(apiClient, 'getModelCatalog').mockResolvedValue([
+      {
+        model_id: 'llama3.2:1b',
+        display_name: 'Llama 3.2 1B',
+        model_family: 'llama',
+        parameter_count_billion: 1.2,
+        default_quantization: 'Q8_0',
+        expected_disk_size_mb: 1300,
+        expected_ram_mb: 1550,
+        context_window: 131072,
+        tokenizer_name: 'tiktoken_llama3',
+        vocabulary_size: 128256,
+        license: 'Meta Community',
+        intended_evaluation_role: 'Baseline',
+        download_command: 'ollama pull llama3.2:1b',
+        installation_status: 'INSTALLED',
+        is_installed: true,
+      },
+    ]);
+    vi.spyOn(apiClient, 'getWorkloadSuite').mockResolvedValue([
+      {
+        task_id: 'workload_v1_interactive_qa',
+        name: 'Interactive QA',
+        task_type: 'INTERACTIVE_QA',
+        prompt: 'What is the capital of France?',
+        max_output_tokens: 16,
+        expected_prompt_words: 6,
+        description: 'Short QA',
+        version: '1.0.0',
+      },
+    ]);
+
+    await act(async () => {
+      render(<RecommendationsPage />);
+    });
+
+    const multiTabBtn = screen.getByRole('button', { name: /Multi-Model Comparison/i });
+    await act(async () => {
+      fireEvent.click(multiTabBtn);
+    });
+
+    expect(await screen.findByText(/Candidate Selection & Comparative Constraints/i)).toBeInTheDocument();
+    expect(await screen.findByText('Interactive QA')).toBeInTheDocument();
+  });
 });

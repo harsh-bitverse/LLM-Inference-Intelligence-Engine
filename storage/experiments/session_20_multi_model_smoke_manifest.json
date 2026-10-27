@@ -1,0 +1,428 @@
+{
+  "experiment_id": "exp-s20-smoke-20261027-200201",
+  "created_at_utc": "2026-10-27T20:02:01.132296+00:00",
+  "workstation_cpu": "Intel Core i7-14700",
+  "runtime_version": "0.40.11",
+  "target_models": [
+    "llama3.2:1b",
+    "qwen2.5:1.5b",
+    "qwen2.5:0.5b"
+  ],
+  "installed_models": [
+    "llama3.2:1b"
+  ],
+  "uninstalled_models": [
+    "qwen2.5:1.5b",
+    "qwen2.5:0.5b"
+  ],
+  "tasks_executed": [
+    "workload_v1_interactive_qa",
+    "workload_v1_long_context_retrieval",
+    "workload_v1_long_form_generation",
+    "workload_v1_structured_json",
+    "workload_v1_code_generation",
+    "workload_v1_reasoning_numerical"
+  ],
+  "observations": [
+    {
+      "observation_id": "obs-exp-s20-smoke-20261027-200201-001",
+      "timestamp_utc": "2026-10-27T20:02:02.760990+00:00",
+      "experiment_id": "exp-s20-smoke-20261027-200201",
+      "model_metadata": {
+        "model_id": "llama3.2:1b",
+        "model_digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+        "model_family": "llama",
+        "parameter_count_billion": 1.24,
+        "quantization": "Q8_0",
+        "model_size_bytes": 1321098329,
+        "context_window": 131072,
+        "tokenizer_family": "llama3_tiktoken_128k",
+        "vocabulary_size": 128256,
+        "runtime_name": "ollama",
+        "runtime_version": "0.40.11",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "execution_backend": "cpu_ggml_avx2",
+        "license": "Meta Llama 3.2 Community License"
+      },
+      "sampling_config": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "top_k": 1,
+        "seed": 42,
+        "stop_sequences": []
+      },
+      "execution_condition": {
+        "concurrency": 1,
+        "model_residency": "warm",
+        "prompt_cache_state": "cold_prefix",
+        "warmup_policy": "1_warmup_excluded",
+        "request_index": 1
+      },
+      "performance_metrics": {
+        "client_e2e_duration_ms": 160.496,
+        "server_total_duration_ms": 158.492,
+        "server_load_duration_ms": 3.155,
+        "server_prefill_duration_ms": 100.219,
+        "server_decode_duration_ms": 53.015,
+        "raw_prompt_tokens": 42,
+        "raw_output_tokens": 2,
+        "raw_decode_tokens_per_second": 37.73,
+        "raw_client_tokens_per_second": 12.46,
+        "task_elapsed_ms": 160.496,
+        "characters_generated": 5,
+        "words_generated": 1,
+        "characters_per_second": 31.15,
+        "words_per_second": 6.23,
+        "cross_tokenizer_comparable": false,
+        "tokenizer_comparability_advisory": "Raw tokens/second cannot be directly compared across differing tokenizers. Compare task_elapsed_ms or characters_per_second for equivalent workloads."
+      },
+      "quality_result": {
+        "task_id": "workload_v1_interactive_qa",
+        "task_type": "INTERACTIVE_QA",
+        "format_compliant": true,
+        "task_success": true,
+        "correctness_score": 1.0,
+        "evaluation_method": "EXACT_MATCH",
+        "evaluation_notes": "Contains 'Paris' (case-insensitive)",
+        "response_snippet": "Paris"
+      },
+      "process_rss_mb": null,
+      "provenance": "MEASURED"
+    },
+    {
+      "observation_id": "obs-exp-s20-smoke-20261027-200201-002",
+      "timestamp_utc": "2026-10-27T20:02:03.924691+00:00",
+      "experiment_id": "exp-s20-smoke-20261027-200201",
+      "model_metadata": {
+        "model_id": "llama3.2:1b",
+        "model_digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+        "model_family": "llama",
+        "parameter_count_billion": 1.24,
+        "quantization": "Q8_0",
+        "model_size_bytes": 1321098329,
+        "context_window": 131072,
+        "tokenizer_family": "llama3_tiktoken_128k",
+        "vocabulary_size": 128256,
+        "runtime_name": "ollama",
+        "runtime_version": "0.40.11",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "execution_backend": "cpu_ggml_avx2",
+        "license": "Meta Llama 3.2 Community License"
+      },
+      "sampling_config": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "top_k": 1,
+        "seed": 42,
+        "stop_sequences": []
+      },
+      "execution_condition": {
+        "concurrency": 1,
+        "model_residency": "warm",
+        "prompt_cache_state": "cold_prefix",
+        "warmup_policy": "1_warmup_excluded",
+        "request_index": 2
+      },
+      "performance_metrics": {
+        "client_e2e_duration_ms": 1163.624,
+        "server_total_duration_ms": 1160.988,
+        "server_load_duration_ms": 2.578,
+        "server_prefill_duration_ms": 733.046,
+        "server_decode_duration_ms": 420.061,
+        "raw_prompt_tokens": 235,
+        "raw_output_tokens": 11,
+        "raw_decode_tokens_per_second": 26.19,
+        "raw_client_tokens_per_second": 9.45,
+        "task_elapsed_ms": 1163.624,
+        "characters_generated": 17,
+        "words_generated": 1,
+        "characters_per_second": 14.61,
+        "words_per_second": 0.86,
+        "cross_tokenizer_comparable": false,
+        "tokenizer_comparability_advisory": "Raw tokens/second cannot be directly compared across differing tokenizers. Compare task_elapsed_ms or characters_per_second for equivalent workloads."
+      },
+      "quality_result": {
+        "task_id": "workload_v1_long_context_retrieval",
+        "task_type": "LONG_CONTEXT_RETRIEVAL",
+        "format_compliant": true,
+        "task_success": true,
+        "correctness_score": 1.0,
+        "evaluation_method": "NEEDLE_RETRIEVAL_REGEX",
+        "evaluation_notes": "Identified key ZEPHYR-7703",
+        "response_snippet": "ZEPHYR-7703-DELTA"
+      },
+      "process_rss_mb": null,
+      "provenance": "MEASURED"
+    },
+    {
+      "observation_id": "obs-exp-s20-smoke-20261027-200201-003",
+      "timestamp_utc": "2026-10-27T20:02:11.515395+00:00",
+      "experiment_id": "exp-s20-smoke-20261027-200201",
+      "model_metadata": {
+        "model_id": "llama3.2:1b",
+        "model_digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+        "model_family": "llama",
+        "parameter_count_billion": 1.24,
+        "quantization": "Q8_0",
+        "model_size_bytes": 1321098329,
+        "context_window": 131072,
+        "tokenizer_family": "llama3_tiktoken_128k",
+        "vocabulary_size": 128256,
+        "runtime_name": "ollama",
+        "runtime_version": "0.40.11",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "execution_backend": "cpu_ggml_avx2",
+        "license": "Meta Llama 3.2 Community License"
+      },
+      "sampling_config": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "top_k": 1,
+        "seed": 42,
+        "stop_sequences": []
+      },
+      "execution_condition": {
+        "concurrency": 1,
+        "model_residency": "warm",
+        "prompt_cache_state": "cold_prefix",
+        "warmup_policy": "1_warmup_excluded",
+        "request_index": 3
+      },
+      "performance_metrics": {
+        "client_e2e_duration_ms": 7590.611,
+        "server_total_duration_ms": 7587.868,
+        "server_load_duration_ms": 2.107,
+        "server_prefill_duration_ms": 147.742,
+        "server_decode_duration_ms": 7432.867,
+        "raw_prompt_tokens": 60,
+        "raw_output_tokens": 160,
+        "raw_decode_tokens_per_second": 21.53,
+        "raw_client_tokens_per_second": 21.08,
+        "task_elapsed_ms": 7590.611,
+        "characters_generated": 897,
+        "words_generated": 132,
+        "characters_per_second": 118.17,
+        "words_per_second": 17.39,
+        "cross_tokenizer_comparable": false,
+        "tokenizer_comparability_advisory": "Raw tokens/second cannot be directly compared across differing tokenizers. Compare task_elapsed_ms or characters_per_second for equivalent workloads."
+      },
+      "quality_result": {
+        "task_id": "workload_v1_long_form_generation",
+        "task_type": "LONG_FORM_GENERATION",
+        "format_compliant": true,
+        "task_success": true,
+        "correctness_score": 1.0,
+        "evaluation_method": "HEURISTIC_KEYWORD_COMPLETION",
+        "evaluation_notes": "Words: 132. Keywords: prefill=True, decode=True, compute/bandwidth=True",
+        "response_snippet": "During transformer LLM (Large Language Model) inference, two key components are involved in the decoding process: prompt"
+      },
+      "process_rss_mb": null,
+      "provenance": "MEASURED"
+    },
+    {
+      "observation_id": "obs-exp-s20-smoke-20261027-200201-004",
+      "timestamp_utc": "2026-10-27T20:02:13.847581+00:00",
+      "experiment_id": "exp-s20-smoke-20261027-200201",
+      "model_metadata": {
+        "model_id": "llama3.2:1b",
+        "model_digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+        "model_family": "llama",
+        "parameter_count_billion": 1.24,
+        "quantization": "Q8_0",
+        "model_size_bytes": 1321098329,
+        "context_window": 131072,
+        "tokenizer_family": "llama3_tiktoken_128k",
+        "vocabulary_size": 128256,
+        "runtime_name": "ollama",
+        "runtime_version": "0.40.11",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "execution_backend": "cpu_ggml_avx2",
+        "license": "Meta Llama 3.2 Community License"
+      },
+      "sampling_config": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "top_k": 1,
+        "seed": 42,
+        "stop_sequences": []
+      },
+      "execution_condition": {
+        "concurrency": 1,
+        "model_residency": "warm",
+        "prompt_cache_state": "cold_prefix",
+        "warmup_policy": "1_warmup_excluded",
+        "request_index": 4
+      },
+      "performance_metrics": {
+        "client_e2e_duration_ms": 2332.128,
+        "server_total_duration_ms": 2328.878,
+        "server_load_duration_ms": 2.595,
+        "server_prefill_duration_ms": 446.947,
+        "server_decode_duration_ms": 1874.855,
+        "raw_prompt_tokens": 143,
+        "raw_output_tokens": 43,
+        "raw_decode_tokens_per_second": 22.94,
+        "raw_client_tokens_per_second": 18.44,
+        "task_elapsed_ms": 2332.128,
+        "characters_generated": 93,
+        "words_generated": 10,
+        "characters_per_second": 39.88,
+        "words_per_second": 4.29,
+        "cross_tokenizer_comparable": false,
+        "tokenizer_comparability_advisory": "Raw tokens/second cannot be directly compared across differing tokenizers. Compare task_elapsed_ms or characters_per_second for equivalent workloads."
+      },
+      "quality_result": {
+        "task_id": "workload_v1_structured_json",
+        "task_type": "STRUCTURED_JSON",
+        "format_compliant": true,
+        "task_success": true,
+        "correctness_score": 1.0,
+        "evaluation_method": "JSON_SCHEMA_VALIDATOR",
+        "evaluation_notes": "JSON valid. Schema match: 5/5 fields correct.",
+        "response_snippet": "{\"patient_id\": \"PT-4402\", \"age\": 45, \"systolic_bp\": 120, \"diastolic_bp\": 80, \"pulse_bpm\": 72}"
+      },
+      "process_rss_mb": null,
+      "provenance": "MEASURED"
+    },
+    {
+      "observation_id": "obs-exp-s20-smoke-20261027-200201-005",
+      "timestamp_utc": "2026-10-27T20:02:17.640154+00:00",
+      "experiment_id": "exp-s20-smoke-20261027-200201",
+      "model_metadata": {
+        "model_id": "llama3.2:1b",
+        "model_digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+        "model_family": "llama",
+        "parameter_count_billion": 1.24,
+        "quantization": "Q8_0",
+        "model_size_bytes": 1321098329,
+        "context_window": 131072,
+        "tokenizer_family": "llama3_tiktoken_128k",
+        "vocabulary_size": 128256,
+        "runtime_name": "ollama",
+        "runtime_version": "0.40.11",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "execution_backend": "cpu_ggml_avx2",
+        "license": "Meta Llama 3.2 Community License"
+      },
+      "sampling_config": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "top_k": 1,
+        "seed": 42,
+        "stop_sequences": []
+      },
+      "execution_condition": {
+        "concurrency": 1,
+        "model_residency": "warm",
+        "prompt_cache_state": "cold_prefix",
+        "warmup_policy": "1_warmup_excluded",
+        "request_index": 5
+      },
+      "performance_metrics": {
+        "client_e2e_duration_ms": 3791.63,
+        "server_total_duration_ms": 3785.169,
+        "server_load_duration_ms": 2.593,
+        "server_prefill_duration_ms": 185.684,
+        "server_decode_duration_ms": 3597.496,
+        "raw_prompt_tokens": 68,
+        "raw_output_tokens": 85,
+        "raw_decode_tokens_per_second": 23.63,
+        "raw_client_tokens_per_second": 22.42,
+        "task_elapsed_ms": 3791.63,
+        "characters_generated": 251,
+        "words_generated": 39,
+        "characters_per_second": 66.2,
+        "words_per_second": 10.29,
+        "cross_tokenizer_comparable": false,
+        "tokenizer_comparability_advisory": "Raw tokens/second cannot be directly compared across differing tokenizers. Compare task_elapsed_ms or characters_per_second for equivalent workloads."
+      },
+      "quality_result": {
+        "task_id": "workload_v1_code_generation",
+        "task_type": "CODE_GENERATION",
+        "format_compliant": true,
+        "task_success": true,
+        "correctness_score": 1.0,
+        "evaluation_method": "AST_SYNTAX_AND_UNIT_TEST",
+        "evaluation_notes": "Syntax valid. Unit tests passed: 8/8",
+        "response_snippet": "```\ndef is_prime(n: int) -> bool:\n    if n < 2:\n        return False\n    for i in range(2, int(n**0.5) + 1):\n        if "
+      },
+      "process_rss_mb": null,
+      "provenance": "MEASURED"
+    },
+    {
+      "observation_id": "obs-exp-s20-smoke-20261027-200201-006",
+      "timestamp_utc": "2026-10-27T20:02:25.383575+00:00",
+      "experiment_id": "exp-s20-smoke-20261027-200201",
+      "model_metadata": {
+        "model_id": "llama3.2:1b",
+        "model_digest": "baf6a787fdffd633537aa2eb51cfd54cb93ff08e28040095462bb63daf552878",
+        "model_family": "llama",
+        "parameter_count_billion": 1.24,
+        "quantization": "Q8_0",
+        "model_size_bytes": 1321098329,
+        "context_window": 131072,
+        "tokenizer_family": "llama3_tiktoken_128k",
+        "vocabulary_size": 128256,
+        "runtime_name": "ollama",
+        "runtime_version": "0.40.11",
+        "hardware_catalog_id": "cpu-intel-i7-14700",
+        "execution_backend": "cpu_ggml_avx2",
+        "license": "Meta Llama 3.2 Community License"
+      },
+      "sampling_config": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "top_k": 1,
+        "seed": 42,
+        "stop_sequences": []
+      },
+      "execution_condition": {
+        "concurrency": 1,
+        "model_residency": "warm",
+        "prompt_cache_state": "cold_prefix",
+        "warmup_policy": "1_warmup_excluded",
+        "request_index": 6
+      },
+      "performance_metrics": {
+        "client_e2e_duration_ms": 7742.739,
+        "server_total_duration_ms": 7739.647,
+        "server_load_duration_ms": 2.627,
+        "server_prefill_duration_ms": 361.772,
+        "server_decode_duration_ms": 7370.52,
+        "raw_prompt_tokens": 112,
+        "raw_output_tokens": 160,
+        "raw_decode_tokens_per_second": 21.71,
+        "raw_client_tokens_per_second": 20.66,
+        "task_elapsed_ms": 7742.739,
+        "characters_generated": 637,
+        "words_generated": 120,
+        "characters_per_second": 82.27,
+        "words_per_second": 15.5,
+        "cross_tokenizer_comparable": false,
+        "tokenizer_comparability_advisory": "Raw tokens/second cannot be directly compared across differing tokenizers. Compare task_elapsed_ms or characters_per_second for equivalent workloads."
+      },
+      "quality_result": {
+        "task_id": "workload_v1_reasoning_numerical",
+        "task_type": "REASONING_NUMERICAL",
+        "format_compliant": false,
+        "task_success": false,
+        "correctness_score": 0.0,
+        "evaluation_method": "NUMERICAL_REGEX_CHECKER",
+        "evaluation_notes": "Final answer 112 not found",
+        "response_snippet": "To find out how many racks remain in the warehouse inventory on Friday morning, we need to calculate the total number of"
+      },
+      "process_rss_mb": null,
+      "provenance": "MEASURED"
+    }
+  ],
+  "summary_statistics": {
+    "llama3.2:1b": {
+      "task_count": 6,
+      "median_duration_ms": 3791.63,
+      "mean_raw_decode_tok_s": 25.62,
+      "mean_characters_per_s": 58.71,
+      "mean_correctness_score": 0.833,
+      "format_compliance_rate_pct": 83.3
+    }
+  }
+}

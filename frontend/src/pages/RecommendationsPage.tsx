@@ -22,8 +22,11 @@ import {
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { ErrorMessage } from '../components/common/ErrorMessage';
 import { MetricCard } from '../components/common/MetricCard';
+import { MultiModelComparisonView } from '../components/recommendations/MultiModelComparisonView';
 
 export const RecommendationsPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'single' | 'multi'>('single');
+
   // Workload Form State
   const [modelId, setModelId] = useState('llama3.2:1b');
   const [promptTokens, setPromptTokens] = useState<number>(32);
@@ -162,8 +165,40 @@ export const RecommendationsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Preset Validation Scenarios Carousel / Badges */}
-      {scenarios.length > 0 && (
+      {/* Navigation Sub-Tabs */}
+      <div className="flex border-b border-slate-800 gap-2">
+        <button
+          type="button"
+          onClick={() => setActiveTab('single')}
+          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all flex items-center gap-1.5 ${
+            activeTab === 'single'
+              ? 'border-sky-500 text-sky-400 bg-sky-500/10'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Compass className="w-3.5 h-3.5" />
+          Single-Model Recommendation
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('multi')}
+          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all flex items-center gap-1.5 ${
+            activeTab === 'multi'
+              ? 'border-sky-500 text-sky-400 bg-sky-500/10'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Layers className="w-3.5 h-3.5" />
+          Multi-Model Comparison
+        </button>
+      </div>
+
+      {activeTab === 'multi' ? (
+        <MultiModelComparisonView />
+      ) : (
+        <>
+          {/* Preset Validation Scenarios Carousel / Badges */}
+          {scenarios.length > 0 && (
         <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
             <Zap className="w-3.5 h-3.5 text-amber-400" />
@@ -656,6 +691,8 @@ export const RecommendationsPage: React.FC = () => {
             )}
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

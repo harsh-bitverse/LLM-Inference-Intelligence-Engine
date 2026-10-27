@@ -52,6 +52,80 @@ class RecommendationEvidenceSource(str, Enum):
     INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
 
 
+class QualityStatus(str, Enum):
+    """Evaluation status of model output quality and correctness constraints."""
+
+    QUALITY_SATISFIED = "QUALITY_SATISFIED"
+    QUALITY_VIOLATED = "QUALITY_VIOLATED"
+    UNKNOWN_QUALITY_NO_EVALUATION = "UNKNOWN_QUALITY_NO_EVALUATION"
+
+
+class ModelCompatibilityStatus(str, Enum):
+    """Compatibility status of a model candidate with the host runtime and hardware."""
+
+    COMPATIBLE = "COMPATIBLE"
+    UNINSTALLED = "UNINSTALLED"
+    INSUFFICIENT_MEMORY = "INSUFFICIENT_MEMORY"
+    INCOMPATIBLE_RUNTIME = "INCOMPATIBLE_RUNTIME"
+
+
+class ModelQualityConstraintSpec(BaseModel):
+    """Specification of quality, compliance, and memory constraints for candidate evaluation."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    require_json_compliance: bool = Field(
+        default=False, description="Require valid JSON parseability for structured tasks"
+    )
+    require_code_pass: bool = Field(
+        default=False, description="Require unit test pass rate >= 80% on code generation tasks"
+    )
+    min_task_correctness: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="Minimum overall correctness score (0.0 to 1.0)"
+    )
+    min_json_compliance_rate: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="Minimum JSON compliance rate (0.0 to 1.0)"
+    )
+    min_code_pass_rate: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="Minimum code unit test pass rate (0.0 to 1.0)"
+    )
+    min_reasoning_accuracy: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="Minimum numerical reasoning accuracy (0.0 to 1.0)"
+    )
+    max_memory_budget_mb: float | None = Field(
+        default=None, gt=0.0, description="Maximum allowed memory footprint in MiB"
+    )
+    preferred_model_family: str | None = Field(
+        default=None, description="Optional filter for preferred model architecture family"
+    )
+
+
+class QualityAssessmentResult(BaseModel):
+    """Quality and correctness evaluation outcome for a recommended model."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    quality_status: QualityStatus = Field(
+        default=QualityStatus.UNKNOWN_QUALITY_NO_EVALUATION,
+        description="Whether quality constraints were met, violated, or unassessed",
+    )
+    json_compliance_rate: float | None = Field(
+        default=None, description="Observed JSON compliance rate"
+    )
+    code_pass_rate: float | None = Field(
+        default=None, description="Observed code pass rate"
+    )
+    reasoning_accuracy: float | None = Field(
+        default=None, description="Observed numerical reasoning accuracy"
+    )
+    task_correctness_mean: float | None = Field(
+        default=None, description="Mean correctness score across evaluated tasks"
+    )
+    evaluation_notes: list[str] = Field(
+        default_factory=list, description="Diagnostic notes detailing quality evaluation"
+    )
+
+
 class WorkloadRecommendationRequest(BaseModel):
     """Typed request describing user workload and constraints for configuration recommendation."""
 
@@ -123,6 +197,10 @@ class WorkloadRecommendationRequest(BaseModel):
     user_preferences: dict[str, Any] = Field(
         default_factory=dict,
         description="Optional user preferences or soft priorities.",
+    )
+    quality_constraints: ModelQualityConstraintSpec = Field(
+        default_factory=ModelQualityConstraintSpec,
+        description="Optional model quality, correctness, and memory constraints.",
     )
 
     @model_validator(mode="after")
@@ -254,4 +332,12 @@ class WorkloadRecommendationResponse(BaseModel):
     sla_risk_flag: str | None = Field(
         default=None,
         description="SLA risk flag if operating regime exhibits elevated variance or sustained slowdown.",
+    )
+    quality_assessment: QualityAssessmentResult | None = Field(
+        default=None,
+        description="Evaluation of model output quality, compliance, and correctness if quality constraints were specified.",
+    )
+    model_compatibility: ModelCompatibilityStatus = Field(
+        default=ModelCompatibilityStatus.COMPATIBLE,
+        description="Compatibility status of model with local runtime and hardware.",
     )

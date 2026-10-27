@@ -629,6 +629,15 @@ export interface WorkloadRecommendationResponse {
   historical_sla_violation_frequency_pct?: number | null;
   conservative_feasibility?: string | null;
   sla_risk_flag?: string | null;
+  quality_assessment?: {
+    quality_status: 'QUALITY_SATISFIED' | 'QUALITY_VIOLATED' | 'UNKNOWN_QUALITY_NO_EVALUATION';
+    json_compliance_rate?: number | null;
+    code_pass_rate?: number | null;
+    reasoning_accuracy?: number | null;
+    task_correctness_mean?: number | null;
+    evaluation_notes: string[];
+  } | null;
+  model_compatibility?: 'COMPATIBLE' | 'UNINSTALLED' | 'INSUFFICIENT_MEMORY' | 'INCOMPATIBLE_RUNTIME';
 }
 
 export interface ValidationScenario {
@@ -665,5 +674,87 @@ export interface ValidationResponse {
   throughput_absolute_error_tok_s?: number | null;
   throughput_relative_error_pct?: number | null;
   explanation: string;
+}
+
+export interface CandidateModelSpec {
+  model_id: string;
+  display_name: string;
+  model_family: string;
+  parameter_count_billion: number;
+  default_quantization: string;
+  expected_disk_size_mb: number;
+  expected_ram_mb: number;
+  context_window: number;
+  tokenizer_name: string;
+  vocabulary_size: number;
+  license: string;
+  intended_evaluation_role: string;
+  download_command: string;
+  installation_status: 'INSTALLED' | 'UNINSTALLED_CANDIDATE' | 'CORRUPTED' | 'UNSUPPORTED';
+  is_installed: boolean;
+  digest?: string | null;
+}
+
+export interface BenchmarkWorkloadTask {
+  task_id: string;
+  name: string;
+  task_type: string;
+  prompt: string;
+  max_output_tokens: number;
+  expected_prompt_words: number;
+  description: string;
+  version: string;
+}
+
+export interface ModelQualityConstraintSpec {
+  require_json_compliance?: boolean;
+  require_code_pass?: boolean;
+  min_task_correctness?: number | null;
+  min_json_compliance_rate?: number | null;
+  min_code_pass_rate?: number | null;
+  min_reasoning_accuracy?: number | null;
+  max_memory_budget_mb?: number | null;
+  preferred_model_family?: string | null;
+}
+
+export interface ModelComparisonEntry {
+  model_id: string;
+  display_name: string;
+  model_family: string;
+  parameter_count_billion: number;
+  quantization: string;
+  installation_status: 'INSTALLED' | 'UNINSTALLED_CANDIDATE' | 'CORRUPTED' | 'UNSUPPORTED';
+  compatibility_status: 'COMPATIBLE' | 'UNINSTALLED' | 'INSUFFICIENT_MEMORY' | 'INCOMPATIBLE_RUNTIME';
+  evidence_source: string;
+  nominal_latency_ms?: number | null;
+  worst_case_latency_ms?: number | null;
+  raw_decode_tokens_per_second?: number | null;
+  characters_per_second?: number | null;
+  quality_status: 'QUALITY_SATISFIED' | 'QUALITY_VIOLATED' | 'UNKNOWN_QUALITY_NO_EVALUATION';
+  mean_correctness_score?: number | null;
+  json_compliance_rate?: number | null;
+  code_pass_rate?: number | null;
+  conservative_feasibility: string;
+  rank?: number | null;
+  decision_label: string;
+  disclaimers: string[];
+}
+
+export interface MultiModelComparisonReport {
+  workload_summary: Record<string, unknown>;
+  latency_sla_ms?: number | null;
+  quality_constraints: ModelQualityConstraintSpec;
+  candidate_evaluations: ModelComparisonEntry[];
+  recommended_model_id?: string | null;
+  comparability_caveat: string;
+  ranking_rationale: string;
+}
+
+export interface MultiModelCompareRequest {
+  candidate_model_ids: string[];
+  prompt_tokens: number;
+  expected_output_tokens: number;
+  latency_sla_ms?: number | null;
+  quality_constraints?: ModelQualityConstraintSpec;
 }
 

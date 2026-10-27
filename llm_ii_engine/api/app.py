@@ -13,6 +13,7 @@ from llm_ii_engine.api.routes import (
     diagnostics_router,
     hardware_router,
     health_router,
+    models_router,
     optimization_router,
     predictions_router,
     recommendation_router,
@@ -101,5 +102,6 @@ def create_app(
     app.include_router(predictions_router, prefix="/api/v1")
     app.include_router(optimization_router, prefix="/api/v1")
     app.include_router(recommendation_router, prefix="/api/v1")
+    app.include_router(models_router, prefix="/api/v1")
 
     return app
