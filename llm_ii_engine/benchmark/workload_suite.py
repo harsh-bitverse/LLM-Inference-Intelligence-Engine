@@ -276,11 +276,22 @@ def evaluate_task_output(task: BenchmarkWorkloadTask, raw_output: str) -> Qualit
                 response_snippet=text[:120],
             )
 
-        # Safely execute function definition in a sandboxed dictionary
-        test_env: dict[str, Any] = {}
+        # Safely execute function definition in a strictly restricted sandboxed dictionary
+        restricted_builtins = {
+            "range": range,
+            "int": int,
+            "float": float,
+            "bool": bool,
+            "len": len,
+            "isinstance": isinstance,
+            "min": min,
+            "max": max,
+            "abs": abs,
+        }
+        test_env: dict[str, Any] = {"__builtins__": restricted_builtins}
         correctness_score = 0.0
         try:
-            exec(compile(tree, filename="<ast>", mode="exec"), test_env)
+            exec(compile(tree, filename="<restricted_sandbox>", mode="exec"), test_env)
             if "is_prime" in test_env and callable(test_env["is_prime"]):
                 func = test_env["is_prime"]
                 test_cases = [

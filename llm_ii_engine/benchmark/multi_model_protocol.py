@@ -89,6 +89,7 @@ class BenchmarkExecutionCondition(BaseModel):
         default="1_warmup_excluded", description="Warmup exclusion description"
     )
     request_index: int = Field(default=1, ge=1, description="Request sequence index")
+    repetition_index: int = Field(default=1, ge=1, description="Repetition sequence index (1-based)")
 
 
 class TaskNormalizedMetrics(BaseModel):

@@ -216,26 +216,54 @@ class MultiModelComparator:
             compat = ModelCompatibilityStatus.COMPATIBLE
             inst_status = ModelInstallationStatus.INSTALLED
 
-            # Performance estimation / empirical lookup
-            # Baseline parameters for llama3.2:1b on Intel Core i7-14700 CPU
-            # Linear model: prefill ~0.74 ms/tok, decode ~44 ms/tok nominal, up to ~80 ms/tok sustained
-            prefill_ms = 0.744 * prompt_tokens
-            nominal_decode_ms = 44.0 * expected_output_tokens
-            worst_decode_ms = 79.6 * expected_output_tokens
-            nominal_latency_ms = round(prefill_ms + nominal_decode_ms, 2)
-            worst_case_latency_ms = round(prefill_ms + worst_decode_ms, 2)
-            nominal_decode_tps = 22.72
-            chars_per_sec = 85.0
-
-            # Quality assessment
-            # Check if empirical smoke summary provides quality stats for this model
+            # Quality assessment & empirical lookup
             q_stats = (empirical_smoke_summary or {}).get(cid, {})
+            t_summaries = q_stats.get("task_summaries", {})
+
+            # Performance estimation / empirical lookup
+            if q_stats.get("mean_raw_decode_tok_s"):
+                nominal_decode_tps = round(q_stats["mean_raw_decode_tok_s"], 2)
+                chars_per_sec = round(q_stats.get("mean_characters_per_s", 75.0), 1)
+                prefill_factor = 0.744 if "llama" in cid else 0.50
+                prefill_ms = prefill_factor * prompt_tokens
+                nominal_decode_ms = (expected_output_tokens / nominal_decode_tps) * 1000.0
+                worst_decode_ms = nominal_decode_ms * 1.5
+                nominal_latency_ms = round(prefill_ms + nominal_decode_ms, 2)
+                worst_case_latency_ms = round(prefill_ms + worst_decode_ms, 2)
+            else:
+                # Default baseline fallback by family
+                if "0.5b" in cid:
+                    nominal_decode_tps = 75.0
+                    chars_per_sec = 180.0
+                    prefill_factor = 0.35
+                elif "1.5b" in cid:
+                    nominal_decode_tps = 32.0
+                    chars_per_sec = 75.0
+                    prefill_factor = 0.55
+                else:
+                    nominal_decode_tps = 22.72
+                    chars_per_sec = 85.0
+                    prefill_factor = 0.744
+
+                prefill_ms = prefill_factor * prompt_tokens
+                nominal_decode_ms = (expected_output_tokens / nominal_decode_tps) * 1000.0
+                worst_decode_ms = nominal_decode_ms * 1.8
+                nominal_latency_ms = round(prefill_ms + nominal_decode_ms, 2)
+                worst_case_latency_ms = round(prefill_ms + worst_decode_ms, 2)
+
             json_rate = q_stats.get("json_compliance_rate_pct")
             if json_rate is not None:
                 json_rate = json_rate / 100.0
+            elif "workload_v1_structured_json" in t_summaries:
+                json_rate = (t_summaries["workload_v1_structured_json"].get("format_compliance_rate_pct", 100.0)) / 100.0
+
             code_rate = q_stats.get("code_pass_rate_pct")
             if code_rate is not None:
                 code_rate = code_rate / 100.0
+            elif "workload_v1_code_generation" in t_summaries:
+                code_t = t_summaries["workload_v1_code_generation"]
+                code_rate = code_t.get("mean_correctness_score", 0.0)
+
             mean_correctness = q_stats.get("mean_correctness_score")
 
             has_quality_reqs = any(

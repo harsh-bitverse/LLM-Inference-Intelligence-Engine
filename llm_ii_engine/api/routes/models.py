@@ -64,7 +64,14 @@ async def list_workload_suite() -> list[BenchmarkWorkloadTask]:
 
 @router.get("/smoke-summary")
 async def get_smoke_summary() -> dict[str, Any]:
-    """Retrieve empirical summary statistics from the latest multi-model smoke validation."""
+    """Retrieve empirical summary statistics from the latest multi-model benchmark or smoke validation."""
+    s21_file = Path("storage/experiments/session_21_cross_model_manifest.json")
+    if s21_file.exists():
+        try:
+            data = json.loads(s21_file.read_text(encoding="utf-8"))
+            return data.get("summary_statistics", {})
+        except Exception:
+            pass
     smoke_file = Path("storage/experiments/session_20_multi_model_smoke_manifest.json")
     if smoke_file.exists():
         try:

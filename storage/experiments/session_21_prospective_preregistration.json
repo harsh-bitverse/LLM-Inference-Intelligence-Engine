@@ -1,0 +1,45 @@
+{
+  "preregistration_timestamp_utc": "2026-10-27T20:43:11.657331+00:00",
+  "scenarios": [
+    {
+      "scenario_id": "scenario_a_latency_interactive",
+      "description": "Low-latency interactive query with tight SLA (2000 ms)",
+      "task_id": "workload_v1_interactive_qa",
+      "prompt_tokens": 13,
+      "expected_output_tokens": 16,
+      "latency_sla_ms": 2000.0,
+      "quality_constraints": {
+        "require_json_compliance": false,
+        "require_code_pass": false,
+        "min_task_correctness": 0.8,
+        "min_json_compliance_rate": null,
+        "min_code_pass_rate": null,
+        "min_reasoning_accuracy": null,
+        "max_memory_budget_mb": null,
+        "preferred_model_family": null
+      },
+      "expected_best_model": "qwen2.5:0.5b",
+      "rationale": "qwen2.5:0.5b provides lowest latency (~90 ms) and easily clears 2000 ms SLA with 100% correctness."
+    },
+    {
+      "scenario_id": "scenario_b_quality_code_generation",
+      "description": "Strict quality-constrained code generation requiring valid syntax and unit test verification (SLA 8000 ms)",
+      "task_id": "workload_v1_code_generation",
+      "prompt_tokens": 58,
+      "expected_output_tokens": 96,
+      "latency_sla_ms": 8000.0,
+      "quality_constraints": {
+        "require_json_compliance": false,
+        "require_code_pass": true,
+        "min_task_correctness": 0.8,
+        "min_json_compliance_rate": null,
+        "min_code_pass_rate": null,
+        "min_reasoning_accuracy": null,
+        "max_memory_budget_mb": null,
+        "preferred_model_family": null
+      },
+      "expected_best_model": "qwen2.5:1.5b",
+      "rationale": "qwen2.5:1.5b is the only model achieving 100% unit test pass rate and correctness 1.0 on code generation within 8000 ms SLA."
+    }
+  ]
+}

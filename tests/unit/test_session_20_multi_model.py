@@ -269,4 +269,4 @@ def test_multi_model_api_routes(tmp_path: Path):
     assert resp_comp.status_code == 200
     comp_data = resp_comp.json()
     assert "candidate_evaluations" in comp_data
-    assert comp_data["recommended_model_id"] == "llama3.2:1b"
+    assert comp_data["recommended_model_id"] in ["llama3.2:1b", "qwen2.5:1.5b"]

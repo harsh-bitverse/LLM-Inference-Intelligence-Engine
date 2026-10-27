@@ -1,0 +1,77 @@
+{
+  "validation_timestamp_utc": "2026-10-27T20:43:20.455100+00:00",
+  "scenarios_evaluated": [
+    {
+      "scenario_id": "scenario_a_latency_interactive",
+      "description": "Low-latency interactive query with tight SLA (2000 ms)",
+      "expected_best_model": "qwen2.5:0.5b",
+      "actual_best_model": "qwen2.5:0.5b",
+      "hypothesis_confirmed": true,
+      "model_evaluations": {
+        "llama3.2:1b": {
+          "duration_ms": 100.225,
+          "raw_output_tokens": 2,
+          "sla_met": true,
+          "format_compliant": true,
+          "correctness_score": 1.0,
+          "quality_met": true,
+          "feasible": true
+        },
+        "qwen2.5:1.5b": {
+          "duration_ms": 86.404,
+          "raw_output_tokens": 2,
+          "sla_met": true,
+          "format_compliant": true,
+          "correctness_score": 1.0,
+          "quality_met": true,
+          "feasible": true
+        },
+        "qwen2.5:0.5b": {
+          "duration_ms": 59.309,
+          "raw_output_tokens": 2,
+          "sla_met": true,
+          "format_compliant": true,
+          "correctness_score": 1.0,
+          "quality_met": true,
+          "feasible": true
+        }
+      }
+    },
+    {
+      "scenario_id": "scenario_b_quality_code_generation",
+      "description": "Strict quality-constrained code generation requiring valid syntax and unit test verification (SLA 8000 ms)",
+      "expected_best_model": "qwen2.5:1.5b",
+      "actual_best_model": "qwen2.5:1.5b",
+      "hypothesis_confirmed": true,
+      "model_evaluations": {
+        "llama3.2:1b": {
+          "duration_ms": 3860.22,
+          "raw_output_tokens": 85,
+          "sla_met": true,
+          "format_compliant": true,
+          "correctness_score": 0.2,
+          "quality_met": false,
+          "feasible": false
+        },
+        "qwen2.5:1.5b": {
+          "duration_ms": 2511.024,
+          "raw_output_tokens": 72,
+          "sla_met": true,
+          "format_compliant": true,
+          "correctness_score": 1.0,
+          "quality_met": true,
+          "feasible": true
+        },
+        "qwen2.5:0.5b": {
+          "duration_ms": 2069.607,
+          "raw_output_tokens": 140,
+          "sla_met": true,
+          "format_compliant": false,
+          "correctness_score": 0.0,
+          "quality_met": false,
+          "feasible": false
+        }
+      }
+    }
+  ]
+}
