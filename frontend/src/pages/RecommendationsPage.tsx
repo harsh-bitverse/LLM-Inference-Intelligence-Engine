@@ -10,6 +10,7 @@ import {
   Layers,
   ShieldCheck,
   Zap,
+  Cpu,
 } from 'lucide-react';
 import { apiClient } from '../api/client';
 import {
@@ -23,9 +24,10 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { ErrorMessage } from '../components/common/ErrorMessage';
 import { MetricCard } from '../components/common/MetricCard';
 import { MultiModelComparisonView } from '../components/recommendations/MultiModelComparisonView';
+import { RuntimeOptimizationView } from '../components/recommendations/RuntimeOptimizationView';
 
 export const RecommendationsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'single' | 'multi'>('single');
+  const [activeTab, setActiveTab] = useState<'single' | 'multi' | 'runtime'>('single');
 
   // Workload Form State
   const [modelId, setModelId] = useState('llama3.2:1b');
@@ -191,9 +193,23 @@ export const RecommendationsPage: React.FC = () => {
           <Layers className="w-3.5 h-3.5" />
           Multi-Model Comparison
         </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('runtime')}
+          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all flex items-center gap-1.5 ${
+            activeTab === 'runtime'
+              ? 'border-sky-500 text-sky-400 bg-sky-500/10'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Cpu className="w-3.5 h-3.5" />
+          Hardware Runtime Optimization
+        </button>
       </div>
 
-      {activeTab === 'multi' ? (
+      {activeTab === 'runtime' ? (
+        <RuntimeOptimizationView />
+      ) : activeTab === 'multi' ? (
         <MultiModelComparisonView />
       ) : (
         <>

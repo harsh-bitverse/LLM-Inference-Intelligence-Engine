@@ -769,3 +769,112 @@ export interface MultiModelCompareRequest {
   quality_constraints?: ModelQualityConstraintSpec;
 }
 
+// ----------------------------------------------------------------------------
+// Session 24 — Hardware-Aware Runtime Optimization Types
+// ----------------------------------------------------------------------------
+
+export type RuntimeOptimizationObjective =
+  | 'MIN_LATENCY'
+  | 'MAX_THROUGHPUT'
+  | 'MIN_MEMORY'
+  | 'QUALITY_CONSTRAINED_LATENCY'
+  | 'CONSERVATIVE_SLA';
+
+export interface HardwareConstraintSpec {
+  max_threads?: number;
+  target_threads?: number | null;
+  memory_budget_mb?: number | null;
+  max_concurrency?: number;
+}
+
+export interface RuntimeRecommendationRequest {
+  prompt_tokens: number;
+  expected_output_tokens: number;
+  latency_sla_ms?: number | null;
+  throughput_sla_tok_s?: number | null;
+  concurrency?: number;
+  objective?: RuntimeOptimizationObjective;
+  hardware_constraints?: HardwareConstraintSpec;
+  quality_constraints?: ModelQualityConstraintSpec;
+  allow_model_selection?: boolean;
+  fixed_model_id?: string | null;
+}
+
+export interface RuntimeRecommendationResult {
+  recommendation_id: string;
+  model_id: string;
+  model_digest: string;
+  quantization: string;
+  recommended_threads: number;
+  recommended_concurrency: number;
+  recommended_num_ctx: number;
+  predicted_client_e2e_ms: number;
+  predicted_decode_tokens_per_second: number;
+  predicted_prefill_ms: number;
+  predicted_decode_ms: number;
+  estimated_memory_mb: number;
+  evidence_tier: string;
+  conservative_feasibility: string;
+  sla_assessments: Record<string, unknown>;
+  quality_assessment?: {
+    quality_status: string;
+    json_compliance_rate?: number | null;
+    code_pass_rate?: number | null;
+    reasoning_accuracy?: number | null;
+    task_correctness_mean?: number | null;
+    evaluation_notes: string[];
+  } | null;
+  code_execution_status: string;
+  isolation_status: string;
+  explanation: string;
+  workstation_provenance_caveat: string;
+  pareto_rank: number;
+  tradeoff_alternatives: Array<{
+    model_id: string;
+    threads: number;
+    e2e_ms: number;
+    decode_tps: number;
+    memory_mb: number;
+    feasibility: string;
+  }>;
+}
+
+export interface RuntimeScenario {
+  scenario_id: string;
+  name: string;
+  description: string;
+  request: RuntimeRecommendationRequest;
+}
+
+export interface RuntimeValidationRequest {
+  recommendation_id: string;
+  model_id: string;
+  num_thread: number;
+  num_ctx: number;
+  prompt_tokens: number;
+  expected_output_tokens: number;
+  expected_latency_ms?: number | null;
+  expected_decode_throughput_tok_s?: number | null;
+}
+
+export interface RuntimeValidationResponse {
+  validation_id: string;
+  recommendation_id: string;
+  model_id: string;
+  num_thread: number;
+  num_ctx: number;
+  status: string;
+  executed_at: string;
+  observed_client_e2e_duration_ms: number;
+  observed_server_decode_duration_ms?: number | null;
+  observed_server_prefill_duration_ms?: number | null;
+  observed_server_load_duration_ms?: number | null;
+  observed_server_decode_throughput_tok_s?: number | null;
+  predicted_client_e2e_duration_ms?: number | null;
+  predicted_server_decode_throughput_tok_s?: number | null;
+  duration_absolute_error_ms?: number | null;
+  duration_relative_error_pct?: number | null;
+  throughput_absolute_error_tok_s?: number | null;
+  throughput_relative_error_pct?: number | null;
+  explanation: string;
+}

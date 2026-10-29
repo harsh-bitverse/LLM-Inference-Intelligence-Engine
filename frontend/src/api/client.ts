@@ -29,6 +29,11 @@ import {
   ValidationScenario,
   WorkloadRecommendationRequest,
   WorkloadRecommendationResponse,
+  RuntimeRecommendationRequest,
+  RuntimeRecommendationResult,
+  RuntimeScenario,
+  RuntimeValidationRequest,
+  RuntimeValidationResponse,
 } from './types';
 
 export class ApiError extends Error {
@@ -480,6 +485,41 @@ export class EngineApiClient {
     signal?: AbortSignal
   ): Promise<MultiModelComparisonReport> {
     return this.request<MultiModelComparisonReport>('/api/v1/models/compare', {
+      method: 'POST',
+      body: JSON.stringify(request),
+      signal,
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Session 24 Hardware-Aware Runtime Recommendations and Live Validation
+  // --------------------------------------------------------------------------
+
+  public async recommendRuntime(
+    request: RuntimeRecommendationRequest,
+    signal?: AbortSignal
+  ): Promise<RuntimeRecommendationResult> {
+    return this.request<RuntimeRecommendationResult>('/api/v1/recommendation/runtime', {
+      method: 'POST',
+      body: JSON.stringify(request),
+      signal,
+    });
+  }
+
+  public async listRuntimeScenarios(
+    signal?: AbortSignal
+  ): Promise<RuntimeScenario[]> {
+    return this.request<RuntimeScenario[]>('/api/v1/recommendation/runtime/scenarios', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async validateRuntime(
+    request: RuntimeValidationRequest,
+    signal?: AbortSignal
+  ): Promise<RuntimeValidationResponse> {
+    return this.request<RuntimeValidationResponse>('/api/v1/recommendation/runtime/validate', {
       method: 'POST',
       body: JSON.stringify(request),
       signal,
