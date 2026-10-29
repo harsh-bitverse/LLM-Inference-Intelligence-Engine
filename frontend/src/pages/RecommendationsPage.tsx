@@ -25,9 +25,10 @@ import { ErrorMessage } from '../components/common/ErrorMessage';
 import { MetricCard } from '../components/common/MetricCard';
 import { MultiModelComparisonView } from '../components/recommendations/MultiModelComparisonView';
 import { RuntimeOptimizationView } from '../components/recommendations/RuntimeOptimizationView';
+import { CapacityPlanningView } from '../components/recommendations/CapacityPlanningView';
 
 export const RecommendationsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'single' | 'multi' | 'runtime'>('single');
+  const [activeTab, setActiveTab] = useState<'single' | 'multi' | 'runtime' | 'capacity'>('single');
 
   // Workload Form State
   const [modelId, setModelId] = useState('llama3.2:1b');
@@ -205,9 +206,23 @@ export const RecommendationsPage: React.FC = () => {
           <Cpu className="w-3.5 h-3.5" />
           Hardware Runtime Optimization
         </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('capacity')}
+          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all flex items-center gap-1.5 ${
+            activeTab === 'capacity'
+              ? 'border-sky-500 text-sky-400 bg-sky-500/10'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Activity className="w-3.5 h-3.5" />
+          Capacity Planning & Admission
+        </button>
       </div>
 
-      {activeTab === 'runtime' ? (
+      {activeTab === 'capacity' ? (
+        <CapacityPlanningView />
+      ) : activeTab === 'runtime' ? (
         <RuntimeOptimizationView />
       ) : activeTab === 'multi' ? (
         <MultiModelComparisonView />

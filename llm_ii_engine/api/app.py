@@ -10,6 +10,7 @@ from llm_ii_engine.api.errors import register_error_handlers
 from llm_ii_engine.api.jobs import BenchmarkJobManager
 from llm_ii_engine.api.routes import (
     benchmarks_router,
+    capacity_router,
     diagnostics_router,
     hardware_router,
     health_router,
@@ -103,5 +104,6 @@ def create_app(
     app.include_router(optimization_router, prefix="/api/v1")
     app.include_router(recommendation_router, prefix="/api/v1")
     app.include_router(models_router, prefix="/api/v1")
+    app.include_router(capacity_router, prefix="/api/v1")
 
     return app

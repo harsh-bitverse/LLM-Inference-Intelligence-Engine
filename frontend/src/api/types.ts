@@ -878,3 +878,128 @@ export interface RuntimeValidationResponse {
   throughput_relative_error_pct?: number | null;
   explanation: string;
 }
+
+// ==========================================
+// Session 25 Capacity Planning & Queueing Types
+// ==========================================
+
+export type CapacityEvidenceTier =
+  | 'DIRECT_MEASURED'
+  | 'EMPIRICALLY_INTERPOLATED'
+  | 'EXPLORATORY_EXTRAPOLATION'
+  | 'UNKNOWN_CAPACITY';
+
+export type AdmissionDecision =
+  | 'ACCEPT'
+  | 'QUEUE_WITH_BOUNDED_WAIT'
+  | 'REJECT_OR_DEFER'
+  | 'INSUFFICIENT_EVIDENCE';
+
+export type QueueingModelType =
+  | 'EMPIRICAL_INTERPOLATION'
+  | 'M_M_1_APPROX'
+  | 'M_G_1_APPROX';
+
+export interface ServiceTimeDistribution {
+  sample_count: number;
+  mean_service_ms: number;
+  variance_service_ms: number;
+  std_service_ms: number;
+  coefficient_of_variation: number;
+  median_service_ms: number;
+  p90_service_ms: number;
+  p95_service_ms: number;
+  min_service_ms: number;
+  max_service_ms: number;
+  mean_prefill_ms: number;
+  mean_decode_ms: number;
+  mean_output_tokens: number;
+}
+
+export interface CapacityCurvePoint {
+  offered_rps: number;
+  completed_rps: number;
+  estimated_utilization: number;
+  median_e2e_ms: number;
+  p90_e2e_ms: number;
+  p95_e2e_ms: number;
+  mean_queue_delay_ms: number;
+  sla_compliance_pct: number;
+  queue_buildup_detected: boolean;
+  failure_count: number;
+}
+
+export interface WorkloadCapacityReport {
+  report_id: string;
+  created_at_utc: string;
+  model_id: string;
+  num_thread: number;
+  workload_id: string;
+  service_distribution: ServiceTimeDistribution;
+  saturation_knee_rps: number;
+  max_sustainable_rps: number;
+  max_sustainable_rpm: number;
+  safe_operating_rps: number;
+  capacity_curve: CapacityCurvePoint[];
+  evidence_tier: CapacityEvidenceTier;
+  queueing_model_type: QueueingModelType;
+  assumptions: string[];
+}
+
+export interface CapacityEstimateRequest {
+  model_id: string;
+  num_thread: number;
+  workload_id: string;
+  latency_sla_ms?: number | null;
+  queueing_model?: QueueingModelType;
+}
+
+export interface AdmissionRequest {
+  model_id: string;
+  num_thread: number;
+  prompt_tokens: number;
+  expected_output_tokens: number;
+  latency_sla_ms?: number | null;
+  current_in_flight: number;
+  current_queue_depth: number;
+  require_code_execution_pass?: boolean;
+}
+
+export interface AdmissionResult {
+  decision: AdmissionDecision;
+  model_id: string;
+  num_thread: number;
+  predicted_queue_delay_ms: number;
+  predicted_service_time_ms: number;
+  predicted_total_latency_ms: number;
+  sla_compliance_probability: number;
+  current_server_utilization: number;
+  capacity_headroom_pct: number;
+  rationale: string;
+  evidence_tier: CapacityEvidenceTier;
+  unverified_code_warning: boolean;
+}
+
+export interface CapacityScenario {
+  scenario_id: string;
+  name: string;
+  model_id: string;
+  offered_rps: number;
+  target_sla_ms: number;
+  expected_decision: string;
+  description: string;
+}
+
+export interface CapacityScenariosResponse {
+  has_cached_manifest: boolean;
+  manifest_id: string | null;
+  total_observations: number;
+  scenarios: CapacityScenario[];
+}
+
+export interface ScenarioValidationResponse {
+  scenario: CapacityScenario;
+  evaluation: AdmissionResult;
+  decision_matches_expectation: boolean;
+}
+

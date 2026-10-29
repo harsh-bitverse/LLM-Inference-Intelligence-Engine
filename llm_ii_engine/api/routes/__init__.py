@@ -1,6 +1,7 @@
 """API routes module exports."""
 
 from llm_ii_engine.api.routes.benchmarks import router as benchmarks_router
+from llm_ii_engine.api.routes.capacity import router as capacity_router
 from llm_ii_engine.api.routes.diagnostics import router as diagnostics_router
 from llm_ii_engine.api.routes.hardware import router as hardware_router
 from llm_ii_engine.api.routes.health import router as health_router
@@ -11,6 +12,7 @@ from llm_ii_engine.api.routes.recommendations import router as recommendation_ro
 
 __all__ = [
     "benchmarks_router",
+    "capacity_router",
     "diagnostics_router",
     "hardware_router",
     "health_router",

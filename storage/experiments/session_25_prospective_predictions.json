@@ -1,0 +1,57 @@
+{
+  "manifest_id": "session-25-prospective-preregistration",
+  "created_at_utc": "2026-10-29T17:20:00.000000+00:00",
+  "status": "LOCKED_PRE_EXECUTION",
+  "workstation": "Intel Core i7-14700 (28 threads), Windows 11",
+  "runtime": "Ollama v0.40.11",
+  "scenarios": [
+    {
+      "scenario_id": "SCENARIO_A_LOW_TRAFFIC",
+      "name": "Scenario A: Low Traffic / Under-Saturated",
+      "model_id": "qwen2.5:0.5b",
+      "workload_id": "workload_v1_interactive_qa",
+      "num_thread": 8,
+      "offered_rps": 0.5,
+      "initial_queue_depth": 0,
+      "initial_in_flight": 0,
+      "target_sla_ms": 2000.0,
+      "predicted_decision": "ACCEPT",
+      "predicted_queue_delay_range_ms": [0.0, 50.0],
+      "predicted_sla_compliance_min_pct": 95.0,
+      "evidence_tier": "DIRECT_MEASURED",
+      "locked": true
+    },
+    {
+      "scenario_id": "SCENARIO_B_NEAR_SATURATION",
+      "name": "Scenario B: Near Saturation Knee",
+      "model_id": "llama3.2:1b",
+      "workload_id": "workload_v1_interactive_qa",
+      "num_thread": 8,
+      "offered_rps": 1.5,
+      "initial_queue_depth": 2,
+      "initial_in_flight": 1,
+      "target_sla_ms": 600.0,
+      "predicted_decision": "QUEUE_WITH_BOUNDED_WAIT",
+      "predicted_queue_delay_range_ms": [200.0, 450.0],
+      "predicted_sla_compliance_min_pct": 60.0,
+      "evidence_tier": "DIRECT_MEASURED",
+      "locked": true
+    },
+    {
+      "scenario_id": "SCENARIO_C_OVERLOAD",
+      "name": "Scenario C: Overload & Backlog Accumulation",
+      "model_id": "llama3.2:1b",
+      "workload_id": "workload_v1_interactive_qa",
+      "num_thread": 8,
+      "offered_rps": 5.0,
+      "initial_queue_depth": 4,
+      "initial_in_flight": 1,
+      "target_sla_ms": 300.0,
+      "predicted_decision": "REJECT_OR_DEFER",
+      "predicted_queue_delay_range_ms": [400.0, 1000.0],
+      "predicted_sla_compliance_min_pct": 0.0,
+      "evidence_tier": "DIRECT_MEASURED",
+      "locked": true
+    }
+  ]
+}

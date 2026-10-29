@@ -34,6 +34,12 @@ import {
   RuntimeScenario,
   RuntimeValidationRequest,
   RuntimeValidationResponse,
+  CapacityEstimateRequest,
+  WorkloadCapacityReport,
+  AdmissionRequest,
+  AdmissionResult,
+  CapacityScenariosResponse,
+  ScenarioValidationResponse,
 } from './types';
 
 export class ApiError extends Error {
@@ -522,6 +528,58 @@ export class EngineApiClient {
     return this.request<RuntimeValidationResponse>('/api/v1/recommendation/runtime/validate', {
       method: 'POST',
       body: JSON.stringify(request),
+      signal,
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Session 25 Inference Capacity Planning & SLA-Aware Admission
+  // --------------------------------------------------------------------------
+
+  public async estimateCapacity(
+    request: CapacityEstimateRequest,
+    signal?: AbortSignal
+  ): Promise<WorkloadCapacityReport> {
+    return this.request<WorkloadCapacityReport>('/api/v1/capacity/estimate', {
+      method: 'POST',
+      body: JSON.stringify(request),
+      signal,
+    });
+  }
+
+  public async admitRequest(
+    request: AdmissionRequest,
+    signal?: AbortSignal
+  ): Promise<AdmissionResult> {
+    return this.request<AdmissionResult>('/api/v1/capacity/admit', {
+      method: 'POST',
+      body: JSON.stringify(request),
+      signal,
+    });
+  }
+
+  public async listCapacityScenarios(
+    signal?: AbortSignal
+  ): Promise<CapacityScenariosResponse> {
+    return this.request<CapacityScenariosResponse>('/api/v1/capacity/scenarios', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async validateCapacityScenario(
+    scenarioId: string,
+    inFlight: number = 0,
+    queueDepth: number = 0,
+    signal?: AbortSignal
+  ): Promise<ScenarioValidationResponse> {
+    return this.request<ScenarioValidationResponse>('/api/v1/capacity/validate', {
+      method: 'POST',
+      body: JSON.stringify({
+        scenario_id: scenarioId,
+        current_in_flight: inFlight,
+        current_queue_depth: queueDepth,
+      }),
       signal,
     });
   }
