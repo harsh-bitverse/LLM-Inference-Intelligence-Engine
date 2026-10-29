@@ -25,6 +25,27 @@ class ModelInstallationStatus(str, Enum):
     UNSUPPORTED = "UNSUPPORTED"
 
 
+class CodeExecutionSecurityMode(str, Enum):
+    """Security isolation mode for model code evaluation."""
+
+    FAIL_CLOSED = "FAIL_CLOSED"
+    OPT_IN_HARDENED_JOB_OBJECT = "OPT_IN_HARDENED_JOB_OBJECT"
+
+
+class QualityEvaluationStatus(str, Enum):
+    """Granular verification status for benchmark quality evaluation."""
+
+    SYNTAX_VALID = "SYNTAX_VALID"
+    SYNTAX_INVALID = "SYNTAX_INVALID"
+    STATIC_CHECK_PASSED = "STATIC_CHECK_PASSED"
+    STATIC_CHECK_FAILED = "STATIC_CHECK_FAILED"
+    EXECUTION_TEST_PASSED = "EXECUTION_TEST_PASSED"
+    EXECUTION_TEST_FAILED = "EXECUTION_TEST_FAILED"
+    EXECUTION_UNVERIFIED = "EXECUTION_UNVERIFIED"
+    EVALUATOR_ERROR = "EVALUATOR_ERROR"
+    EVALUATION_TIMEOUT = "EVALUATION_TIMEOUT"
+
+
 class TaskEvaluationType(str, Enum):
     """Evaluation category for benchmarking workload tasks."""
 
@@ -176,10 +197,19 @@ class QualityEvaluationResult(BaseModel):
         default=None, ge=0.0, le=1.0, description="Deterministic score between 0.0 and 1.0"
     )
     evaluation_method: str = Field(
-        description="Verification method: 'JSON_SCHEMA_VALIDATOR', 'REGEX_EXTRACTOR', 'EXACT_MATCH', 'AST_SYNTAX_CHECK'"
+        description="Verification method: 'JSON_SCHEMA_VALIDATOR', 'REGEX_EXTRACTOR', 'EXACT_MATCH', 'AST_SYNTAX_CHECK', 'FAIL_CLOSED_AST_STATIC_VERIFICATION'"
     )
     evaluation_notes: str = Field(default="", description="Diagnostic details or error explanation")
     response_snippet: str = Field(default="", description="Snippet of evaluated model response")
+    evaluation_status: QualityEvaluationStatus | None = Field(
+        default=None, description="Granular verification taxonomy status"
+    )
+    security_mode: CodeExecutionSecurityMode | None = Field(
+        default=None, description="Execution isolation mode used for code tasks"
+    )
+    isolation_guarantees: list[str] = Field(
+        default_factory=list, description="List of active OS/process isolation guarantees"
+    )
 
 
 class MultiModelBenchmarkObservation(BaseModel):

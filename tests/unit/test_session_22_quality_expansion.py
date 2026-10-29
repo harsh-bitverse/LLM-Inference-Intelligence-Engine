@@ -23,6 +23,7 @@ from llm_ii_engine.benchmark.expanded_quality_suite import (
     evaluate_quality_task,
 )
 from llm_ii_engine.benchmark.multi_model_protocol import (
+    CodeExecutionSecurityMode,
     ModelInstallationStatus,
 )
 from llm_ii_engine.recommendation.models import (
@@ -84,7 +85,7 @@ class TestASTSandboxSecurity:
     def test_sandbox_executes_safe_code(self) -> None:
         task = next(t for t in EXPANDED_QUALITY_SUITE if t.task_id == "code_dev_01")
         code = "def is_palindrome(s: str) -> bool:\n    c = [ch.lower() for ch in s if ch.isalnum()]\n    return c == c[::-1]"
-        res = _eval_code(task, code)
+        res = _eval_code(task, code, security_mode=CodeExecutionSecurityMode.OPT_IN_HARDENED_JOB_OBJECT)
         assert res.task_success is True
         assert res.correctness_score == 1.0
         assert "Unit tests passed" in res.evaluation_notes
@@ -92,21 +93,21 @@ class TestASTSandboxSecurity:
     def test_sandbox_blocks_disallowed_builtins(self) -> None:
         task = next(t for t in EXPANDED_QUALITY_SUITE if t.task_id == "code_dev_01")
         code = "def is_palindrome(s: str) -> bool:\n    open('test.txt', 'w')\n    return True"
-        res = _eval_code(task, code)
+        res = _eval_code(task, code, security_mode=CodeExecutionSecurityMode.OPT_IN_HARDENED_JOB_OBJECT)
         assert res.task_success is False
         assert res.correctness_score == 0.0
 
     def test_sandbox_handles_syntax_error(self) -> None:
         task = next(t for t in EXPANDED_QUALITY_SUITE if t.task_id == "code_dev_01")
         code = "def is_palindrome(s:\n    return True"
-        res = _eval_code(task, code)
+        res = _eval_code(task, code, security_mode=CodeExecutionSecurityMode.OPT_IN_HARDENED_JOB_OBJECT)
         assert res.format_compliant is False
         assert "SyntaxError" in res.evaluation_notes
 
     def test_sandbox_times_out_on_infinite_loop(self) -> None:
         task = next(t for t in EXPANDED_QUALITY_SUITE if t.task_id == "code_dev_01")
         code = "def is_palindrome(s: str) -> bool:\n    while True:\n        pass\n    return True"
-        res = _eval_code(task, code)
+        res = _eval_code(task, code, security_mode=CodeExecutionSecurityMode.OPT_IN_HARDENED_JOB_OBJECT)
         assert res.task_success is False
         assert "timeout" in res.evaluation_notes.lower()
 
@@ -145,13 +146,13 @@ class TestCategoryEvaluators:
     def test_code_generation_evaluator(self) -> None:
         task = next(t for t in EXPANDED_QUALITY_SUITE if t.task_id == "code_dev_01")
         valid_code = "```python\ndef is_palindrome(s: str) -> bool:\n    c = [ch.lower() for ch in s if ch.isalnum()]\n    return c == c[::-1]\n```"
-        res = evaluate_quality_task(task, valid_code)
+        res = evaluate_quality_task(task, valid_code, security_mode=CodeExecutionSecurityMode.OPT_IN_HARDENED_JOB_OBJECT)
         assert res.format_compliant is True
         assert res.task_success is True
         assert res.correctness_score == 1.0
 
         failing_code = "```python\ndef is_palindrome(s: str) -> bool:\n    return False\n```"
-        res_fail = evaluate_quality_task(task, failing_code)
+        res_fail = evaluate_quality_task(task, failing_code, security_mode=CodeExecutionSecurityMode.OPT_IN_HARDENED_JOB_OBJECT)
         assert res_fail.task_success is False
         assert res_fail.correctness_score < 1.0
 

@@ -482,7 +482,7 @@ export const MultiModelComparisonView: React.FC = () => {
                       </td>
                       <td className="py-3 px-3">
                         <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             {cand.quality_status === 'QUALITY_SATISFIED' && (
                               <span className="text-[10px] text-emerald-400 font-medium">Satisfied</span>
                             )}
@@ -491,6 +491,22 @@ export const MultiModelComparisonView: React.FC = () => {
                             )}
                             {cand.quality_status === 'UNKNOWN_QUALITY_NO_EVALUATION' && (
                               <span className="text-[10px] text-slate-500 font-medium">Unassessed</span>
+                            )}
+                            {cand.code_execution_status === 'EXECUTION_UNVERIFIED' && (
+                              <span
+                                className="text-[9px] bg-amber-950/40 text-amber-300 border border-amber-600/30 px-1 py-0.5 rounded font-mono"
+                                title="Untrusted bytecode execution disabled by fail-closed security policy"
+                              >
+                                Unverified Exec
+                              </span>
+                            )}
+                            {cand.code_execution_status === 'EXECUTION_TEST_PASSED' && (
+                              <span
+                                className="text-[9px] bg-emerald-950/40 text-emerald-300 border border-emerald-600/30 px-1 py-0.5 rounded font-mono"
+                                title="Hardened Job Object Sandbox Verified"
+                              >
+                                Sandbox Verified
+                              </span>
                             )}
                             {cand.evidence_sample_count !== undefined && cand.evidence_sample_count > 0 && (
                               <span className="text-[9px] text-slate-400 bg-slate-800/80 px-1 py-0.5 rounded font-mono">

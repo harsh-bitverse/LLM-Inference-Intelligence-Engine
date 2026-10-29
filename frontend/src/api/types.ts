@@ -747,6 +747,8 @@ export interface ModelComparisonEntry {
   rank?: number | null;
   decision_label: string;
   disclaimers: string[];
+  code_execution_status?: string | null;
+  isolation_status?: string | null;
 }
 
 export interface MultiModelComparisonReport {

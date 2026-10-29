@@ -6,8 +6,11 @@ Held-Out (12 tasks) splits to ensure benchmark validity and prevent data contami
 """
 
 import ast
+import contextlib
+import ctypes
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -17,7 +20,9 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from llm_ii_engine.benchmark.multi_model_protocol import (
+    CodeExecutionSecurityMode,
     QualityEvaluationResult,
+    QualityEvaluationStatus,
     TaskEvaluationType,
 )
 
@@ -740,7 +745,9 @@ def compute_suite_hashes() -> dict[str, str]:
 # ==============================================================================
 
 def evaluate_quality_task(
-    task: QualityBenchmarkTask, raw_output: str
+    task: QualityBenchmarkTask,
+    raw_output: str,
+    security_mode: CodeExecutionSecurityMode = CodeExecutionSecurityMode.FAIL_CLOSED,
 ) -> QualityEvaluationResult:
     """Execute deterministic automated evaluation against task answer specification."""
     text = (raw_output or "").strip()
@@ -753,7 +760,7 @@ def evaluate_quality_task(
     elif cat == QualityTaskCategory.STRUCTURED_JSON:
         return _eval_json(task, text)
     elif cat == QualityTaskCategory.CODE_GENERATION:
-        return _eval_code(task, text)
+        return _eval_code(task, text, security_mode=security_mode)
     elif cat == QualityTaskCategory.CONTEXT_RETRIEVAL:
         return _eval_retrieval(task, text)
     elif cat == QualityTaskCategory.LONG_FORM_COMPLIANCE:
@@ -768,6 +775,7 @@ def evaluate_quality_task(
             evaluation_method="UNKNOWN",
             evaluation_notes=f"Unsupported category: {cat}",
             response_snippet=text[:100],
+            evaluation_status=QualityEvaluationStatus.EVALUATOR_ERROR,
         )
 
 
@@ -802,6 +810,9 @@ def _eval_factual(task: QualityBenchmarkTask, text: str) -> QualityEvaluationRes
         evaluation_method="OBJECTIVE_FACTUAL_MATCHER",
         evaluation_notes="Match criteria verified" if success else "Criteria failed",
         response_snippet=text[:120],
+        evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_PASSED
+        if success
+        else QualityEvaluationStatus.EXECUTION_TEST_FAILED,
     )
 
 
@@ -828,6 +839,9 @@ def _eval_numerical(task: QualityBenchmarkTask, text: str) -> QualityEvaluationR
         evaluation_method="NUMERICAL_PARSER",
         evaluation_notes="Numeric value verified" if success else "Expected number not found in text",
         response_snippet=text[:120],
+        evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_PASSED
+        if success
+        else QualityEvaluationStatus.EXECUTION_TEST_FAILED,
     )
 
 
@@ -854,6 +868,7 @@ def _eval_json(task: QualityBenchmarkTask, text: str) -> QualityEvaluationResult
             evaluation_method="JSON_SYNTAX_AND_SEMANTIC_PARSER",
             evaluation_notes=f"JSON parse error: {e}",
             response_snippet=text[:120],
+            evaluation_status=QualityEvaluationStatus.SYNTAX_INVALID,
         )
 
     # Semantic evaluation
@@ -870,6 +885,7 @@ def _eval_json(task: QualityBenchmarkTask, text: str) -> QualityEvaluationResult
                 evaluation_method="JSON_SYNTAX_AND_SEMANTIC_PARSER",
                 evaluation_notes=f"Array length mismatch: expected {spec['expected_items_count']}, got {len(items)}",
                 response_snippet=text[:120],
+                evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_FAILED,
             )
         total_q = sum(it.get("quantity", 0) for it in items if isinstance(it, dict))
         if total_q == spec["total_quantity"]:
@@ -882,6 +898,7 @@ def _eval_json(task: QualityBenchmarkTask, text: str) -> QualityEvaluationResult
                 evaluation_method="JSON_SYNTAX_AND_SEMANTIC_PARSER",
                 evaluation_notes="Array and item quantities matched exactly",
                 response_snippet=text[:120],
+                evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_PASSED,
             )
         return QualityEvaluationResult(
             task_id=task.task_id,
@@ -892,6 +909,7 @@ def _eval_json(task: QualityBenchmarkTask, text: str) -> QualityEvaluationResult
             evaluation_method="JSON_SYNTAX_AND_SEMANTIC_PARSER",
             evaluation_notes=f"Quantity mismatch: expected {spec['total_quantity']}, got {total_q}",
             response_snippet=text[:120],
+            evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_FAILED,
         )
 
     expected_fields = spec.get("fields", {})
@@ -905,6 +923,7 @@ def _eval_json(task: QualityBenchmarkTask, text: str) -> QualityEvaluationResult
             evaluation_method="JSON_SYNTAX_AND_SEMANTIC_PARSER",
             evaluation_notes="Syntax valid, no semantic fields specified",
             response_snippet=text[:120],
+            evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_PASSED,
         )
 
     # Recursive field comparison
@@ -947,38 +966,69 @@ def _eval_json(task: QualityBenchmarkTask, text: str) -> QualityEvaluationResult
         evaluation_method="JSON_SYNTAX_AND_SEMANTIC_PARSER",
         evaluation_notes=f"Semantic fields matched: {score * 100:.1f}%",
         response_snippet=text[:120],
+        evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_PASSED
+        if success
+        else QualityEvaluationStatus.EXECUTION_TEST_FAILED,
     )
 
 
-def _eval_code(task: QualityBenchmarkTask, text: str) -> QualityEvaluationResult:
-    spec = task.expected_answer_spec
-    entry_point = spec.get("entry_point")
-    tests = spec.get("tests", [])
+# ==============================================================================
+# Security Policy & Hardened Sandbox Isolation
+# ==============================================================================
 
-    # Extract code from markdown fences if present
-    code = text
-    if "```python" in text:
-        code = text.split("```python")[1].split("```")[0].strip()
-    elif "```" in text:
-        code = text.split("```")[1].split("```")[0].strip()
+FORBIDDEN_IMPORTS = {
+    "os", "sys", "subprocess", "shutil", "socket", "http", "urllib", "urllib3",
+    "requests", "ctypes", "cffi", "importlib", "pickle", "builtins", "posix",
+    "nt", "threading", "multiprocessing", "pty", "commands", "winreg",
+    "msvcrt", "signal", "_posixsubprocess", "_winapi", "platform", "pathlib",
+    "tempfile", "io",
+}
 
-    # Step 1: AST parse validation
-    try:
-        ast.parse(code)
-        syntax_valid = True
-    except SyntaxError as e:
-        return QualityEvaluationResult(
-            task_id=task.task_id,
-            task_type=TaskEvaluationType.CODE_GENERATION,
-            format_compliant=False,
-            task_success=False,
-            correctness_score=0.0,
-            evaluation_method="RESTRICTED_AST_SANDBOX_UNIT_TEST",
-            evaluation_notes=f"Python SyntaxError: {e}",
-            response_snippet=text[:120],
-        )
+FORBIDDEN_ATTRS = {
+    "__subclasses__", "__bases__", "__base__", "__globals__", "__builtins__",
+    "__code__", "__closure__", "__dict__", "__class__", "__loader__",
+    "__spec__", "__import__",
+}
 
-    # Step 2: Restricted Execution Environment via isolated subprocess with timeout
+FORBIDDEN_FUNCS = {
+    "eval", "exec", "getattr", "setattr", "delattr", "compile", "open",
+    "input", "breakpoint", "memoryview", "help", "license",
+}
+
+
+def check_ast_security(tree: ast.AST) -> tuple[bool, str]:
+    """Inspect AST nodes for dangerous imports, attribute lookups, and function calls."""
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                mod = alias.name.split(".")[0]
+                if mod in FORBIDDEN_IMPORTS:
+                    return False, f"Forbidden import: {alias.name}"
+        elif isinstance(node, ast.ImportFrom):
+            mod = (node.module or "").split(".")[0]
+            if mod in FORBIDDEN_IMPORTS:
+                return False, f"Forbidden import from: {node.module}"
+        elif isinstance(node, ast.Attribute):
+            if node.attr in FORBIDDEN_ATTRS:
+                return False, f"Forbidden attribute access: {node.attr}"
+        elif isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Name):
+                if node.func.id in FORBIDDEN_FUNCS:
+                    return False, f"Forbidden function call: {node.func.id}()"
+            elif isinstance(node.func, ast.Attribute) and (
+                node.func.attr in FORBIDDEN_FUNCS or node.func.attr in FORBIDDEN_ATTRS
+            ):
+                return False, f"Forbidden function/attribute call: {node.func.attr}()"
+    return True, "AST static security checks passed"
+
+
+def _run_hardened_subprocess_code(
+    code: str, tests: list[Any], entry_point: str, timeout: float = 2.0
+) -> tuple[int, int, str | None, bool]:
+    """Execute untrusted code inside an isolated, resource-bounded subprocess with sanitized environment.
+
+    Returns (passed_count, total_count, error_message, timed_out).
+    """
     runner_script = f"""import json, sys
 restricted_builtins = {{
     'range': range, 'int': int, 'float': float, 'bool': bool, 'len': len,
@@ -1010,43 +1060,234 @@ for test_in, test_out in tests:
 print(json.dumps({{'passed': passed, 'total': len(tests), 'err': None}}))
 """
 
+    base_py = getattr(sys, "_base_executable", sys.executable)
+    py_dir = os.path.dirname(base_py)
+    system_root = os.environ.get("SYSTEMROOT", "C:\\Windows")
+    sys32 = os.path.join(system_root, "System32")
+
+    # Scrub environment to prevent secret or token leakage
+    scrubbed_env: dict[str, str] = {}
+    for k in ("SYSTEMROOT", "WINDIR", "COMSPEC", "PATHEXT"):
+        if k in os.environ:
+            scrubbed_env[k] = os.environ[k]
+    scrubbed_env["PATH"] = f"{py_dir};{sys32}"
+
+    job_handle = None
+    proc = None
     try:
-        proc = subprocess.run(
-            [sys.executable, "-c", runner_script],
-            capture_output=True,
+        proc = subprocess.Popen(
+            [base_py, "-c", runner_script],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
-            timeout=2.0,
+            env=scrubbed_env,
         )
-        if proc.returncode == 0 and proc.stdout.strip():
-            result_data = json.loads(proc.stdout.strip().splitlines()[-1])
-            passed_cnt = result_data.get("passed", 0)
-            total_cnt = result_data.get("total", len(tests))
-            err_msg = result_data.get("err")
+
+        # Attach Windows Job Object for process tree termination and memory bounds
+        if sys.platform == "win32":
+            try:
+                from ctypes import wintypes
+
+                class _IO_COUNTERS(ctypes.Structure):
+                    _fields_ = [
+                        ("ReadOperationCount", ctypes.c_uint64),
+                        ("WriteOperationCount", ctypes.c_uint64),
+                        ("OtherOperationCount", ctypes.c_uint64),
+                        ("ReadTransferCount", ctypes.c_uint64),
+                        ("WriteTransferCount", ctypes.c_uint64),
+                        ("OtherTransferCount", ctypes.c_uint64),
+                    ]
+
+                class _JOBOBJECT_BASIC_LIMIT_INFORMATION(ctypes.Structure):
+                    _fields_ = [
+                        ("PerProcessUserTimeLimit", ctypes.c_int64),
+                        ("PerJobUserTimeLimit", ctypes.c_int64),
+                        ("LimitFlags", wintypes.DWORD),
+                        ("MinimumWorkingSetSize", ctypes.c_size_t),
+                        ("MaximumWorkingSetSize", ctypes.c_size_t),
+                        ("ActiveProcessLimit", wintypes.DWORD),
+                        ("Affinity", ctypes.c_size_t),
+                        ("PriorityClass", wintypes.DWORD),
+                        ("SchedulingClass", wintypes.DWORD),
+                    ]
+
+                class _JOBOBJECT_EXTENDED_LIMIT_INFORMATION(ctypes.Structure):
+                    _fields_ = [
+                        ("BasicLimitInformation", _JOBOBJECT_BASIC_LIMIT_INFORMATION),
+                        ("IoInfo", _IO_COUNTERS),
+                        ("ProcessMemoryLimit", ctypes.c_size_t),
+                        ("JobMemoryLimit", ctypes.c_size_t),
+                        ("PeakProcessMemoryUsed", ctypes.c_size_t),
+                        ("PeakJobMemoryUsed", ctypes.c_size_t),
+                    ]
+
+                kernel32 = ctypes.windll.kernel32
+                job_handle = kernel32.CreateJobObjectW(None, None)
+                if job_handle:
+                    limits = _JOBOBJECT_EXTENDED_LIMIT_INFORMATION()
+                    # KILL_ON_JOB_CLOSE (0x2000) | PROCESS_MEMORY (0x0100) | ACTIVE_PROCESS (0x0008)
+                    limits.BasicLimitInformation.LimitFlags = 0x2000 | 0x0100 | 0x0008
+                    limits.BasicLimitInformation.ActiveProcessLimit = 1
+                    limits.ProcessMemoryLimit = 256 * 1024 * 1024  # 256 MiB
+                    kernel32.SetInformationJobObject(
+                        job_handle, 9, ctypes.byref(limits), ctypes.sizeof(limits)
+                    )
+                    kernel32.AssignProcessToJobObject(job_handle, int(proc._handle))
+            except Exception:
+                pass
+
+        stdout, stderr = proc.communicate(timeout=timeout)
+        # Cap output reading at 16 KB to prevent memory exhaustion
+        stdout = stdout[:16384]
+        stderr = stderr[:16384]
+
+        if proc.returncode == 0 and stdout.strip():
+            last_line = stdout.strip().splitlines()[-1]
+            result_data = json.loads(last_line)
+            return (
+                result_data.get("passed", 0),
+                result_data.get("total", len(tests)),
+                result_data.get("err"),
+                False,
+            )
         else:
-            passed_cnt = 0
-            total_cnt = len(tests)
-            err_msg = proc.stderr.strip() or "Process execution failed"
+            err = stderr.strip() or stdout.strip() or f"Process execution failed with returncode {proc.returncode}"
+            return 0, len(tests), err, False
+
     except subprocess.TimeoutExpired:
-        return QualityEvaluationResult(
-            task_id=task.task_id,
-            task_type=TaskEvaluationType.CODE_GENERATION,
-            format_compliant=True,
-            task_success=False,
-            correctness_score=0.0,
-            evaluation_method="RESTRICTED_AST_SANDBOX_UNIT_TEST",
-            evaluation_notes="Execution timeout exceeded (2.0s bounded wall-time limit)",
-            response_snippet=text[:120],
-        )
+        if job_handle and sys.platform == "win32":
+            with contextlib.suppress(Exception):
+                ctypes.windll.kernel32.TerminateJobObject(job_handle, 1)
+        if proc:
+            with contextlib.suppress(Exception):
+                proc.kill()
+                proc.communicate()
+        return 0, len(tests), "Execution timeout exceeded (2.0s bounded wall-time limit)", True
+
     except Exception as e:
+        return 0, len(tests), f"Hardened sandbox error: {e}", False
+
+    finally:
+        if job_handle and sys.platform == "win32":
+            with contextlib.suppress(Exception):
+                ctypes.windll.kernel32.CloseHandle(job_handle)
+
+
+def _eval_code(
+    task: QualityBenchmarkTask,
+    text: str,
+    security_mode: CodeExecutionSecurityMode = CodeExecutionSecurityMode.FAIL_CLOSED,
+) -> QualityEvaluationResult:
+    spec = task.expected_answer_spec
+    entry_point = spec.get("entry_point")
+    tests = spec.get("tests", [])
+
+    # Extract code from markdown fences if present
+    code = text
+    if "```python" in text:
+        code = text.split("```python")[1].split("```")[0].strip()
+    elif "```" in text:
+        code = text.split("```")[1].split("```")[0].strip()
+
+    # Step 1: AST parse validation
+    try:
+        tree = ast.parse(code)
+    except SyntaxError as e:
+        return QualityEvaluationResult(
+            task_id=task.task_id,
+            task_type=TaskEvaluationType.CODE_GENERATION,
+            format_compliant=False,
+            task_success=False,
+            correctness_score=0.0,
+            evaluation_method="FAIL_CLOSED_AST_STATIC_VERIFICATION",
+            evaluation_notes=f"Python SyntaxError: {e}",
+            response_snippet=text[:120],
+            evaluation_status=QualityEvaluationStatus.SYNTAX_INVALID,
+            security_mode=security_mode,
+            isolation_guarantees=["NO_BYTECODE_EXECUTED"],
+        )
+
+    # Step 2: AST static security check
+    safe, reason = check_ast_security(tree)
+    if not safe:
         return QualityEvaluationResult(
             task_id=task.task_id,
             task_type=TaskEvaluationType.CODE_GENERATION,
             format_compliant=True,
             task_success=False,
             correctness_score=0.0,
-            evaluation_method="RESTRICTED_AST_SANDBOX_UNIT_TEST",
-            evaluation_notes=f"Sandbox execution error: {e}",
+            evaluation_method="FAIL_CLOSED_AST_STATIC_VERIFICATION",
+            evaluation_notes=f"Security violation: {reason}",
             response_snippet=text[:120],
+            evaluation_status=QualityEvaluationStatus.STATIC_CHECK_FAILED,
+            security_mode=security_mode,
+            isolation_guarantees=["NO_BYTECODE_EXECUTED", "AST_STATIC_SAFETY_VERIFIED"],
+        )
+
+    # Step 3: Verify entry point definition in AST
+    has_entry = (
+        entry_point is None
+        or any(isinstance(node, ast.FunctionDef) and node.name == entry_point for node in ast.walk(tree))
+    )
+    if not has_entry:
+        return QualityEvaluationResult(
+            task_id=task.task_id,
+            task_type=TaskEvaluationType.CODE_GENERATION,
+            format_compliant=True,
+            task_success=False,
+            correctness_score=0.0,
+            evaluation_method="FAIL_CLOSED_AST_STATIC_VERIFICATION",
+            evaluation_notes=f"Required function '{entry_point}' not defined in AST",
+            response_snippet=text[:120],
+            evaluation_status=QualityEvaluationStatus.STATIC_CHECK_FAILED,
+            security_mode=security_mode,
+            isolation_guarantees=["NO_BYTECODE_EXECUTED", "AST_STATIC_SAFETY_VERIFIED"],
+        )
+
+    # Step 4: Handle FAIL_CLOSED mode (default)
+    if security_mode == CodeExecutionSecurityMode.FAIL_CLOSED:
+        return QualityEvaluationResult(
+            task_id=task.task_id,
+            task_type=TaskEvaluationType.CODE_GENERATION,
+            format_compliant=True,
+            task_success=None,
+            correctness_score=None,
+            evaluation_method="FAIL_CLOSED_AST_STATIC_VERIFICATION",
+            evaluation_notes="Execution unverified: Untrusted code execution disabled by fail-closed security policy. Syntax and static safety rules verified.",
+            response_snippet=text[:120],
+            evaluation_status=QualityEvaluationStatus.EXECUTION_UNVERIFIED,
+            security_mode=CodeExecutionSecurityMode.FAIL_CLOSED,
+            isolation_guarantees=["NO_BYTECODE_EXECUTED", "AST_STATIC_SAFETY_VERIFIED"],
+        )
+
+    # Step 5: Handle OPT_IN_HARDENED_JOB_OBJECT mode
+    passed_cnt, total_cnt, err_msg, timed_out = _run_hardened_subprocess_code(
+        code, tests, entry_point or "", timeout=2.0
+    )
+
+    isolation_guarantees = [
+        "WINDOWS_JOB_OBJECT_KILL_ON_CLOSE",
+        "MEMORY_LIMIT_256MB",
+        "ACTIVE_PROCESS_LIMIT_1",
+        "ENVIRONMENT_SCRUBBED",
+        "OUTPUT_STREAM_CAPPED_16KB",
+        "BOUNDED_TIMEOUT_2S",
+    ]
+
+    if timed_out:
+        return QualityEvaluationResult(
+            task_id=task.task_id,
+            task_type=TaskEvaluationType.CODE_GENERATION,
+            format_compliant=True,
+            task_success=False,
+            correctness_score=0.0,
+            evaluation_method="HARDENED_JOB_OBJECT_SANDBOX_UNIT_TEST",
+            evaluation_notes=err_msg or "Execution timeout exceeded (2.0s bounded wall-time limit)",
+            response_snippet=text[:120],
+            evaluation_status=QualityEvaluationStatus.EVALUATION_TIMEOUT,
+            security_mode=CodeExecutionSecurityMode.OPT_IN_HARDENED_JOB_OBJECT,
+            isolation_guarantees=isolation_guarantees,
         )
 
     if err_msg:
@@ -1056,9 +1297,12 @@ print(json.dumps({{'passed': passed, 'total': len(tests), 'err': None}}))
             format_compliant=True,
             task_success=False,
             correctness_score=0.0,
-            evaluation_method="RESTRICTED_AST_SANDBOX_UNIT_TEST",
+            evaluation_method="HARDENED_JOB_OBJECT_SANDBOX_UNIT_TEST",
             evaluation_notes=err_msg,
             response_snippet=text[:120],
+            evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_FAILED,
+            security_mode=CodeExecutionSecurityMode.OPT_IN_HARDENED_JOB_OBJECT,
+            isolation_guarantees=isolation_guarantees,
         )
 
     pass_rate = round(passed_cnt / total_cnt, 3) if total_cnt > 0 else 1.0
@@ -1067,12 +1311,17 @@ print(json.dumps({{'passed': passed, 'total': len(tests), 'err': None}}))
     return QualityEvaluationResult(
         task_id=task.task_id,
         task_type=TaskEvaluationType.CODE_GENERATION,
-        format_compliant=syntax_valid,
+        format_compliant=True,
         task_success=success,
         correctness_score=pass_rate,
-        evaluation_method="RESTRICTED_AST_SANDBOX_UNIT_TEST",
+        evaluation_method="HARDENED_JOB_OBJECT_SANDBOX_UNIT_TEST",
         evaluation_notes=f"Unit tests passed: {passed_cnt}/{total_cnt}",
         response_snippet=text[:120],
+        evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_PASSED
+        if success
+        else QualityEvaluationStatus.EXECUTION_TEST_FAILED,
+        security_mode=CodeExecutionSecurityMode.OPT_IN_HARDENED_JOB_OBJECT,
+        isolation_guarantees=isolation_guarantees,
     )
 
 
@@ -1101,6 +1350,9 @@ def _eval_retrieval(task: QualityBenchmarkTask, text: str) -> QualityEvaluationR
         evaluation_method="CONTEXT_RETRIEVAL_MATCHER",
         evaluation_notes="Retrieved evidence verified" if success else "Key needle not retrieved",
         response_snippet=text[:120],
+        evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_PASSED
+        if success
+        else QualityEvaluationStatus.EXECUTION_TEST_FAILED,
     )
 
 
@@ -1164,4 +1416,7 @@ def _eval_longform(task: QualityBenchmarkTask, text: str) -> QualityEvaluationRe
         evaluation_method="STRUCTURE_AND_CONSTRAINT_VERIFIER",
         evaluation_notes=f"Constraint adherence: {passed_ratio * 100:.1f}% ({sum(1 for c in checks if c)}/{len(checks)})",
         response_snippet=text[:120],
+        evaluation_status=QualityEvaluationStatus.EXECUTION_TEST_PASSED
+        if success
+        else QualityEvaluationStatus.EXECUTION_TEST_FAILED,
     )

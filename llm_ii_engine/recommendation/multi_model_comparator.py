@@ -92,6 +92,12 @@ class ModelComparisonEntry(BaseModel):
     disclaimers: list[str] = Field(
         default_factory=list, description="Advisories, caveats, or installation notices"
     )
+    code_execution_status: str | None = Field(
+        default=None, description="Code evaluation status (e.g. EXECUTION_UNVERIFIED, EXECUTION_TEST_PASSED)"
+    )
+    isolation_status: str | None = Field(
+        default=None, description="Process and OS isolation level applied"
+    )
 
 
 class MultiModelComparisonReport(BaseModel):
@@ -263,7 +269,7 @@ class MultiModelComparator:
             q_stats = (empirical_smoke_summary or {}).get(cid, {})
             t_summaries = q_stats.get("task_summaries", {})
             cats = q_stats.get("categories", {})
-            cat_scores = {k: float(v.get("mean_correctness_score", 0.0)) for k, v in cats.items()}
+            cat_scores = {k: float(v.get("mean_correctness_score") or 0.0) for k, v in cats.items()}
             sample_count = int(q_stats.get("total_observations", 0))
 
             # Performance estimation / empirical lookup
@@ -310,7 +316,8 @@ class MultiModelComparator:
             elif q_stats.get("json_compliance_rate_pct") is not None:
                 json_format_rate = q_stats["json_compliance_rate_pct"] / 100.0
 
-            # Code pass rate
+            # Code pass rate & execution security status
+            code_unverified = bool(q_stats.get("code_execution_unverified", False))
             code_rate = None
             if "CODE_GENERATION" in cats:
                 code_rate = cats["CODE_GENERATION"].get("mean_correctness_score")
@@ -319,6 +326,16 @@ class MultiModelComparator:
                 code_rate = code_t.get("mean_correctness_score", 0.0)
             elif q_stats.get("code_pass_rate_pct") is not None:
                 code_rate = q_stats["code_pass_rate_pct"] / 100.0
+
+            if code_unverified:
+                code_exec_status = "EXECUTION_UNVERIFIED"
+                iso_status = "FAIL_CLOSED_NO_BYTECODE"
+            elif code_rate is not None:
+                code_exec_status = "EXECUTION_TEST_PASSED" if code_rate >= 0.8 else "EXECUTION_TEST_FAILED"
+                iso_status = "HARDENED_JOB_OBJECT"
+            else:
+                code_exec_status = "EXECUTION_UNVERIFIED"
+                iso_status = "FAIL_CLOSED_NO_BYTECODE"
 
             # Numerical reasoning
             num_rate = None
@@ -369,18 +386,28 @@ class MultiModelComparator:
                         disclaimers.append(
                             f"JSON semantic correctness requirement violated (observed rate: {json_semantic_rate})."
                         )
-                    if constraints.require_code_pass and (code_rate is None or code_rate < 0.8):
-                        quality_status = QualityStatus.QUALITY_VIOLATED
-                        disclaimers.append(
-                            f"Code generation pass rate requirement violated (observed rate: {code_rate})."
-                        )
-                    if constraints.min_code_pass_rate is not None and (
-                        code_rate is None or code_rate < constraints.min_code_pass_rate
-                    ):
-                        quality_status = QualityStatus.QUALITY_VIOLATED
-                        disclaimers.append(
-                            f"Minimum code pass rate ({constraints.min_code_pass_rate}) not met (observed: {code_rate})."
-                        )
+                    if constraints.require_code_pass:
+                        if code_unverified:
+                            quality_status = QualityStatus.UNKNOWN_QUALITY_NO_EVALUATION
+                            disclaimers.append(
+                                "Code generation correctness is unverified because untrusted code execution is disabled by fail-closed security policy. Full unit test execution requires an authorized isolated sandbox."
+                            )
+                        elif code_rate is None or code_rate < 0.8:
+                            quality_status = QualityStatus.QUALITY_VIOLATED
+                            disclaimers.append(
+                                f"Code generation pass rate requirement violated (observed rate: {code_rate})."
+                            )
+                    if constraints.min_code_pass_rate is not None:
+                        if code_unverified:
+                            quality_status = QualityStatus.UNKNOWN_QUALITY_NO_EVALUATION
+                            disclaimers.append(
+                                "Code generation correctness is unverified because untrusted code execution is disabled by fail-closed security policy. Full unit test execution requires an authorized isolated sandbox."
+                            )
+                        elif code_rate is None or code_rate < constraints.min_code_pass_rate:
+                            quality_status = QualityStatus.QUALITY_VIOLATED
+                            disclaimers.append(
+                                f"Minimum code pass rate ({constraints.min_code_pass_rate}) not met (observed: {code_rate})."
+                            )
                     if constraints.min_json_compliance_rate is not None and (
                         json_format_rate is None or json_format_rate < constraints.min_json_compliance_rate
                     ):
@@ -484,6 +511,8 @@ class MultiModelComparator:
                     rank=None,  # Will assign below
                     decision_label=decision_label,
                     disclaimers=disclaimers,
+                    code_execution_status=code_exec_status,
+                    isolation_status=iso_status,
                 )
             )
 
@@ -545,6 +574,8 @@ class MultiModelComparator:
                     rank=current_rank,
                     decision_label=e.decision_label,
                     disclaimers=e.disclaimers,
+                    code_execution_status=e.code_execution_status,
+                    isolation_status=e.isolation_status,
                 )
             )
             current_rank += 1
