@@ -1,0 +1,431 @@
+{
+  "manifest_id": "manifest-session-26-1793295647",
+  "session_id": "session_26",
+  "created_at_utc": "2026-10-29T17:40:47.536937+00:00",
+  "hardware_id": "cpu-intel-i7-14700",
+  "total_benchmark_duration_s": 127.75,
+  "profiles": [
+    {
+      "profile_id": "profile-v1-interactive-dominant",
+      "name": "Profile A: Interactive Dominant",
+      "profile_type": "PROFILE_A_INTERACTIVE_DOMINANT",
+      "description": "80% short interactive requests, 15% structured JSON extraction, 5% long-form generation.",
+      "items": [
+        {
+          "workload_class": "INTERACTIVE_QA",
+          "weight": 0.8,
+          "prompt_tokens": 20,
+          "expected_output_tokens": 16,
+          "latency_sla_ms": 500.0
+        },
+        {
+          "workload_class": "STRUCTURED_JSON",
+          "weight": 0.15,
+          "prompt_tokens": 70,
+          "expected_output_tokens": 96,
+          "latency_sla_ms": 3000.0
+        },
+        {
+          "workload_class": "LONG_FORM_GENERATION",
+          "weight": 0.05,
+          "prompt_tokens": 30,
+          "expected_output_tokens": 160,
+          "latency_sla_ms": 8000.0
+        }
+      ],
+      "burst_idle_interval_s": null,
+      "burst_batch_size": null
+    },
+    {
+      "profile_id": "profile-v1-balanced",
+      "name": "Profile B: Balanced Mixture",
+      "profile_type": "PROFILE_B_BALANCED",
+      "description": "50% short interactive, 30% structured JSON extraction, 20% long-form generation.",
+      "items": [
+        {
+          "workload_class": "INTERACTIVE_QA",
+          "weight": 0.5,
+          "prompt_tokens": 20,
+          "expected_output_tokens": 16,
+          "latency_sla_ms": 500.0
+        },
+        {
+          "workload_class": "STRUCTURED_JSON",
+          "weight": 0.3,
+          "prompt_tokens": 70,
+          "expected_output_tokens": 96,
+          "latency_sla_ms": 3000.0
+        },
+        {
+          "workload_class": "LONG_FORM_GENERATION",
+          "weight": 0.2,
+          "prompt_tokens": 30,
+          "expected_output_tokens": 160,
+          "latency_sla_ms": 8000.0
+        }
+      ],
+      "burst_idle_interval_s": null,
+      "burst_batch_size": null
+    },
+    {
+      "profile_id": "profile-v1-generation-heavy",
+      "name": "Profile C: Generation Heavy",
+      "profile_type": "PROFILE_C_GENERATION_HEAVY",
+      "description": "20% short interactive, 30% structured extraction, 50% sustained long-form generation.",
+      "items": [
+        {
+          "workload_class": "INTERACTIVE_QA",
+          "weight": 0.2,
+          "prompt_tokens": 20,
+          "expected_output_tokens": 16,
+          "latency_sla_ms": 500.0
+        },
+        {
+          "workload_class": "STRUCTURED_JSON",
+          "weight": 0.3,
+          "prompt_tokens": 70,
+          "expected_output_tokens": 96,
+          "latency_sla_ms": 3000.0
+        },
+        {
+          "workload_class": "LONG_FORM_GENERATION",
+          "weight": 0.5,
+          "prompt_tokens": 30,
+          "expected_output_tokens": 160,
+          "latency_sla_ms": 8000.0
+        }
+      ],
+      "burst_idle_interval_s": null,
+      "burst_batch_size": null
+    },
+    {
+      "profile_id": "profile-v1-bursty",
+      "name": "Profile D: Bursty Traffic Mixture",
+      "profile_type": "PROFILE_D_BURSTY",
+      "description": "Alternating idle periods with bursts of short interactive requests arriving during long generations.",
+      "items": [
+        {
+          "workload_class": "INTERACTIVE_QA",
+          "weight": 0.75,
+          "prompt_tokens": 20,
+          "expected_output_tokens": 16,
+          "latency_sla_ms": 500.0
+        },
+        {
+          "workload_class": "LONG_FORM_GENERATION",
+          "weight": 0.25,
+          "prompt_tokens": 30,
+          "expected_output_tokens": 160,
+          "latency_sla_ms": 8000.0
+        }
+      ],
+      "burst_idle_interval_s": 2.0,
+      "burst_batch_size": 4
+    }
+  ],
+  "policy_reports": [
+    {
+      "policy_type": "POLICY_A_NO_CONTROL",
+      "profile_type": "PROFILE_A_INTERACTIVE_DOMINANT",
+      "offered_rps": 1.2,
+      "total_offered": 12,
+      "total_admitted": 12,
+      "total_completed": 12,
+      "total_rejected": 0,
+      "total_timed_out": 0,
+      "total_canceled": 0,
+      "total_outstanding": 0,
+      "accounting_invariant_holds": true,
+      "all_offered_sla_attainment_pct": 66.7,
+      "admitted_sla_attainment_pct": 66.7,
+      "false_feasible_count": 4,
+      "unnecessarily_rejected_count": 0,
+      "completed_p50_e2e_ms": 131.4,
+      "completed_p90_e2e_ms": 1539.2,
+      "completed_p95_e2e_ms": 2266.5,
+      "mean_queue_delay_ms": 0.6,
+      "max_queue_depth": 12,
+      "completed_throughput_rps": 1.07,
+      "model_switch_count": 0,
+      "per_class_sla_attainment": {
+        "INTERACTIVE_QA": 63.6,
+        "STRUCTURED_JSON": 100.0
+      },
+      "workload_fairness_index": 0.953,
+      "tradeoff_utility_score": 0.0
+    },
+    {
+      "policy_type": "POLICY_B_STATIC_UTILIZATION",
+      "profile_type": "PROFILE_A_INTERACTIVE_DOMINANT",
+      "offered_rps": 1.2,
+      "total_offered": 12,
+      "total_admitted": 4,
+      "total_completed": 4,
+      "total_rejected": 8,
+      "total_timed_out": 0,
+      "total_canceled": 0,
+      "total_outstanding": 0,
+      "accounting_invariant_holds": true,
+      "all_offered_sla_attainment_pct": 33.3,
+      "admitted_sla_attainment_pct": 100.0,
+      "false_feasible_count": 0,
+      "unnecessarily_rejected_count": 0,
+      "completed_p50_e2e_ms": 120.8,
+      "completed_p90_e2e_ms": 147.2,
+      "completed_p95_e2e_ms": 147.2,
+      "mean_queue_delay_ms": 0.4,
+      "max_queue_depth": 4,
+      "completed_throughput_rps": 0.36,
+      "model_switch_count": 0,
+      "per_class_sla_attainment": {
+        "INTERACTIVE_QA": 36.4,
+        "STRUCTURED_JSON": 0.0
+      },
+      "workload_fairness_index": 0.5,
+      "tradeoff_utility_score": 4.0
+    },
+    {
+      "policy_type": "POLICY_C_WORKLOAD_AWARE",
+      "profile_type": "PROFILE_A_INTERACTIVE_DOMINANT",
+      "offered_rps": 1.2,
+      "total_offered": 12,
+      "total_admitted": 3,
+      "total_completed": 3,
+      "total_rejected": 9,
+      "total_timed_out": 0,
+      "total_canceled": 0,
+      "total_outstanding": 0,
+      "accounting_invariant_holds": true,
+      "all_offered_sla_attainment_pct": 25.0,
+      "admitted_sla_attainment_pct": 100.0,
+      "false_feasible_count": 0,
+      "unnecessarily_rejected_count": 0,
+      "completed_p50_e2e_ms": 130.6,
+      "completed_p90_e2e_ms": 2072.1,
+      "completed_p95_e2e_ms": 2072.1,
+      "mean_queue_delay_ms": 0.3,
+      "max_queue_depth": 3,
+      "completed_throughput_rps": 0.27,
+      "model_switch_count": 0,
+      "per_class_sla_attainment": {
+        "INTERACTIVE_QA": 18.2,
+        "STRUCTURED_JSON": 100.0
+      },
+      "workload_fairness_index": 0.676,
+      "tradeoff_utility_score": 3.0
+    },
+    {
+      "policy_type": "POLICY_A_NO_CONTROL",
+      "profile_type": "PROFILE_B_BALANCED",
+      "offered_rps": 0.8,
+      "total_offered": 10,
+      "total_admitted": 10,
+      "total_completed": 10,
+      "total_rejected": 0,
+      "total_timed_out": 0,
+      "total_canceled": 0,
+      "total_outstanding": 0,
+      "accounting_invariant_holds": true,
+      "all_offered_sla_attainment_pct": 50.0,
+      "admitted_sla_attainment_pct": 50.0,
+      "false_feasible_count": 5,
+      "unnecessarily_rejected_count": 0,
+      "completed_p50_e2e_ms": 2418.7,
+      "completed_p90_e2e_ms": 9470.0,
+      "completed_p95_e2e_ms": 9470.0,
+      "mean_queue_delay_ms": 0.6,
+      "max_queue_depth": 10,
+      "completed_throughput_rps": 0.75,
+      "model_switch_count": 0,
+      "per_class_sla_attainment": {
+        "STRUCTURED_JSON": 100.0,
+        "LONG_FORM_GENERATION": 0.0,
+        "INTERACTIVE_QA": 33.3
+      },
+      "workload_fairness_index": 0.533,
+      "tradeoff_utility_score": -5.0
+    },
+    {
+      "policy_type": "POLICY_C_WORKLOAD_AWARE",
+      "profile_type": "PROFILE_B_BALANCED",
+      "offered_rps": 0.8,
+      "total_offered": 10,
+      "total_admitted": 1,
+      "total_completed": 1,
+      "total_rejected": 9,
+      "total_timed_out": 0,
+      "total_canceled": 0,
+      "total_outstanding": 0,
+      "accounting_invariant_holds": true,
+      "all_offered_sla_attainment_pct": 10.0,
+      "admitted_sla_attainment_pct": 100.0,
+      "false_feasible_count": 0,
+      "unnecessarily_rejected_count": 2,
+      "completed_p50_e2e_ms": 2107.6,
+      "completed_p90_e2e_ms": 2107.6,
+      "completed_p95_e2e_ms": 2107.6,
+      "mean_queue_delay_ms": 0.2,
+      "max_queue_depth": 1,
+      "completed_throughput_rps": 0.08,
+      "model_switch_count": 0,
+      "per_class_sla_attainment": {
+        "STRUCTURED_JSON": 33.3,
+        "LONG_FORM_GENERATION": 0.0,
+        "INTERACTIVE_QA": 0.0
+      },
+      "workload_fairness_index": 0.333,
+      "tradeoff_utility_score": 0.0
+    },
+    {
+      "policy_type": "POLICY_A_NO_CONTROL",
+      "profile_type": "PROFILE_C_GENERATION_HEAVY",
+      "offered_rps": 0.4,
+      "total_offered": 8,
+      "total_admitted": 8,
+      "total_completed": 8,
+      "total_rejected": 0,
+      "total_timed_out": 0,
+      "total_canceled": 0,
+      "total_outstanding": 0,
+      "accounting_invariant_holds": true,
+      "all_offered_sla_attainment_pct": 12.5,
+      "admitted_sla_attainment_pct": 12.5,
+      "false_feasible_count": 7,
+      "unnecessarily_rejected_count": 0,
+      "completed_p50_e2e_ms": 8514.5,
+      "completed_p90_e2e_ms": 20022.9,
+      "completed_p95_e2e_ms": 20022.9,
+      "mean_queue_delay_ms": 0.6,
+      "max_queue_depth": 8,
+      "completed_throughput_rps": 0.41,
+      "model_switch_count": 0,
+      "per_class_sla_attainment": {
+        "INTERACTIVE_QA": 0.0,
+        "LONG_FORM_GENERATION": 25.0,
+        "STRUCTURED_JSON": 0.0
+      },
+      "workload_fairness_index": 0.333,
+      "tradeoff_utility_score": -13.0
+    },
+    {
+      "policy_type": "POLICY_C_WORKLOAD_AWARE",
+      "profile_type": "PROFILE_C_GENERATION_HEAVY",
+      "offered_rps": 0.4,
+      "total_offered": 8,
+      "total_admitted": 1,
+      "total_completed": 1,
+      "total_rejected": 7,
+      "total_timed_out": 0,
+      "total_canceled": 0,
+      "total_outstanding": 0,
+      "accounting_invariant_holds": true,
+      "all_offered_sla_attainment_pct": 12.5,
+      "admitted_sla_attainment_pct": 100.0,
+      "false_feasible_count": 0,
+      "unnecessarily_rejected_count": 2,
+      "completed_p50_e2e_ms": 7756.6,
+      "completed_p90_e2e_ms": 7756.6,
+      "completed_p95_e2e_ms": 7756.6,
+      "mean_queue_delay_ms": 0.3,
+      "max_queue_depth": 1,
+      "completed_throughput_rps": 0.05,
+      "model_switch_count": 0,
+      "per_class_sla_attainment": {
+        "INTERACTIVE_QA": 0.0,
+        "LONG_FORM_GENERATION": 25.0,
+        "STRUCTURED_JSON": 0.0
+      },
+      "workload_fairness_index": 0.333,
+      "tradeoff_utility_score": 0.0
+    },
+    {
+      "policy_type": "POLICY_A_NO_CONTROL",
+      "profile_type": "PROFILE_D_BURSTY",
+      "offered_rps": 1.5,
+      "total_offered": 10,
+      "total_admitted": 10,
+      "total_completed": 10,
+      "total_rejected": 0,
+      "total_timed_out": 0,
+      "total_canceled": 0,
+      "total_outstanding": 0,
+      "accounting_invariant_holds": true,
+      "all_offered_sla_attainment_pct": 30.0,
+      "admitted_sla_attainment_pct": 30.0,
+      "false_feasible_count": 7,
+      "unnecessarily_rejected_count": 0,
+      "completed_p50_e2e_ms": 667.3,
+      "completed_p90_e2e_ms": 2610.7,
+      "completed_p95_e2e_ms": 2610.7,
+      "mean_queue_delay_ms": 0.4,
+      "max_queue_depth": 10,
+      "completed_throughput_rps": 1.65,
+      "model_switch_count": 0,
+      "per_class_sla_attainment": {
+        "INTERACTIVE_QA": 22.2,
+        "LONG_FORM_GENERATION": 100.0
+      },
+      "workload_fairness_index": 0.712,
+      "tradeoff_utility_score": -11.0
+    },
+    {
+      "policy_type": "POLICY_C_WORKLOAD_AWARE",
+      "profile_type": "PROFILE_D_BURSTY",
+      "offered_rps": 1.5,
+      "total_offered": 10,
+      "total_admitted": 3,
+      "total_completed": 3,
+      "total_rejected": 7,
+      "total_timed_out": 0,
+      "total_canceled": 0,
+      "total_outstanding": 0,
+      "accounting_invariant_holds": true,
+      "all_offered_sla_attainment_pct": 30.0,
+      "admitted_sla_attainment_pct": 100.0,
+      "false_feasible_count": 0,
+      "unnecessarily_rejected_count": 0,
+      "completed_p50_e2e_ms": 56.8,
+      "completed_p90_e2e_ms": 2554.1,
+      "completed_p95_e2e_ms": 2554.1,
+      "mean_queue_delay_ms": 0.4,
+      "max_queue_depth": 3,
+      "completed_throughput_rps": 0.5,
+      "model_switch_count": 0,
+      "per_class_sla_attainment": {
+        "INTERACTIVE_QA": 22.2,
+        "LONG_FORM_GENERATION": 100.0
+      },
+      "workload_fairness_index": 0.712,
+      "tradeoff_utility_score": 3.0
+    }
+  ],
+  "hol_observations": [
+    {
+      "experiment_id": "hol-probe-01-single-behind-long",
+      "timestamp_utc": "2026-10-29T17:40:46.192396+00:00",
+      "model_id": "llama3.2:1b",
+      "scenario_description": "Short interactive request (SLA 500ms) queued behind long generation request.",
+      "antecedent_workload": "LONG_FORM_GENERATION",
+      "consequent_workload": "INTERACTIVE_QA",
+      "antecedent_duration_ms": 7576.1,
+      "isolated_consequent_duration_ms": 109.6,
+      "blocked_consequent_duration_ms": 7647.3,
+      "additional_queue_delay_ms": 7537.7,
+      "sla_missed_due_to_blocking": true
+    }
+  ],
+  "model_switch_observations": [
+    {
+      "experiment_id": "switch-probe-01-a-to-b",
+      "timestamp_utc": "2026-10-29T17:40:47.536937+00:00",
+      "from_model_id": "qwen2.5:0.5b",
+      "to_model_id": "llama3.2:1b",
+      "from_model_resident_before": true,
+      "actual_load_duration_ms": 3.3,
+      "client_switch_penalty_ms": 0.0,
+      "warm_execution_duration_ms": 121.2,
+      "cold_execution_duration_ms": 112.5
+    }
+  ],
+  "total_observations_count": 92
+}

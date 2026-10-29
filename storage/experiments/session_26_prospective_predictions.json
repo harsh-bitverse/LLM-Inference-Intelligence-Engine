@@ -1,0 +1,54 @@
+{
+  "manifest_id": "session-26-prospective-preregistration",
+  "created_at_utc": "2026-10-29T17:37:00.000000+00:00",
+  "status": "LOCKED_PRE_EXECUTION",
+  "workstation": "Intel Core i7-14700 (28 threads, 32GB RAM), Windows 11",
+  "runtime": "Ollama v0.40.11 (Single-Slot Server Queueing Architecture)",
+  "scenarios": [
+    {
+      "scenario_id": "SCENARIO_1_INTERACTIVE_DOMINANT",
+      "name": "Scenario 1: Interactive-Dominant Traffic Serving",
+      "model_id": "llama3.2:1b",
+      "profile_type": "PROFILE_A_INTERACTIVE_DOMINANT",
+      "offered_rps": 1.0,
+      "policy": "POLICY_C_WORKLOAD_AWARE",
+      "predicted_admitted_sla_min_pct": 85.0,
+      "predicted_p95_e2e_max_ms": 1500.0,
+      "predicted_dominant_admission_decision": "ACCEPT",
+      "predicted_invariant_holds": true,
+      "locked": true
+    },
+    {
+      "scenario_id": "SCENARIO_2_HEAD_OF_LINE_BLOCKING",
+      "name": "Scenario 2: Head-of-Line Blocking Penalty",
+      "model_id": "llama3.2:1b",
+      "antecedent_workload": "LONG_FORM_GENERATION",
+      "consequent_workload": "INTERACTIVE_QA",
+      "consequent_sla_ms": 500.0,
+      "policy": "POLICY_A_NO_CONTROL",
+      "predicted_additional_queue_wait_range_ms": [6000.0, 8500.0],
+      "predicted_sla_missed": true,
+      "locked": true
+    },
+    {
+      "scenario_id": "SCENARIO_3_OVERLOAD_ADMISSION",
+      "name": "Scenario 3: Overload Load-Shedding & SLA Protection",
+      "model_id": "llama3.2:1b",
+      "profile_type": "PROFILE_C_GENERATION_HEAVY",
+      "offered_rps": 1.5,
+      "policy_a_predicted_admitted_sla_max_pct": 50.0,
+      "policy_c_predicted_admitted_sla_min_pct": 75.0,
+      "policy_c_predicted_rejected_max_pct": 80.0,
+      "locked": true
+    },
+    {
+      "scenario_id": "SCENARIO_4_MODEL_SWITCHING",
+      "name": "Scenario 4: Model Switching Overhead and Residency",
+      "from_model_id": "qwen2.5:0.5b",
+      "to_model_id": "llama3.2:1b",
+      "predicted_actual_load_duration_range_ms": [400.0, 1600.0],
+      "predicted_client_switching_penalty_range_ms": [400.0, 1600.0],
+      "locked": true
+    }
+  ]
+}

@@ -8,6 +8,15 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from llm_ii_engine.capacity.admission import SLAAdmissionController
+from llm_ii_engine.capacity.mixed_queueing_model import (
+    STANDARD_PROFILES,
+    MixedQueueingCalculator,
+    MixedWorkloadSimulator,
+)
+from llm_ii_engine.capacity.mixed_workload_protocol import (
+    WorkloadClass,
+    WorkloadProfileType,
+)
 from llm_ii_engine.capacity.protocol import (
     AdmissionDecision,
     AdmissionRequest,
@@ -22,6 +31,7 @@ from llm_ii_engine.capacity.queueing_model import CapacityPlanner, QueueingCalcu
 router = APIRouter(prefix="/capacity", tags=["capacity"])
 
 MANIFEST_PATH = Path("storage/experiments/session_25_capacity_manifest.json")
+SESSION_26_MANIFEST_PATH = Path("storage/experiments/session_26_mixed_workload_manifest.json")
 admission_controller = SLAAdmissionController()
 
 
@@ -182,3 +192,152 @@ async def validate_scenario(req: ScenarioValidationRequest) -> dict[str, Any]:
         "evaluation": result.model_dump(),
         "decision_matches_expectation": result.decision.value == target_scenario["expected_decision"],
     }
+
+
+# =========================================================================
+# Session 26 Mixed-Workload & Adaptive Admission Endpoints
+# =========================================================================
+
+# Calibrated distributions mapping
+CALIBRATED_DISTRIBUTIONS: dict[WorkloadClass, ServiceTimeDistribution] = {
+    WorkloadClass.INTERACTIVE_QA: ServiceTimeDistribution(
+        sample_count=10,
+        mean_service_ms=113.0,
+        variance_service_ms=13.7,
+        std_service_ms=3.7,
+        coefficient_of_variation=0.033,
+        median_service_ms=113.0,
+        p90_service_ms=117.0,
+        p95_service_ms=118.5,
+        min_service_ms=108.0,
+        max_service_ms=120.0,
+        mean_prefill_ms=25.0,
+        mean_decode_ms=88.0,
+        mean_output_tokens=16.0,
+    ),
+    WorkloadClass.STRUCTURED_JSON: ServiceTimeDistribution(
+        sample_count=10,
+        mean_service_ms=2003.7,
+        variance_service_ms=2313.6,
+        std_service_ms=48.1,
+        coefficient_of_variation=0.024,
+        median_service_ms=2000.0,
+        p90_service_ms=2040.0,
+        p95_service_ms=2058.4,
+        min_service_ms=1950.0,
+        max_service_ms=2100.0,
+        mean_prefill_ms=140.0,
+        mean_decode_ms=1863.7,
+        mean_output_tokens=96.0,
+    ),
+    WorkloadClass.LONG_FORM_GENERATION: ServiceTimeDistribution(
+        sample_count=10,
+        mean_service_ms=7513.7,
+        variance_service_ms=85849.0,
+        std_service_ms=293.0,
+        coefficient_of_variation=0.039,
+        median_service_ms=7500.0,
+        p90_service_ms=7750.0,
+        p95_service_ms=7815.9,
+        min_service_ms=7200.0,
+        max_service_ms=8100.0,
+        mean_prefill_ms=60.0,
+        mean_decode_ms=7453.7,
+        mean_output_tokens=160.0,
+    ),
+}
+
+
+@router.get("/mixed-profiles")
+async def get_mixed_profiles() -> list[dict[str, Any]]:
+    """Retrieve standard versioned mixed-workload profiles."""
+    return [prof.model_dump() for prof in STANDARD_PROFILES.values()]
+
+
+class MixedCapacityEstimateRequest(BaseModel):
+    """Payload to request mixed-workload capacity analysis and simulation."""
+
+    profile_type: WorkloadProfileType = Field(default=WorkloadProfileType.PROFILE_A_INTERACTIVE_DOMINANT)
+    model_id: str = Field(default="llama3.2:1b")
+    offered_rps: float = Field(default=1.0, gt=0.0)
+
+
+@router.post("/estimate-mixed")
+async def estimate_mixed_capacity(req: MixedCapacityEstimateRequest) -> dict[str, Any]:
+    """Calculate analytical moments and discrete-event simulated tail latencies for mixed traffic."""
+    prof = STANDARD_PROFILES.get(req.profile_type)
+    if not prof:
+        raise HTTPException(status_code=404, detail=f"Profile '{req.profile_type}' not found.")
+
+    # Analytical moments
+    moments = MixedQueueingCalculator.calculate_mixed_moments(prof, CALIBRATED_DISTRIBUTIONS)
+    theo_wq, rho, is_stable = MixedQueueingCalculator.estimate_theoretical_mean_queue_delay(
+        arrival_rate_rps=req.offered_rps,
+        moments=moments,
+    )
+
+    mu_mix = round(1000.0 / moments.mean_service_ms, 2) if moments.mean_service_ms > 0 else 0.0
+    knee_rps = round(mu_mix * 0.82, 2)
+    safe_rps = round(knee_rps * 0.75, 2)
+
+    # Discrete-event simulation
+    sim_results = MixedWorkloadSimulator.simulate(
+        profile=prof,
+        arrival_rate_rps=req.offered_rps,
+        per_class_distributions=CALIBRATED_DISTRIBUTIONS,
+        request_count=120,
+        seed=42,
+    )
+
+    return {
+        "profile": prof.model_dump(),
+        "model_id": req.model_id,
+        "offered_rps": req.offered_rps,
+        "moments": moments.model_dump(),
+        "theoretical_queue_wait_ms": theo_wq,
+        "estimated_utilization_rho": rho,
+        "is_stable": is_stable,
+        "max_sustainable_rps": mu_mix,
+        "saturation_knee_rps": knee_rps,
+        "safe_operating_rps": safe_rps,
+        "simulation": sim_results,
+    }
+
+
+@router.get("/hol-analysis")
+async def get_hol_analysis() -> dict[str, Any]:
+    """Retrieve Head-of-Line blocking analysis and observations."""
+    if SESSION_26_MANIFEST_PATH.exists():
+        try:
+            with open(SESSION_26_MANIFEST_PATH, encoding="utf-8") as f:
+                data = json.load(f)
+                return {"observations": data.get("hol_observations", [])}
+        except Exception:
+            pass
+    return {"observations": []}
+
+
+@router.get("/model-switching-analysis")
+async def get_model_switching_analysis() -> dict[str, Any]:
+    """Retrieve model switching overhead and residency observations."""
+    if SESSION_26_MANIFEST_PATH.exists():
+        try:
+            with open(SESSION_26_MANIFEST_PATH, encoding="utf-8") as f:
+                data = json.load(f)
+                return {"observations": data.get("model_switch_observations", [])}
+        except Exception:
+            pass
+    return {"observations": []}
+
+
+@router.get("/admission-policies")
+async def get_admission_policies_summary() -> dict[str, Any]:
+    """Retrieve Session 26 admission policies comparison summary."""
+    if SESSION_26_MANIFEST_PATH.exists():
+        try:
+            with open(SESSION_26_MANIFEST_PATH, encoding="utf-8") as f:
+                data = json.load(f)
+                return {"policy_reports": data.get("policy_reports", [])}
+        except Exception:
+            pass
+    return {"policy_reports": []}

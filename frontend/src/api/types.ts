@@ -1003,3 +1003,140 @@ export interface ScenarioValidationResponse {
   decision_matches_expectation: boolean;
 }
 
+// ==========================================
+// Session 26 Mixed-Workload & Tail Latency Types
+// ==========================================
+
+export type WorkloadClass =
+  | 'INTERACTIVE_QA'
+  | 'STRUCTURED_JSON'
+  | 'LONG_FORM_GENERATION'
+  | 'LONG_CONTEXT_RETRIEVAL';
+
+export type WorkloadProfileType =
+  | 'PROFILE_A_INTERACTIVE_DOMINANT'
+  | 'PROFILE_B_BALANCED'
+  | 'PROFILE_C_GENERATION_HEAVY'
+  | 'PROFILE_D_BURSTY';
+
+export type AdmissionPolicyType =
+  | 'POLICY_A_NO_CONTROL'
+  | 'POLICY_B_STATIC_UTILIZATION'
+  | 'POLICY_C_WORKLOAD_AWARE';
+
+export interface MixedWorkloadItem {
+  workload_class: WorkloadClass;
+  weight: number;
+  prompt_tokens: number;
+  expected_output_tokens: number;
+  latency_sla_ms: number;
+}
+
+export interface MixedWorkloadProfile {
+  profile_id: string;
+  name: string;
+  profile_type: WorkloadProfileType;
+  description: string;
+  items: MixedWorkloadItem[];
+  burst_idle_interval_s?: number | null;
+  burst_batch_size?: number | null;
+}
+
+export interface MixedServiceMoments {
+  mean_service_ms: number;
+  second_moment_ms2: number;
+  variance_service_ms2: number;
+  std_service_ms: number;
+  coefficient_of_variation: number;
+  per_class_moments: Record<string, Record<string, number>>;
+}
+
+export interface HeadOfLineBlockingObservation {
+  experiment_id: string;
+  timestamp_utc: string;
+  model_id: string;
+  scenario_description: string;
+  antecedent_workload: WorkloadClass;
+  consequent_workload: WorkloadClass;
+  antecedent_duration_ms: number;
+  isolated_consequent_duration_ms: number;
+  blocked_consequent_duration_ms: number;
+  additional_queue_delay_ms: number;
+  sla_missed_due_to_blocking: boolean;
+}
+
+export interface ModelSwitchingObservation {
+  experiment_id: string;
+  timestamp_utc: string;
+  from_model_id: string;
+  to_model_id: string;
+  from_model_resident_before: boolean;
+  actual_load_duration_ms: number;
+  client_switch_penalty_ms: number;
+  warm_execution_duration_ms: number;
+  cold_execution_duration_ms: number;
+}
+
+export interface PolicyEvaluationReport {
+  policy_type: AdmissionPolicyType;
+  profile_type: WorkloadProfileType;
+  offered_rps: number;
+  total_offered: number;
+  total_admitted: number;
+  total_completed: number;
+  total_rejected: number;
+  total_timed_out: number;
+  total_canceled: number;
+  total_outstanding: number;
+  accounting_invariant_holds: boolean;
+  all_offered_sla_attainment_pct: number;
+  admitted_sla_attainment_pct: number;
+  false_feasible_count: number;
+  unnecessarily_rejected_count: number;
+  completed_p50_e2e_ms: number;
+  completed_p90_e2e_ms: number;
+  completed_p95_e2e_ms: number;
+  mean_queue_delay_ms: number;
+  max_queue_depth: number;
+  completed_throughput_rps: number;
+  model_switch_count: number;
+  per_class_sla_attainment: Record<string, number>;
+  workload_fairness_index: number;
+  tradeoff_utility_score: number;
+}
+
+export interface MixedCapacityEstimateRequest {
+  profile_type: WorkloadProfileType;
+  model_id: string;
+  offered_rps: number;
+}
+
+export interface MixedCapacityEstimateResponse {
+  profile: MixedWorkloadProfile;
+  model_id: string;
+  offered_rps: number;
+  moments: MixedServiceMoments;
+  theoretical_queue_wait_ms: number;
+  estimated_utilization_rho: number;
+  is_stable: boolean;
+  max_sustainable_rps: number;
+  saturation_knee_rps: number;
+  safe_operating_rps: number;
+  simulation: {
+    request_count: number;
+    overall_p50_e2e_ms: number;
+    overall_p90_e2e_ms: number;
+    overall_p95_e2e_ms: number;
+    mean_queue_delay_ms: number;
+    overall_sla_attainment_pct: number;
+    per_class_summary: Record<string, {
+      count: number;
+      p50_e2e_ms: number;
+      p95_e2e_ms: number;
+      mean_wait_ms: number;
+      sla_attainment_pct: number;
+    }>;
+  };
+}
+
+

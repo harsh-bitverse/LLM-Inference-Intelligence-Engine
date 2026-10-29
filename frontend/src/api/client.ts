@@ -40,6 +40,12 @@ import {
   AdmissionResult,
   CapacityScenariosResponse,
   ScenarioValidationResponse,
+  MixedWorkloadProfile,
+  MixedCapacityEstimateRequest,
+  MixedCapacityEstimateResponse,
+  HeadOfLineBlockingObservation,
+  ModelSwitchingObservation,
+  PolicyEvaluationReport,
 } from './types';
 
 export class ApiError extends Error {
@@ -580,6 +586,57 @@ export class EngineApiClient {
         current_in_flight: inFlight,
         current_queue_depth: queueDepth,
       }),
+      signal,
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Session 26 Mixed-Workload Serving, HoL & Policy Analysis
+  // --------------------------------------------------------------------------
+
+  public async getMixedProfiles(
+    signal?: AbortSignal
+  ): Promise<MixedWorkloadProfile[]> {
+    return this.request<MixedWorkloadProfile[]>('/api/v1/capacity/mixed-profiles', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async estimateMixedCapacity(
+    request: MixedCapacityEstimateRequest,
+    signal?: AbortSignal
+  ): Promise<MixedCapacityEstimateResponse> {
+    return this.request<MixedCapacityEstimateResponse>('/api/v1/capacity/estimate-mixed', {
+      method: 'POST',
+      body: JSON.stringify(request),
+      signal,
+    });
+  }
+
+  public async getHoLAnalysis(
+    signal?: AbortSignal
+  ): Promise<{ observations: HeadOfLineBlockingObservation[] }> {
+    return this.request<{ observations: HeadOfLineBlockingObservation[] }>('/api/v1/capacity/hol-analysis', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async getModelSwitchingAnalysis(
+    signal?: AbortSignal
+  ): Promise<{ observations: ModelSwitchingObservation[] }> {
+    return this.request<{ observations: ModelSwitchingObservation[] }>('/api/v1/capacity/model-switching-analysis', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async getAdmissionPoliciesSummary(
+    signal?: AbortSignal
+  ): Promise<{ policy_reports: PolicyEvaluationReport[] }> {
+    return this.request<{ policy_reports: PolicyEvaluationReport[] }>('/api/v1/capacity/admission-policies', {
+      method: 'GET',
       signal,
     });
   }
