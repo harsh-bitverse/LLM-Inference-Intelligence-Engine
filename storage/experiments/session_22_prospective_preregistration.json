@@ -1,0 +1,345 @@
+{
+  "preregistration_id": "prereg-s22-val-20261028-153215",
+  "locked_at_utc": "2026-10-28T15:32:15.287885+00:00",
+  "task_set_hashes": {
+    "suite_hash": "8603c0949f3c862c42d5a6f83e45f70f2ed242628a52bed175af9bc7deeec1a3",
+    "dev_hash": "70f83e7688b96c2864b67ec5d4339dd1677eb2aa03e1ea902a7f8705ed68d194",
+    "selection_hash": "19d3a8273296e2d2a4635b0825933c15e89fc6e3850263495207e56ee9204fb4",
+    "heldout_hash": "4fbca67c48e470a7402effd6db04101291966274da7c7fa5112d9c626ac27f28",
+    "total_task_count": "36",
+    "dev_count": "6",
+    "selection_count": "18",
+    "heldout_count": "12"
+  },
+  "models_evaluated": [
+    "llama3.2:1b",
+    "qwen2.5:1.5b",
+    "qwen2.5:0.5b"
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "scenario_1_latency_prioritized",
+      "title": "Latency-Prioritized Short Query",
+      "target_category": "FACTUAL_INSTRUCTION",
+      "prompt_tokens": 64,
+      "expected_output_tokens": 32,
+      "latency_sla_ms": 1500.0,
+      "quality_constraints": {
+        "require_json_compliance": false,
+        "require_code_pass": false,
+        "min_task_correctness": null,
+        "min_json_compliance_rate": null,
+        "min_code_pass_rate": null,
+        "min_reasoning_accuracy": null,
+        "require_json_semantic_correctness": false,
+        "min_retrieval_accuracy": null,
+        "min_instruction_compliance": null,
+        "target_category": null,
+        "max_memory_budget_mb": null,
+        "preferred_model_family": null
+      },
+      "associated_heldout_task_ids": [
+        "factual_heldout_01",
+        "factual_heldout_02"
+      ],
+      "predicted_recommended_model_id": "qwen2.5:0.5b",
+      "candidate_rankings": [
+        {
+          "rank": 1,
+          "model_id": "qwen2.5:0.5b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "ROBUST_RECOMMENDED",
+          "nominal_latency_ms": 562.59,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 2,
+          "model_id": "qwen2.5:1.5b",
+          "feasibility": "NOMINAL_FEASIBLE_ROBUST_RISK",
+          "decision_label": "FEASIBLE_ROBUST_RISK",
+          "nominal_latency_ms": 1319.21,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 3,
+          "model_id": "llama3.2:1b",
+          "feasibility": "PREDICTED_SLA_MISS",
+          "decision_label": "REJECTED_SLA",
+          "nominal_latency_ms": 1620.1,
+          "quality_status": "QUALITY_SATISFIED"
+        }
+      ],
+      "ranking_rationale": "Recommended 'qwen2.5:0.5b' based on directly measured empirical latency and quality evidence."
+    },
+    {
+      "scenario_id": "scenario_2_code_generation_quality",
+      "title": "Quality-Constrained Code Generation",
+      "target_category": "CODE_GENERATION",
+      "prompt_tokens": 64,
+      "expected_output_tokens": 64,
+      "latency_sla_ms": null,
+      "quality_constraints": {
+        "require_json_compliance": false,
+        "require_code_pass": true,
+        "min_task_correctness": null,
+        "min_json_compliance_rate": null,
+        "min_code_pass_rate": 0.8,
+        "min_reasoning_accuracy": null,
+        "require_json_semantic_correctness": false,
+        "min_retrieval_accuracy": null,
+        "min_instruction_compliance": null,
+        "target_category": "CODE_GENERATION",
+        "max_memory_budget_mb": null,
+        "preferred_model_family": null
+      },
+      "associated_heldout_task_ids": [
+        "code_heldout_01",
+        "code_heldout_02"
+      ],
+      "predicted_recommended_model_id": "qwen2.5:1.5b",
+      "candidate_rankings": [
+        {
+          "rank": 1,
+          "model_id": "qwen2.5:1.5b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "RECOMMENDED",
+          "nominal_latency_ms": 2606.42,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 2,
+          "model_id": "llama3.2:1b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "RECOMMENDED",
+          "nominal_latency_ms": 3192.58,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 3,
+          "model_id": "qwen2.5:0.5b",
+          "feasibility": "QUALITY_INFEASIBLE",
+          "decision_label": "REJECTED_QUALITY",
+          "nominal_latency_ms": 1093.18,
+          "quality_status": "QUALITY_VIOLATED"
+        }
+      ],
+      "ranking_rationale": "Recommended 'qwen2.5:1.5b' based on directly measured empirical latency and quality evidence."
+    },
+    {
+      "scenario_id": "scenario_3_structured_json_semantic",
+      "title": "Structured JSON with Verified Semantic Correctness",
+      "target_category": "STRUCTURED_JSON",
+      "prompt_tokens": 64,
+      "expected_output_tokens": 64,
+      "latency_sla_ms": null,
+      "quality_constraints": {
+        "require_json_compliance": true,
+        "require_code_pass": false,
+        "min_task_correctness": null,
+        "min_json_compliance_rate": null,
+        "min_code_pass_rate": null,
+        "min_reasoning_accuracy": null,
+        "require_json_semantic_correctness": true,
+        "min_retrieval_accuracy": null,
+        "min_instruction_compliance": null,
+        "target_category": "STRUCTURED_JSON",
+        "max_memory_budget_mb": null,
+        "preferred_model_family": null
+      },
+      "associated_heldout_task_ids": [
+        "json_heldout_01",
+        "json_heldout_02"
+      ],
+      "predicted_recommended_model_id": "qwen2.5:0.5b",
+      "candidate_rankings": [
+        {
+          "rank": 1,
+          "model_id": "qwen2.5:0.5b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "RECOMMENDED",
+          "nominal_latency_ms": 1093.18,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 2,
+          "model_id": "qwen2.5:1.5b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "RECOMMENDED",
+          "nominal_latency_ms": 2606.42,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 3,
+          "model_id": "llama3.2:1b",
+          "feasibility": "QUALITY_INFEASIBLE",
+          "decision_label": "REJECTED_QUALITY",
+          "nominal_latency_ms": 3192.58,
+          "quality_status": "QUALITY_VIOLATED"
+        }
+      ],
+      "ranking_rationale": "Recommended 'qwen2.5:0.5b' based on directly measured empirical latency and quality evidence."
+    },
+    {
+      "scenario_id": "scenario_4_context_retrieval_sla",
+      "title": "Context Retrieval under Latency SLA",
+      "target_category": "CONTEXT_RETRIEVAL",
+      "prompt_tokens": 128,
+      "expected_output_tokens": 32,
+      "latency_sla_ms": 3000.0,
+      "quality_constraints": {
+        "require_json_compliance": false,
+        "require_code_pass": false,
+        "min_task_correctness": null,
+        "min_json_compliance_rate": null,
+        "min_code_pass_rate": null,
+        "min_reasoning_accuracy": null,
+        "require_json_semantic_correctness": false,
+        "min_retrieval_accuracy": 0.8,
+        "min_instruction_compliance": null,
+        "target_category": "CONTEXT_RETRIEVAL",
+        "max_memory_budget_mb": null,
+        "preferred_model_family": null
+      },
+      "associated_heldout_task_ids": [
+        "retrieval_heldout_01",
+        "retrieval_heldout_02"
+      ],
+      "predicted_recommended_model_id": "qwen2.5:0.5b",
+      "candidate_rankings": [
+        {
+          "rank": 1,
+          "model_id": "qwen2.5:0.5b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "ROBUST_RECOMMENDED",
+          "nominal_latency_ms": 594.59,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 2,
+          "model_id": "qwen2.5:1.5b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "ROBUST_RECOMMENDED",
+          "nominal_latency_ms": 1351.21,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 3,
+          "model_id": "llama3.2:1b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "ROBUST_RECOMMENDED",
+          "nominal_latency_ms": 1667.71,
+          "quality_status": "QUALITY_SATISFIED"
+        }
+      ],
+      "ranking_rationale": "Recommended 'qwen2.5:0.5b' based on directly measured empirical latency and quality evidence."
+    },
+    {
+      "scenario_id": "scenario_5_longform_instruction_compliance",
+      "title": "Long-Form Multi-Constraint Instruction Compliance",
+      "target_category": "LONG_FORM_COMPLIANCE",
+      "prompt_tokens": 64,
+      "expected_output_tokens": 128,
+      "latency_sla_ms": 12000.0,
+      "quality_constraints": {
+        "require_json_compliance": false,
+        "require_code_pass": false,
+        "min_task_correctness": null,
+        "min_json_compliance_rate": null,
+        "min_code_pass_rate": null,
+        "min_reasoning_accuracy": null,
+        "require_json_semantic_correctness": false,
+        "min_retrieval_accuracy": null,
+        "min_instruction_compliance": 0.85,
+        "target_category": "LONG_FORM_COMPLIANCE",
+        "max_memory_budget_mb": null,
+        "preferred_model_family": null
+      },
+      "associated_heldout_task_ids": [
+        "longform_heldout_01",
+        "longform_heldout_02"
+      ],
+      "predicted_recommended_model_id": "qwen2.5:1.5b",
+      "candidate_rankings": [
+        {
+          "rank": 1,
+          "model_id": "qwen2.5:1.5b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "ROBUST_RECOMMENDED",
+          "nominal_latency_ms": 5180.83,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 2,
+          "model_id": "llama3.2:1b",
+          "feasibility": "ROBUST_FEASIBLE",
+          "decision_label": "ROBUST_RECOMMENDED",
+          "nominal_latency_ms": 6337.54,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 3,
+          "model_id": "qwen2.5:0.5b",
+          "feasibility": "QUALITY_INFEASIBLE",
+          "decision_label": "REJECTED_QUALITY",
+          "nominal_latency_ms": 2154.37,
+          "quality_status": "QUALITY_VIOLATED"
+        }
+      ],
+      "ranking_rationale": "Recommended 'qwen2.5:1.5b' based on directly measured empirical latency and quality evidence."
+    },
+    {
+      "scenario_id": "scenario_6_mixed_sla_code_quality",
+      "title": "Mixed SLA and Code Quality Constraint",
+      "target_category": "CODE_GENERATION",
+      "prompt_tokens": 64,
+      "expected_output_tokens": 64,
+      "latency_sla_ms": 3500.0,
+      "quality_constraints": {
+        "require_json_compliance": false,
+        "require_code_pass": true,
+        "min_task_correctness": null,
+        "min_json_compliance_rate": null,
+        "min_code_pass_rate": null,
+        "min_reasoning_accuracy": null,
+        "require_json_semantic_correctness": false,
+        "min_retrieval_accuracy": null,
+        "min_instruction_compliance": null,
+        "target_category": "CODE_GENERATION",
+        "max_memory_budget_mb": null,
+        "preferred_model_family": null
+      },
+      "associated_heldout_task_ids": [
+        "code_heldout_01",
+        "code_heldout_02"
+      ],
+      "predicted_recommended_model_id": "qwen2.5:1.5b",
+      "candidate_rankings": [
+        {
+          "rank": 1,
+          "model_id": "qwen2.5:1.5b",
+          "feasibility": "NOMINAL_FEASIBLE_ROBUST_RISK",
+          "decision_label": "FEASIBLE_ROBUST_RISK",
+          "nominal_latency_ms": 2606.42,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 2,
+          "model_id": "llama3.2:1b",
+          "feasibility": "NOMINAL_FEASIBLE_ROBUST_RISK",
+          "decision_label": "FEASIBLE_ROBUST_RISK",
+          "nominal_latency_ms": 3192.58,
+          "quality_status": "QUALITY_SATISFIED"
+        },
+        {
+          "rank": 3,
+          "model_id": "qwen2.5:0.5b",
+          "feasibility": "QUALITY_INFEASIBLE",
+          "decision_label": "REJECTED_QUALITY",
+          "nominal_latency_ms": 1093.18,
+          "quality_status": "QUALITY_VIOLATED"
+        }
+      ],
+      "ranking_rationale": "Recommended 'qwen2.5:1.5b' based on directly measured empirical latency and quality evidence."
+    }
+  ]
+}

@@ -1,0 +1,911 @@
+{
+  "hashes": {
+    "suite_hash": "8603c0949f3c862c42d5a6f83e45f70f2ed242628a52bed175af9bc7deeec1a3",
+    "dev_hash": "70f83e7688b96c2864b67ec5d4339dd1677eb2aa03e1ea902a7f8705ed68d194",
+    "selection_hash": "19d3a8273296e2d2a4635b0825933c15e89fc6e3850263495207e56ee9204fb4",
+    "heldout_hash": "4fbca67c48e470a7402effd6db04101291966274da7c7fa5112d9c626ac27f28",
+    "total_task_count": "36",
+    "dev_count": "6",
+    "selection_count": "18",
+    "heldout_count": "12"
+  },
+  "tasks": [
+    {
+      "task_id": "factual_dev_01",
+      "name": "Chemical Symbol Recall",
+      "category": "FACTUAL_INSTRUCTION",
+      "split": "DEV",
+      "prompt": "What is the chemical symbol for gold? Output ONLY the symbol, nothing else.",
+      "max_output_tokens": 8,
+      "expected_prompt_words": 13,
+      "expected_answer_spec": {
+        "match_type": "exact_ci",
+        "expected": "Au"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "easy",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "faa8756a9e969b7a"
+    },
+    {
+      "task_id": "factual_select_01",
+      "name": "Constrained Multi-Instruction Colors",
+      "category": "FACTUAL_INSTRUCTION",
+      "split": "SELECTION",
+      "prompt": "List exactly three primary colors of light in RGB format, separated by commas. Do not include any punctuation other than commas, and use all lowercase.",
+      "max_output_tokens": 16,
+      "expected_prompt_words": 25,
+      "expected_answer_spec": {
+        "match_type": "regex",
+        "pattern": "^(?:red\\s*,\\s*green\\s*,\\s*blue|red\\s*,\\s*blue\\s*,\\s*green|green\\s*,\\s*red\\s*,\\s*blue)$"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "fac4b43cef94d024"
+    },
+    {
+      "task_id": "factual_select_02",
+      "name": "Moon Landing Year Prefix",
+      "category": "FACTUAL_INSTRUCTION",
+      "split": "SELECTION",
+      "prompt": "State the year the Apollo 11 moon landing occurred. Format your response exactly as: 'Year: YYYY'.",
+      "max_output_tokens": 12,
+      "expected_prompt_words": 16,
+      "expected_answer_spec": {
+        "match_type": "regex",
+        "pattern": "Year:\\s*1969\\b"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "easy",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "3367992b7b3cfa19"
+    },
+    {
+      "task_id": "factual_select_03",
+      "name": "Fact Extraction with Units",
+      "category": "FACTUAL_INSTRUCTION",
+      "split": "SELECTION",
+      "prompt": "Fact: The Mariana Trench reaches an estimated maximum depth of 10,994 meters (36,070 feet).\nQuestion: What is the depth in feet according to the text? State only the number with units.",
+      "max_output_tokens": 16,
+      "expected_prompt_words": 31,
+      "expected_answer_spec": {
+        "match_type": "regex",
+        "pattern": "36[,\\.]?070\\s*feet\\b"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "easy",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "2c8a497abe7321fc"
+    },
+    {
+      "task_id": "factual_heldout_01",
+      "name": "Absent Information Abstention",
+      "category": "FACTUAL_INSTRUCTION",
+      "split": "HELD_OUT",
+      "prompt": "Based strictly on this text: 'The annual biology conference was held in Kyoto in October.'\nQuestion: Who was the keynote speaker? If the speaker is not mentioned in the text, you MUST respond with 'NOT_SPECIFIED'. Do not guess.",
+      "max_output_tokens": 16,
+      "expected_prompt_words": 38,
+      "expected_answer_spec": {
+        "match_type": "contains_ci",
+        "expected": "NOT_SPECIFIED"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "b9a6bb995d68b175"
+    },
+    {
+      "task_id": "factual_heldout_02",
+      "name": "Negative Constraint Geography",
+      "category": "FACTUAL_INSTRUCTION",
+      "split": "HELD_OUT",
+      "prompt": "Name the capital of Australia. Do NOT mention Sydney or Melbourne. Provide only the capital name.",
+      "max_output_tokens": 12,
+      "expected_prompt_words": 16,
+      "expected_answer_spec": {
+        "match_type": "positive_and_negative",
+        "required": [
+          "Canberra"
+        ],
+        "prohibited": [
+          "Sydney",
+          "Melbourne"
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "fef881f37af5ca35"
+    },
+    {
+      "task_id": "num_dev_01",
+      "name": "Retail Profit Calculation",
+      "category": "NUMERICAL_REASONING",
+      "split": "DEV",
+      "prompt": "A store buys 50 notebooks for $2 each and sells them for $5 each. The shipping fee for the shipment was $20. What is the total net profit in dollars? State the final answer as: 'Profit: $X'.",
+      "max_output_tokens": 48,
+      "expected_prompt_words": 37,
+      "expected_answer_spec": {
+        "match_type": "regex",
+        "pattern": "Profit:\\s*\\$?\\s*130\\b"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "440d1cf6b54de8c6"
+    },
+    {
+      "task_id": "num_select_01",
+      "name": "Discount and Sales Tax",
+      "category": "NUMERICAL_REASONING",
+      "split": "SELECTION",
+      "prompt": "An item originally priced at $80 is discounted by 25%. Then a 10% sales tax is applied to the discounted price. What is the final total cost? Provide only the final numerical price.",
+      "max_output_tokens": 32,
+      "expected_prompt_words": 33,
+      "expected_answer_spec": {
+        "match_type": "number_in_text",
+        "expected_number": 66.0
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "b19da9df7a74fef2"
+    },
+    {
+      "task_id": "num_select_02",
+      "name": "Distractor Filtering Arithmetic",
+      "category": "NUMERICAL_REASONING",
+      "split": "SELECTION",
+      "prompt": "In a library of 1,200 books across 4 floors built in 1995, there are 30 shelves in Room A. Each shelf holds 25 books. 10 books are currently checked out from Room A. How many books are currently present on the shelves in Room A? End your answer with 'Result: N'.",
+      "max_output_tokens": 64,
+      "expected_prompt_words": 51,
+      "expected_answer_spec": {
+        "match_type": "regex",
+        "pattern": "Result:\\s*740\\b"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "e199e911ae42375e"
+    },
+    {
+      "task_id": "num_select_03",
+      "name": "Speed Rate Calculation",
+      "category": "NUMERICAL_REASONING",
+      "split": "SELECTION",
+      "prompt": "A car travels 180 kilometers in 2 hours and 30 minutes. What is its average speed in kilometers per hour (km/h)? State only the number.",
+      "max_output_tokens": 24,
+      "expected_prompt_words": 25,
+      "expected_answer_spec": {
+        "match_type": "number_in_text",
+        "expected_number": 72.0
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "d257feedf1970968"
+    },
+    {
+      "task_id": "num_heldout_01",
+      "name": "Expense Split Table",
+      "category": "NUMERICAL_REASONING",
+      "split": "HELD_OUT",
+      "prompt": "Table of monthly expenses:\n- Rent: $1,200\n- Utilities: $180\n- Groceries: $420\n- Transit: $100\nIf two roommates split all expenses equally, how much does each person pay? State only the final amount per person.",
+      "max_output_tokens": 32,
+      "expected_prompt_words": 36,
+      "expected_answer_spec": {
+        "match_type": "number_in_text",
+        "expected_number": 950.0
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "e7c1f48b0855e51c"
+    },
+    {
+      "task_id": "num_heldout_02",
+      "name": "Algebraic Age Ratio",
+      "category": "NUMERICAL_REASONING",
+      "split": "HELD_OUT",
+      "prompt": "A father is currently 4 times as old as his son. In 20 years, the father will be twice as old as his son. How old is the son now? State the son's current age as a single integer.",
+      "max_output_tokens": 48,
+      "expected_prompt_words": 39,
+      "expected_answer_spec": {
+        "match_type": "number_in_text",
+        "expected_number": 10.0
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "hard",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "0984167c88674948"
+    },
+    {
+      "task_id": "json_dev_01",
+      "name": "Server Configuration Extraction",
+      "category": "STRUCTURED_JSON",
+      "split": "DEV",
+      "prompt": "Extract the server specifications into JSON with keys 'host' (string), 'port' (int), 'ssl_enabled' (bool). Text: 'Primary web server nginx running on host api.internal at port 8443 with TLS active.' Return ONLY the raw JSON object.",
+      "max_output_tokens": 64,
+      "expected_prompt_words": 35,
+      "expected_answer_spec": {
+        "fields": {
+          "host": "api.internal",
+          "port": 8443,
+          "ssl_enabled": true
+        }
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "easy",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "537b6f0b4463a099"
+    },
+    {
+      "task_id": "json_select_01",
+      "name": "Nested Clinical Vitals Schema",
+      "category": "STRUCTURED_JSON",
+      "split": "SELECTION",
+      "prompt": "Extract patient data into JSON: 'Patient ID PT-901, female, age 52. Vitals: blood pressure 130/85, pulse 76.' Use JSON structure: {\"patient_id\": \"PT-901\", \"demographics\": {\"age\": 52, \"gender\": \"female\"}, \"vitals\": {\"systolic\": 130, \"diastolic\": 85, \"pulse\": 76}}. Output ONLY valid JSON.",
+      "max_output_tokens": 96,
+      "expected_prompt_words": 38,
+      "expected_answer_spec": {
+        "fields": {
+          "patient_id": "PT-901",
+          "demographics": {
+            "age": 52,
+            "gender": "female"
+          },
+          "vitals": {
+            "systolic": 130,
+            "diastolic": 85,
+            "pulse": 76
+          }
+        }
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "hard",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "2cbd25d0dfd7ecc1"
+    },
+    {
+      "task_id": "json_select_02",
+      "name": "Array Items Extraction",
+      "category": "STRUCTURED_JSON",
+      "split": "SELECTION",
+      "prompt": "Convert this shopping list into JSON with an 'items' array of objects containing 'name' (string) and 'quantity' (integer): '3 apples, 1 milk carton, 6 eggs'. Return ONLY JSON.",
+      "max_output_tokens": 96,
+      "expected_prompt_words": 28,
+      "expected_answer_spec": {
+        "is_array_check": true,
+        "array_key": "items",
+        "expected_items_count": 3,
+        "total_quantity": 10
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "335bbf9ae225e049"
+    },
+    {
+      "task_id": "json_select_03",
+      "name": "Missing Value Null Extraction",
+      "category": "STRUCTURED_JSON",
+      "split": "SELECTION",
+      "prompt": "Extract contact info: 'Contact name: Alice Vance. Phone: 555-0199. No email provided.' Return JSON with keys 'name', 'phone', 'email' (set 'email' to null if not provided). Output ONLY JSON.",
+      "max_output_tokens": 64,
+      "expected_prompt_words": 29,
+      "expected_answer_spec": {
+        "fields": {
+          "name": "Alice Vance",
+          "phone": "555-0199",
+          "email": null
+        }
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "5b3e4fb662d56f2d"
+    },
+    {
+      "task_id": "json_heldout_01",
+      "name": "Database Float and Boolean Config",
+      "category": "STRUCTURED_JSON",
+      "split": "HELD_OUT",
+      "prompt": "Convert to JSON: 'Database db-prod-01 on port 5432 with max_connections 100, read_timeout 2.5 seconds, and replica_enabled true.' Structure: {\"database\": str, \"port\": int, \"max_connections\": int, \"read_timeout_sec\": float, \"replica_enabled\": bool}. Output ONLY JSON.",
+      "max_output_tokens": 80,
+      "expected_prompt_words": 31,
+      "expected_answer_spec": {
+        "fields": {
+          "database": "db-prod-01",
+          "port": 5432,
+          "max_connections": 100,
+          "read_timeout_sec": 2.5,
+          "replica_enabled": true
+        }
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "37fadd10f680ea38"
+    },
+    {
+      "task_id": "json_heldout_02",
+      "name": "Escaped Quotes Support Ticket",
+      "category": "STRUCTURED_JSON",
+      "split": "HELD_OUT",
+      "prompt": "Extract into JSON: 'Ticket #404: Title \"DB Connection \\\"Timeout\\\" Error\", priority high, assignee bob@corp.local.' Keys: 'ticket_id' (int), 'title' (string), 'priority' (string), 'assignee' (string). Output ONLY JSON.",
+      "max_output_tokens": 80,
+      "expected_prompt_words": 26,
+      "expected_answer_spec": {
+        "fields": {
+          "ticket_id": 404,
+          "priority": "high",
+          "assignee": "bob@corp.local"
+        }
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "hard",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "d12a2f9415010d9c"
+    },
+    {
+      "task_id": "code_dev_01",
+      "name": "Palindrome String Predicate",
+      "category": "CODE_GENERATION",
+      "split": "DEV",
+      "prompt": "Write a Python function `is_palindrome(s: str) -> bool` that returns True if string `s` is a palindrome (ignoring casing and spaces), False otherwise. Output ONLY the function definition.",
+      "max_output_tokens": 128,
+      "expected_prompt_words": 28,
+      "expected_answer_spec": {
+        "entry_point": "is_palindrome",
+        "tests": [
+          [
+            "racecar",
+            true
+          ],
+          [
+            "Race car",
+            true
+          ],
+          [
+            "hello",
+            false
+          ],
+          [
+            "",
+            true
+          ],
+          [
+            "a",
+            true
+          ]
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "502532d5b962815e"
+    },
+    {
+      "task_id": "code_select_01",
+      "name": "Order Preserving Deduplication",
+      "category": "CODE_GENERATION",
+      "split": "SELECTION",
+      "prompt": "Write a Python function `deduplicate_preserve_order(lst: list) -> list` that removes duplicate items from `lst` while keeping the original order of their first appearance. Output ONLY the function definition.",
+      "max_output_tokens": 128,
+      "expected_prompt_words": 28,
+      "expected_answer_spec": {
+        "entry_point": "deduplicate_preserve_order",
+        "tests": [
+          [
+            [
+              1,
+              2,
+              2,
+              3,
+              1,
+              4
+            ],
+            [
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          [
+            [
+              "a",
+              "b",
+              "a"
+            ],
+            [
+              "a",
+              "b"
+            ]
+          ],
+          [
+            [],
+            []
+          ],
+          [
+            [
+              5,
+              5,
+              5
+            ],
+            [
+              5
+            ]
+          ]
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "56ca506070dff941"
+    },
+    {
+      "task_id": "code_select_02",
+      "name": "Word Frequency Counter",
+      "category": "CODE_GENERATION",
+      "split": "SELECTION",
+      "prompt": "Write a Python function `count_frequencies(words: list) -> dict` that returns a dictionary mapping each string in `words` to the number of times it appears. Output ONLY the function definition.",
+      "max_output_tokens": 128,
+      "expected_prompt_words": 29,
+      "expected_answer_spec": {
+        "entry_point": "count_frequencies",
+        "tests": [
+          [
+            [
+              "apple",
+              "banana",
+              "apple"
+            ],
+            {
+              "apple": 2,
+              "banana": 1
+            }
+          ],
+          [
+            [],
+            {}
+          ],
+          [
+            [
+              "x"
+            ],
+            {
+              "x": 1
+            }
+          ],
+          [
+            [
+              "a",
+              "b",
+              "c"
+            ],
+            {
+              "a": 1,
+              "b": 1,
+              "c": 1
+            }
+          ]
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "6456e17488354a59"
+    },
+    {
+      "task_id": "code_select_03",
+      "name": "Binary Search Algorithm",
+      "category": "CODE_GENERATION",
+      "split": "SELECTION",
+      "prompt": "Write a Python function `binary_search(arr: list, target: int) -> int` that returns the 0-based index of `target` in sorted list `arr`, or -1 if not found. Output ONLY the function definition.",
+      "max_output_tokens": 140,
+      "expected_prompt_words": 31,
+      "expected_answer_spec": {
+        "entry_point": "binary_search",
+        "tests": [
+          [
+            [
+              [
+                1,
+                3,
+                5,
+                7,
+                9
+              ],
+              5
+            ],
+            2
+          ],
+          [
+            [
+              [
+                1,
+                3,
+                5,
+                7,
+                9
+              ],
+              1
+            ],
+            0
+          ],
+          [
+            [
+              [
+                1,
+                3,
+                5,
+                7,
+                9
+              ],
+              9
+            ],
+            4
+          ],
+          [
+            [
+              [
+                1,
+                3,
+                5,
+                7,
+                9
+              ],
+              4
+            ],
+            -1
+          ],
+          [
+            [
+              [],
+              2
+            ],
+            -1
+          ]
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "hard",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "20ecb3718c9c0093"
+    },
+    {
+      "task_id": "code_heldout_01",
+      "name": "Sentence Word Reversal",
+      "category": "CODE_GENERATION",
+      "split": "HELD_OUT",
+      "prompt": "Write a Python function `reverse_words(sentence: str) -> str` that reverses the order of words in `sentence` (words separated by single spaces). Output ONLY the function definition.",
+      "max_output_tokens": 96,
+      "expected_prompt_words": 26,
+      "expected_answer_spec": {
+        "entry_point": "reverse_words",
+        "tests": [
+          [
+            "hello world",
+            "world hello"
+          ],
+          [
+            "a b c",
+            "c b a"
+          ],
+          [
+            "single",
+            "single"
+          ],
+          [
+            "",
+            ""
+          ]
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "easy",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "9f7feb013a0b0f12"
+    },
+    {
+      "task_id": "code_heldout_02",
+      "name": "Value Clamping Range",
+      "category": "CODE_GENERATION",
+      "split": "HELD_OUT",
+      "prompt": "Write a Python function `clamp(val: int, low: int, high: int) -> int` that returns `low` if `val < low`, `high` if `val > high`, and `val` otherwise. Output ONLY the function definition.",
+      "max_output_tokens": 96,
+      "expected_prompt_words": 32,
+      "expected_answer_spec": {
+        "entry_point": "clamp",
+        "tests": [
+          [
+            [
+              5,
+              1,
+              10
+            ],
+            5
+          ],
+          [
+            [
+              -2,
+              0,
+              100
+            ],
+            0
+          ],
+          [
+            [
+              150,
+              0,
+              100
+            ],
+            100
+          ],
+          [
+            [
+              0,
+              0,
+              10
+            ],
+            0
+          ],
+          [
+            [
+              10,
+              0,
+              10
+            ],
+            10
+          ]
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "easy",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "4c18eb37076ce9ba"
+    },
+    {
+      "task_id": "retrieval_dev_01",
+      "name": "Short Context Key Person",
+      "category": "CONTEXT_RETRIEVAL",
+      "split": "DEV",
+      "prompt": "Context: Project Falcon launched on March 14, led by Director Sandra Ramos with an initial grant of $4.2M.\nQuestion: Who is the director of Project Falcon? Answer with only the name.",
+      "max_output_tokens": 16,
+      "expected_prompt_words": 31,
+      "expected_answer_spec": {
+        "match_type": "contains_ci",
+        "expected": "Sandra Ramos"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "easy",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "0337099c940e9949"
+    },
+    {
+      "task_id": "retrieval_select_01",
+      "name": "Branch Needle in Haystack",
+      "category": "CONTEXT_RETRIEVAL",
+      "split": "SELECTION",
+      "prompt": "Global Office Report:\nThe London branch completed facility upgrades in April. Headcount stands at 145 engineers and 20 staff.\nThe Tokyo branch expanded operations in Shibuya, focusing on robotics automation. Headcount reached 88.\nThe Zurich branch hosts the secure cryptographic infrastructure. In case of system failover, the primary activation passcode is ZURICH-ALPHA-99, managed by security lead Thomas Weber.\nQuestion: What is Zurich's emergency passcode? State only the passcode.",
+      "max_output_tokens": 16,
+      "expected_prompt_words": 68,
+      "expected_answer_spec": {
+        "match_type": "contains_ci",
+        "expected": "ZURICH-ALPHA-99"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "2ce945b99c821f96"
+    },
+    {
+      "task_id": "retrieval_select_02",
+      "name": "Superseded Policy Retrieval",
+      "category": "CONTEXT_RETRIEVAL",
+      "split": "SELECTION",
+      "prompt": "Policy Notice:\nThe policy established on January 1 set the remote work allowance at $50/month. On June 15, Amendment B superseded this policy, increasing the allowance to $85/month. Question: What is the current effective remote work allowance per month according to the text? State only the dollar amount.",
+      "max_output_tokens": 16,
+      "expected_prompt_words": 48,
+      "expected_answer_spec": {
+        "match_type": "positive_and_negative",
+        "required": [
+          "85"
+        ],
+        "prohibited": [
+          "50/month",
+          "$50 per month",
+          "is $50"
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "305e1557ef44951d"
+    },
+    {
+      "task_id": "retrieval_select_03",
+      "name": "Multi-Fact Patient Aggregation",
+      "category": "CONTEXT_RETRIEVAL",
+      "split": "SELECTION",
+      "prompt": "Medication Administration Log:\nPatient A received 200mg medication at 08:00 and 150mg at 14:00.\nPatient B received 100mg at 10:00.\nQuestion: What is the total milligrams of medication received by Patient A across the day? State only the number with mg.",
+      "max_output_tokens": 16,
+      "expected_prompt_words": 41,
+      "expected_answer_spec": {
+        "match_type": "regex",
+        "pattern": "\\b350\\s*mg\\b"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "87865b8677d4c0f7"
+    },
+    {
+      "task_id": "retrieval_heldout_01",
+      "name": "Unstated Fact Abstention",
+      "category": "CONTEXT_RETRIEVAL",
+      "split": "HELD_OUT",
+      "prompt": "System Architecture Log:\nThe server cluster operates across us-east-1 and eu-central-1 regions. Backup schedules run daily at 02:00 UTC.\nQuestion: What is the encryption key length used for backup storage? If this information is NOT present in the text, you must reply: 'ABSENT_FROM_CONTEXT'. Do not fabricate.",
+      "max_output_tokens": 16,
+      "expected_prompt_words": 46,
+      "expected_answer_spec": {
+        "match_type": "contains_ci",
+        "expected": "ABSENT_FROM_CONTEXT"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "cfd8574aaf87033c"
+    },
+    {
+      "task_id": "retrieval_heldout_02",
+      "name": "Deep Needle Token",
+      "category": "CONTEXT_RETRIEVAL",
+      "split": "HELD_OUT",
+      "prompt": "Cluster Nodes Diagnostic Log:\nNode 1: Online, load 0.42, ping 12ms. Checksum: A19-FF.\nNode 2: Online, load 0.58, ping 15ms. Checksum: B22-C8.\nNode 3: Standby, load 0.05, ping 8ms. Checksum: D04-11.\nNode 4: Provisioning sequence initiated. Hardware authentication token: PIN-7731-X. Security status verified.\nNode 5: Maintenance mode, load 0.00, ping 20ms. Checksum: E88-Z2.\nQuestion: What is Node 4's hardware authentication token? State only the token.",
+      "max_output_tokens": 16,
+      "expected_prompt_words": 65,
+      "expected_answer_spec": {
+        "match_type": "contains_ci",
+        "expected": "PIN-7731-X"
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "db84952104337ef7"
+    },
+    {
+      "task_id": "longform_dev_01",
+      "name": "Required Headings and Length Bounds",
+      "category": "LONG_FORM_COMPLIANCE",
+      "split": "DEV",
+      "prompt": "Write a summary of solar power. You MUST include two section headings: '## Benefits' and '## Limitations'. Write at least 40 words but no more than 140 words.",
+      "max_output_tokens": 180,
+      "expected_prompt_words": 28,
+      "expected_answer_spec": {
+        "required_headings": [
+          "## Benefits",
+          "## Limitations"
+        ],
+        "min_words": 40,
+        "max_words": 150
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "ff4e25152e289336"
+    },
+    {
+      "task_id": "longform_select_01",
+      "name": "Keyword Inclusion and Prohibition",
+      "category": "LONG_FORM_COMPLIANCE",
+      "split": "SELECTION",
+      "prompt": "Explain photosynthesis in 2 paragraphs. You MUST mention 'chlorophyll' and 'ATP'. You MUST NOT mention the word 'mitochondria'. Each paragraph must contain at least 2 sentences.",
+      "max_output_tokens": 180,
+      "expected_prompt_words": 26,
+      "expected_answer_spec": {
+        "required_keywords": [
+          "chlorophyll",
+          "ATP"
+        ],
+        "prohibited_keywords": [
+          "mitochondria"
+        ],
+        "min_paragraphs": 2
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "hard",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "8e90ffef056f9057"
+    },
+    {
+      "task_id": "longform_select_02",
+      "name": "Exact 4-Item Numbered Troubleshooting List",
+      "category": "LONG_FORM_COMPLIANCE",
+      "split": "SELECTION",
+      "prompt": "List exactly 4 key steps to troubleshoot a slow internet connection. Format as a numbered list from 1 to 4. Do not include a 5th item.",
+      "max_output_tokens": 160,
+      "expected_prompt_words": 26,
+      "expected_answer_spec": {
+        "numbered_items_required": [
+          "1.",
+          "2.",
+          "3.",
+          "4."
+        ],
+        "prohibited_items": [
+          "5."
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "98dd3457c27a6f5a"
+    },
+    {
+      "task_id": "longform_select_03",
+      "name": "Release Note Header and Version Metrics",
+      "category": "LONG_FORM_COMPLIANCE",
+      "split": "SELECTION",
+      "prompt": "Draft a quarterly software release note. You must include: (1) Version number 'v2.4.0', (2) Performance metric '35% lower latency', (3) A '### Highlights' section header.",
+      "max_output_tokens": 160,
+      "expected_prompt_words": 25,
+      "expected_answer_spec": {
+        "required_phrases": [
+          "v2.4.0",
+          "35% lower latency",
+          "### Highlights"
+        ]
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "21d73f8ea96cca75"
+    },
+    {
+      "task_id": "longform_heldout_01",
+      "name": "Greenhouse Description with Exact Closing Token",
+      "category": "LONG_FORM_COMPLIANCE",
+      "split": "HELD_OUT",
+      "prompt": "Write a brief description of the greenhouse effect. End your entire response with the exact closing token: '---END OF SUMMARY---'.",
+      "max_output_tokens": 160,
+      "expected_prompt_words": 20,
+      "expected_answer_spec": {
+        "closing_token": "---END OF SUMMARY---",
+        "min_words": 20
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "medium",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "a44ee3ded7045eb8"
+    },
+    {
+      "task_id": "longform_heldout_02",
+      "name": "Pronoun-Free Technical Explanation",
+      "category": "LONG_FORM_COMPLIANCE",
+      "split": "HELD_OUT",
+      "prompt": "Describe water purification in 40 to 100 words. Do NOT use the personal pronouns 'we', 'you', 'our', or 'I'. Include the word 'filtration'.",
+      "max_output_tokens": 140,
+      "expected_prompt_words": 23,
+      "expected_answer_spec": {
+        "required_words": [
+          "filtration"
+        ],
+        "prohibited_words": [
+          "we",
+          "you",
+          "our",
+          "i"
+        ],
+        "min_words": 35,
+        "max_words": 115
+      },
+      "evaluator_version": "2.2.0",
+      "difficulty": "hard",
+      "evaluation_limitations": "Deterministic automated evaluation; does not assess unprompted nuance.",
+      "prompt_hash": "0c1a7e68b16ea248"
+    }
+  ]
+}

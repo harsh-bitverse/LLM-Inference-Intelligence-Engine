@@ -65,6 +65,21 @@ class ModelComparisonEntry(BaseModel):
     code_pass_rate: float | None = Field(
         default=None, description="Code unit test pass rate (0.0 to 1.0)"
     )
+    category_scores: dict[str, float] = Field(
+        default_factory=dict, description="Observed scores by task category"
+    )
+    numerical_accuracy: float | None = Field(
+        default=None, description="Observed numerical reasoning accuracy"
+    )
+    retrieval_accuracy: float | None = Field(
+        default=None, description="Observed context retrieval accuracy"
+    )
+    instruction_compliance_rate: float | None = Field(
+        default=None, description="Observed long-form instruction compliance rate"
+    )
+    evidence_sample_count: int = Field(
+        default=0, description="Number of empirical quality evaluations supporting this candidate"
+    )
 
     # Feasibility and decision
     conservative_feasibility: str = Field(
@@ -119,6 +134,24 @@ class MultiModelComparator:
         constraints = quality_constraints or ModelQualityConstraintSpec()
         installed_dict = fetch_installed_ollama_models(self.base_url)
 
+        if empirical_smoke_summary is None:
+            import json
+            from pathlib import Path
+
+            for p in [
+                Path("storage/experiments/session_22_quality_benchmark_manifest.json"),
+                Path("storage/experiments/session_21_cross_model_manifest.json"),
+                Path("storage/experiments/session_20_multi_model_smoke_manifest.json"),
+            ]:
+                if p.exists():
+                    try:
+                        data = json.loads(p.read_text(encoding="utf-8"))
+                        empirical_smoke_summary = data.get("summary_statistics", {})
+                        if empirical_smoke_summary:
+                            break
+                    except Exception:
+                        pass
+
         entries: list[ModelComparisonEntry] = []
 
         for cid in candidate_ids:
@@ -172,6 +205,11 @@ class MultiModelComparator:
                         mean_correctness_score=None,
                         json_compliance_rate=None,
                         code_pass_rate=None,
+                        category_scores={},
+                        numerical_accuracy=None,
+                        retrieval_accuracy=None,
+                        instruction_compliance_rate=None,
+                        evidence_sample_count=0,
                         conservative_feasibility="UNKNOWN_FEASIBILITY",
                         rank=None,
                         decision_label="UNINSTALLED_UNMEASURED",
@@ -204,6 +242,11 @@ class MultiModelComparator:
                         mean_correctness_score=None,
                         json_compliance_rate=None,
                         code_pass_rate=None,
+                        category_scores={},
+                        numerical_accuracy=None,
+                        retrieval_accuracy=None,
+                        instruction_compliance_rate=None,
+                        evidence_sample_count=0,
                         conservative_feasibility="PROVEN_INFEASIBLE",
                         rank=None,
                         decision_label="INSUFFICIENT_MEMORY",
@@ -219,11 +262,15 @@ class MultiModelComparator:
             # Quality assessment & empirical lookup
             q_stats = (empirical_smoke_summary or {}).get(cid, {})
             t_summaries = q_stats.get("task_summaries", {})
+            cats = q_stats.get("categories", {})
+            cat_scores = {k: float(v.get("mean_correctness_score", 0.0)) for k, v in cats.items()}
+            sample_count = int(q_stats.get("total_observations", 0))
 
             # Performance estimation / empirical lookup
-            if q_stats.get("mean_raw_decode_tok_s"):
-                nominal_decode_tps = round(q_stats["mean_raw_decode_tok_s"], 2)
-                chars_per_sec = round(q_stats.get("mean_characters_per_s", 75.0), 1)
+            decode_tps_val = q_stats.get("mean_raw_decode_tok_s") or q_stats.get("mean_decode_tps")
+            if decode_tps_val:
+                nominal_decode_tps = round(float(decode_tps_val), 2)
+                chars_per_sec = round(float(q_stats.get("mean_characters_per_s", 75.0)), 1)
                 prefill_factor = 0.744 if "llama" in cid else 0.50
                 prefill_ms = prefill_factor * prompt_tokens
                 nominal_decode_ms = (expected_output_tokens / nominal_decode_tps) * 1000.0
@@ -251,29 +298,57 @@ class MultiModelComparator:
                 nominal_latency_ms = round(prefill_ms + nominal_decode_ms, 2)
                 worst_case_latency_ms = round(prefill_ms + worst_decode_ms, 2)
 
-            json_rate = q_stats.get("json_compliance_rate_pct")
-            if json_rate is not None:
-                json_rate = json_rate / 100.0
+            # JSON format compliance vs semantic correctness
+            json_format_rate = None
+            json_semantic_rate = None
+            if "STRUCTURED_JSON" in cats:
+                json_format_rate = cats["STRUCTURED_JSON"].get("format_compliance_pct", 100.0) / 100.0
+                json_semantic_rate = cats["STRUCTURED_JSON"].get("mean_correctness_score")
             elif "workload_v1_structured_json" in t_summaries:
-                json_rate = (t_summaries["workload_v1_structured_json"].get("format_compliance_rate_pct", 100.0)) / 100.0
+                json_format_rate = (t_summaries["workload_v1_structured_json"].get("format_compliance_rate_pct", 100.0)) / 100.0
+                json_semantic_rate = t_summaries["workload_v1_structured_json"].get("mean_correctness_score")
+            elif q_stats.get("json_compliance_rate_pct") is not None:
+                json_format_rate = q_stats["json_compliance_rate_pct"] / 100.0
 
-            code_rate = q_stats.get("code_pass_rate_pct")
-            if code_rate is not None:
-                code_rate = code_rate / 100.0
+            # Code pass rate
+            code_rate = None
+            if "CODE_GENERATION" in cats:
+                code_rate = cats["CODE_GENERATION"].get("mean_correctness_score")
             elif "workload_v1_code_generation" in t_summaries:
                 code_t = t_summaries["workload_v1_code_generation"]
                 code_rate = code_t.get("mean_correctness_score", 0.0)
+            elif q_stats.get("code_pass_rate_pct") is not None:
+                code_rate = q_stats["code_pass_rate_pct"] / 100.0
+
+            # Numerical reasoning
+            num_rate = None
+            if "NUMERICAL_REASONING" in cats:
+                num_rate = cats["NUMERICAL_REASONING"].get("accuracy_pct", 0.0) / 100.0
+
+            # Context retrieval
+            retrieval_rate = None
+            if "CONTEXT_RETRIEVAL" in cats:
+                retrieval_rate = cats["CONTEXT_RETRIEVAL"].get("accuracy_pct", 0.0) / 100.0
+
+            # Long-form instruction compliance
+            instruction_rate = None
+            if "LONG_FORM_COMPLIANCE" in cats:
+                instruction_rate = cats["LONG_FORM_COMPLIANCE"].get("mean_correctness_score")
 
             mean_correctness = q_stats.get("mean_correctness_score")
 
             has_quality_reqs = any(
                 [
                     constraints.require_json_compliance,
+                    constraints.require_json_semantic_correctness,
                     constraints.require_code_pass,
                     constraints.min_task_correctness is not None,
                     constraints.min_json_compliance_rate is not None,
                     constraints.min_code_pass_rate is not None,
                     constraints.min_reasoning_accuracy is not None,
+                    constraints.min_retrieval_accuracy is not None,
+                    constraints.min_instruction_compliance is not None,
+                    constraints.target_category is not None,
                 ]
             )
 
@@ -284,15 +359,55 @@ class MultiModelComparator:
             if has_quality_reqs:
                 if q_stats:
                     # Check each requirement
-                    if constraints.require_json_compliance and (json_rate is None or json_rate < 1.0):
+                    if constraints.require_json_compliance and (json_format_rate is None or json_format_rate < 1.0):
                         quality_status = QualityStatus.QUALITY_VIOLATED
                         disclaimers.append(
-                            f"JSON compliance requirement violated (observed rate: {json_rate})."
+                            f"JSON compliance requirement violated (observed format rate: {json_format_rate})."
+                        )
+                    if constraints.require_json_semantic_correctness and (json_semantic_rate is None or json_semantic_rate < 1.0):
+                        quality_status = QualityStatus.QUALITY_VIOLATED
+                        disclaimers.append(
+                            f"JSON semantic correctness requirement violated (observed rate: {json_semantic_rate})."
                         )
                     if constraints.require_code_pass and (code_rate is None or code_rate < 0.8):
                         quality_status = QualityStatus.QUALITY_VIOLATED
                         disclaimers.append(
                             f"Code generation pass rate requirement violated (observed rate: {code_rate})."
+                        )
+                    if constraints.min_code_pass_rate is not None and (
+                        code_rate is None or code_rate < constraints.min_code_pass_rate
+                    ):
+                        quality_status = QualityStatus.QUALITY_VIOLATED
+                        disclaimers.append(
+                            f"Minimum code pass rate ({constraints.min_code_pass_rate}) not met (observed: {code_rate})."
+                        )
+                    if constraints.min_json_compliance_rate is not None and (
+                        json_format_rate is None or json_format_rate < constraints.min_json_compliance_rate
+                    ):
+                        quality_status = QualityStatus.QUALITY_VIOLATED
+                        disclaimers.append(
+                            f"Minimum JSON compliance rate ({constraints.min_json_compliance_rate}) not met (observed: {json_format_rate})."
+                        )
+                    if constraints.min_reasoning_accuracy is not None and (
+                        num_rate is None or num_rate < constraints.min_reasoning_accuracy
+                    ):
+                        quality_status = QualityStatus.QUALITY_VIOLATED
+                        disclaimers.append(
+                            f"Minimum reasoning accuracy ({constraints.min_reasoning_accuracy}) not met (observed: {num_rate})."
+                        )
+                    if constraints.min_retrieval_accuracy is not None and (
+                        retrieval_rate is None or retrieval_rate < constraints.min_retrieval_accuracy
+                    ):
+                        quality_status = QualityStatus.QUALITY_VIOLATED
+                        disclaimers.append(
+                            f"Minimum retrieval accuracy ({constraints.min_retrieval_accuracy}) not met (observed: {retrieval_rate})."
+                        )
+                    if constraints.min_instruction_compliance is not None and (
+                        instruction_rate is None or instruction_rate < constraints.min_instruction_compliance
+                    ):
+                        quality_status = QualityStatus.QUALITY_VIOLATED
+                        disclaimers.append(
+                            f"Minimum instruction compliance ({constraints.min_instruction_compliance}) not met (observed: {instruction_rate})."
                         )
                     if constraints.min_task_correctness is not None and (
                         mean_correctness is None or mean_correctness < constraints.min_task_correctness
@@ -301,6 +416,13 @@ class MultiModelComparator:
                         disclaimers.append(
                             f"Minimum task correctness ({constraints.min_task_correctness}) not met (observed: {mean_correctness})."
                         )
+                    if constraints.target_category is not None:
+                        cat_val = cat_scores.get(constraints.target_category)
+                        if cat_val is None:
+                            quality_status = QualityStatus.UNKNOWN_QUALITY_NO_EVALUATION
+                            disclaimers.append(
+                                f"No empirical data for target category '{constraints.target_category}'."
+                            )
                 else:
                     quality_status = QualityStatus.UNKNOWN_QUALITY_NO_EVALUATION
                     disclaimers.append(
@@ -351,8 +473,13 @@ class MultiModelComparator:
                     characters_per_second=chars_per_sec,
                     quality_status=quality_status,
                     mean_correctness_score=mean_correctness,
-                    json_compliance_rate=json_rate,
+                    json_compliance_rate=json_format_rate,
                     code_pass_rate=code_rate,
+                    category_scores=cat_scores,
+                    numerical_accuracy=num_rate,
+                    retrieval_accuracy=retrieval_rate,
+                    instruction_compliance_rate=instruction_rate,
+                    evidence_sample_count=sample_count,
                     conservative_feasibility=feasibility,
                     rank=None,  # Will assign below
                     decision_label=decision_label,
@@ -409,6 +536,11 @@ class MultiModelComparator:
                     mean_correctness_score=e.mean_correctness_score,
                     json_compliance_rate=e.json_compliance_rate,
                     code_pass_rate=e.code_pass_rate,
+                    category_scores=e.category_scores,
+                    numerical_accuracy=e.numerical_accuracy,
+                    retrieval_accuracy=e.retrieval_accuracy,
+                    instruction_compliance_rate=e.instruction_compliance_rate,
+                    evidence_sample_count=e.evidence_sample_count,
                     conservative_feasibility=e.conservative_feasibility,
                     rank=current_rank,
                     decision_label=e.decision_label,

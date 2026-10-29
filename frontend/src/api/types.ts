@@ -713,6 +713,10 @@ export interface ModelQualityConstraintSpec {
   min_json_compliance_rate?: number | null;
   min_code_pass_rate?: number | null;
   min_reasoning_accuracy?: number | null;
+  require_json_semantic_correctness?: boolean;
+  min_retrieval_accuracy?: number | null;
+  min_instruction_compliance?: number | null;
+  target_category?: string | null;
   max_memory_budget_mb?: number | null;
   preferred_model_family?: string | null;
 }
@@ -734,6 +738,11 @@ export interface ModelComparisonEntry {
   mean_correctness_score?: number | null;
   json_compliance_rate?: number | null;
   code_pass_rate?: number | null;
+  category_scores?: Record<string, number>;
+  numerical_accuracy?: number | null;
+  retrieval_accuracy?: number | null;
+  instruction_compliance_rate?: number | null;
+  evidence_sample_count?: number;
   conservative_feasibility: string;
   rank?: number | null;
   decision_label: string;

@@ -34,7 +34,9 @@ export const MultiModelComparisonView: React.FC = () => {
   const [outputTokens, setOutputTokens] = useState<number>(64);
   const [latencySlaMs, setLatencySlaMs] = useState<string>('5000');
   const [requireJsonCompliance, setRequireJsonCompliance] = useState<boolean>(false);
+  const [requireJsonSemanticCorrectness, setRequireJsonSemanticCorrectness] = useState<boolean>(false);
   const [requireCodePass, setRequireCodePass] = useState<boolean>(false);
+  const [targetCategory, setTargetCategory] = useState<string>('');
   const [maxMemoryBudgetMb, setMaxMemoryBudgetMb] = useState<string>('');
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -69,13 +71,19 @@ export const MultiModelComparisonView: React.FC = () => {
     setOutputTokens(task.max_output_tokens);
     if (task.task_type === 'STRUCTURED_JSON') {
       setRequireJsonCompliance(true);
+      setRequireJsonSemanticCorrectness(true);
       setRequireCodePass(false);
+      setTargetCategory('STRUCTURED_JSON');
     } else if (task.task_type === 'CODE_GENERATION') {
       setRequireCodePass(true);
       setRequireJsonCompliance(false);
+      setRequireJsonSemanticCorrectness(false);
+      setTargetCategory('CODE_GENERATION');
     } else {
       setRequireJsonCompliance(false);
+      setRequireJsonSemanticCorrectness(false);
       setRequireCodePass(false);
+      setTargetCategory('');
     }
   };
 
@@ -101,7 +109,9 @@ export const MultiModelComparisonView: React.FC = () => {
         latency_sla_ms: latencySlaMs ? parseFloat(latencySlaMs) : null,
         quality_constraints: {
           require_json_compliance: requireJsonCompliance,
+          require_json_semantic_correctness: requireJsonSemanticCorrectness,
           require_code_pass: requireCodePass,
+          target_category: targetCategory || null,
           max_memory_budget_mb: maxMemoryBudgetMb ? parseFloat(maxMemoryBudgetMb) : null,
         },
       });
@@ -291,7 +301,7 @@ export const MultiModelComparisonView: React.FC = () => {
             <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
             Quality & Compatibility Constraints
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
             <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
               <input
                 type="checkbox"
@@ -299,7 +309,16 @@ export const MultiModelComparisonView: React.FC = () => {
                 onChange={(e) => setRequireJsonCompliance(e.target.checked)}
                 className="rounded border-slate-700 bg-slate-900 text-sky-500 focus:ring-0"
               />
-              <span>Require Valid JSON Schema</span>
+              <span>Valid JSON Format</span>
+            </label>
+            <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={requireJsonSemanticCorrectness}
+                onChange={(e) => setRequireJsonSemanticCorrectness(e.target.checked)}
+                className="rounded border-slate-700 bg-slate-900 text-sky-500 focus:ring-0"
+              />
+              <span>JSON Semantic Accuracy</span>
             </label>
             <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
               <input
@@ -308,9 +327,25 @@ export const MultiModelComparisonView: React.FC = () => {
                 onChange={(e) => setRequireCodePass(e.target.checked)}
                 className="rounded border-slate-700 bg-slate-900 text-sky-500 focus:ring-0"
               />
-              <span>Require Code Unit Test Pass (&ge; 80%)</span>
+              <span>Code Unit Pass (&ge; 80%)</span>
             </label>
             <div className="flex items-center gap-2">
+              <span className="text-slate-400 whitespace-nowrap">Target Category:</span>
+              <select
+                value={targetCategory}
+                onChange={(e) => setTargetCategory(e.target.value)}
+                className="bg-slate-900 border border-slate-800 rounded px-2 py-1 text-slate-200 focus:outline-none focus:border-sky-500 text-xs"
+              >
+                <option value="">All Categories</option>
+                <option value="CODE_GENERATION">Code Generation</option>
+                <option value="STRUCTURED_JSON">Structured JSON</option>
+                <option value="FACTUAL_INSTRUCTION">Factual Instruction</option>
+                <option value="NUMERICAL_REASONING">Numerical Reasoning</option>
+                <option value="CONTEXT_RETRIEVAL">Context Retrieval</option>
+                <option value="LONG_FORM_COMPLIANCE">Long-Form Compliance</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2 sm:col-span-2">
               <span className="text-slate-400 whitespace-nowrap">Max RAM (MiB):</span>
               <input
                 type="number"
@@ -395,7 +430,7 @@ export const MultiModelComparisonView: React.FC = () => {
                     <th className="py-2.5 px-3">Worst-Case Latency</th>
                     <th className="py-2.5 px-3">Raw Decode</th>
                     <th className="py-2.5 px-3">Chars/sec</th>
-                    <th className="py-2.5 px-3">Quality Status</th>
+                    <th className="py-2.5 px-3">Quality & Categories</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60">
@@ -446,15 +481,37 @@ export const MultiModelComparisonView: React.FC = () => {
                           : '—'}
                       </td>
                       <td className="py-3 px-3">
-                        {cand.quality_status === 'QUALITY_SATISFIED' && (
-                          <span className="text-[10px] text-emerald-400 font-medium">Satisfied</span>
-                        )}
-                        {cand.quality_status === 'QUALITY_VIOLATED' && (
-                          <span className="text-[10px] text-rose-400 font-medium">Violated</span>
-                        )}
-                        {cand.quality_status === 'UNKNOWN_QUALITY_NO_EVALUATION' && (
-                          <span className="text-[10px] text-slate-500 font-medium">Unassessed</span>
-                        )}
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            {cand.quality_status === 'QUALITY_SATISFIED' && (
+                              <span className="text-[10px] text-emerald-400 font-medium">Satisfied</span>
+                            )}
+                            {cand.quality_status === 'QUALITY_VIOLATED' && (
+                              <span className="text-[10px] text-rose-400 font-medium">Violated</span>
+                            )}
+                            {cand.quality_status === 'UNKNOWN_QUALITY_NO_EVALUATION' && (
+                              <span className="text-[10px] text-slate-500 font-medium">Unassessed</span>
+                            )}
+                            {cand.evidence_sample_count !== undefined && cand.evidence_sample_count > 0 && (
+                              <span className="text-[9px] text-slate-400 bg-slate-800/80 px-1 py-0.5 rounded font-mono">
+                                N={cand.evidence_sample_count}
+                              </span>
+                            )}
+                          </div>
+                          {cand.category_scores && Object.keys(cand.category_scores).length > 0 && (
+                            <div className="flex flex-wrap gap-1 max-w-[220px]">
+                              {Object.entries(cand.category_scores).map(([cat, score]) => (
+                                <span
+                                  key={cat}
+                                  className="text-[9px] px-1 py-0.5 rounded bg-slate-800/80 text-slate-300 font-mono"
+                                  title={`${cat}: ${(score * 100).toFixed(0)}%`}
+                                >
+                                  {cat.slice(0, 4)}: {(score * 100).toFixed(0)}%
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

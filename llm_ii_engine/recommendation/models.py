@@ -92,6 +92,18 @@ class ModelQualityConstraintSpec(BaseModel):
     min_reasoning_accuracy: float | None = Field(
         default=None, ge=0.0, le=1.0, description="Minimum numerical reasoning accuracy (0.0 to 1.0)"
     )
+    require_json_semantic_correctness: bool = Field(
+        default=False, description="Require verified semantic field correctness on structured JSON tasks"
+    )
+    min_retrieval_accuracy: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="Minimum context retrieval accuracy (0.0 to 1.0)"
+    )
+    min_instruction_compliance: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="Minimum long-form instruction compliance score (0.0 to 1.0)"
+    )
+    target_category: str | None = Field(
+        default=None, description="Optional target category identifier"
+    )
     max_memory_budget_mb: float | None = Field(
         default=None, gt=0.0, description="Maximum allowed memory footprint in MiB"
     )
