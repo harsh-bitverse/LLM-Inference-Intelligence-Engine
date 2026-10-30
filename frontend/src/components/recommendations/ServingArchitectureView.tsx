@@ -13,6 +13,11 @@ import {
   ShieldCheck,
   Split,
   Activity,
+  Calculator,
+  Database,
+  Sliders,
+  HardDrive,
+  Check,
 } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import {
@@ -23,6 +28,10 @@ import {
   ServingArchitectureRecommendation,
   ArchitectureRecommendationRequest,
   CapabilityVerificationStatus,
+  KVEstimatesResponse,
+  ModelEquivalenceRecord,
+  SlotOptimizationRequest,
+  SlotContextRecommendation,
 } from '../../api/types';
 import { LoadingSpinner } from '../common/LoadingSpinner';
 import { ErrorMessage } from '../common/ErrorMessage';
@@ -35,10 +44,19 @@ export const ServingArchitectureView: React.FC = () => {
   const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
   const [initialError, setInitialError] = useState<string | null>(null);
 
+  // Session 28 Telemetry & Contracts
+  const [kvData, setKvData] = useState<KVEstimatesResponse | null>(null);
+  const [equivalenceRecords, setEquivalenceRecords] = useState<ModelEquivalenceRecord[]>([]);
+
+  // Interactive KV Cache Explorer State
+  const [explorerModelId, setExplorerModelId] = useState<string>('qwen2.5:0.5b');
+  const [sliderContext, setSliderContext] = useState<number>(1024);
+  const [sliderSlots, setSliderSlots] = useState<number>(2);
+
   // Model filter for comparisons
   const [selectedModel, setSelectedModel] = useState<string>('all');
 
-  // Recommender Form State
+  // Recommender Form State (Session 27)
   const [recModelId, setRecModelId] = useState<string>('qwen2.5:0.5b');
   const [recWorkloadType, setRecWorkloadType] = useState<string>('mixed_chat_summary');
   const [recConcurrency, setRecConcurrency] = useState<number>(2);
@@ -50,21 +68,36 @@ export const ServingArchitectureView: React.FC = () => {
   const [recommendation, setRecommendation] = useState<ServingArchitectureRecommendation | null>(null);
   const [recError, setRecError] = useState<string | null>(null);
 
+  // Slot Optimizer Form State (Session 28)
+  const [slotModelId, setSlotModelId] = useState<string>('qwen2.5:0.5b');
+  const [slotReqContext, setSlotReqContext] = useState<number>(1024);
+  const [slotExpectedOutput, setSlotExpectedOutput] = useState<number>(64);
+  const [slotConcurrency, setSlotConcurrency] = useState<number>(2);
+  const [slotLatencySla, setSlotLatencySla] = useState<string>('2500');
+  const [slotMemoryBudget, setSlotMemoryBudget] = useState<string>('8192');
+  const [slotOptimizing, setSlotOptimizing] = useState<boolean>(false);
+  const [slotRecommendation, setSlotRecommendation] = useState<SlotContextRecommendation | null>(null);
+  const [slotError, setSlotError] = useState<string | null>(null);
+
   useEffect(() => {
     let isMounted = true;
     const fetchInitialData = async () => {
       setLoadingInitial(true);
       setInitialError(null);
       try {
-        const [caps, comps, hols] = await Promise.all([
+        const [caps, comps, hols, kvRes, eqRes] = await Promise.all([
           apiClient.getServingCapabilities(),
           apiClient.getArchitectureComparisons(),
           apiClient.getServingHolComparisons(),
+          apiClient.getKvEstimates().catch(() => null),
+          apiClient.getModelEquivalence().catch(() => null),
         ]);
         if (isMounted) {
           setCapabilitiesData(caps);
           setComparisons(comps.comparisons || []);
           setHolComparisons(hols.hol_comparisons || []);
+          if (kvRes) setKvData(kvRes);
+          if (eqRes) setEquivalenceRecords(eqRes.records || []);
         }
       } catch (err: unknown) {
         if (isMounted) {
@@ -81,6 +114,28 @@ export const ServingArchitectureView: React.FC = () => {
       isMounted = false;
     };
   }, []);
+
+  const handleSlotOptimize = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setSlotOptimizing(true);
+    setSlotError(null);
+    try {
+      const req: SlotOptimizationRequest = {
+        model_id: slotModelId,
+        required_context_tokens: slotReqContext,
+        expected_output_tokens: slotExpectedOutput,
+        offered_concurrency: slotConcurrency,
+        latency_sla_ms: parseFloat(slotLatencySla) || 2500,
+        memory_budget_mb: parseFloat(slotMemoryBudget) || 8192,
+      };
+      const res = await apiClient.optimizeServingSlots(req);
+      setSlotRecommendation(res);
+    } catch (err: unknown) {
+      setSlotError(err instanceof Error ? err.message : 'Failed to optimize slot configuration');
+    } finally {
+      setSlotOptimizing(false);
+    }
+  };
 
   const handleGetRecommendation = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -616,6 +671,417 @@ export const ServingArchitectureView: React.FC = () => {
                 <span className="font-semibold text-slate-300">Deployment Command Guidance:</span>
                 <pre className="mt-1 p-3 bg-slate-900 rounded-lg text-slate-300 font-mono text-[11px] overflow-x-auto border border-slate-800">
                   {recommendation.actionable_setup_guidance}
+                </pre>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Section 5: Model & Tokenizer Identity Equivalence Audit */}
+      <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <Database className="w-4 h-4 text-sky-400" />
+          <h3 className="text-sm font-semibold text-slate-200">
+            Model Representation & Tokenizer Identity Equivalence Audit
+          </h3>
+        </div>
+        <p className="text-xs text-slate-400 mb-4">
+          Independent verification confirming that Ollama and llama.cpp server evaluate the exact same underlying GGUF model blobs, vocabularies, and quantizations.
+        </p>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-slate-800 bg-slate-950/40 text-slate-400">
+                <th className="py-2.5 px-3 font-semibold">Model ID</th>
+                <th className="py-2.5 px-3 font-semibold">Runtime Engine</th>
+                <th className="py-2.5 px-3 font-semibold">Quantization</th>
+                <th className="py-2.5 px-3 font-semibold">Tokenizer & Template</th>
+                <th className="py-2.5 px-3 font-semibold text-center">Usable Per-Slot Context</th>
+                <th className="py-2.5 px-3 font-semibold text-center">Total Allocation</th>
+                <th className="py-2.5 px-3 font-semibold text-center">Equivalence Verdict</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60 font-mono">
+              {equivalenceRecords.length > 0 ? (
+                equivalenceRecords.map((r, idx) => (
+                  <tr key={idx} className="hover:bg-slate-800/20">
+                    <td className="py-2.5 px-3 font-semibold text-slate-200">{r.model_id}</td>
+                    <td className="py-2.5 px-3 text-slate-300 font-sans">{r.runtime_name}</td>
+                    <td className="py-2.5 px-3 text-sky-400">{r.quantization}</td>
+                    <td className="py-2.5 px-3 text-slate-400 font-sans truncate max-w-xs">{r.tokenizer_identity}</td>
+                    <td className="py-2.5 px-3 text-center text-slate-200 font-semibold">{r.verified_usable_per_request_context} tok</td>
+                    <td className="py-2.5 px-3 text-center text-slate-400">{r.total_context_allocation} tok ({r.slots_count} slots)</td>
+                    <td className="py-2.5 px-3 text-center">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold ${
+                        r.equivalence_verdict === 'EXACT_EQUIVALENT'
+                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                          : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                      }`}>
+                        <Check className="w-3 h-3" /> {r.equivalence_verdict}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="py-4 text-center text-slate-500 font-sans">
+                    No equivalence records loaded. Run context-fair benchmarks to populate.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Section 6: Transformer Architecture & KV-Cache Memory Specification */}
+      <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <Calculator className="w-4 h-4 text-sky-400" />
+          <h3 className="text-sm font-semibold text-slate-200">
+            Transformer Architecture & Theoretical KV-Cache Memory Specification
+          </h3>
+        </div>
+        <p className="text-xs text-slate-400 mb-4">
+          Theoretical scaling derived from Transformer architecture hyperparameters: <code className="text-sky-300">Bytes/Token = 2 × L × H_kv × d_k × b_kv</code>.
+        </p>
+
+        {/* Hyperparameters Table */}
+        <div className="overflow-x-auto mb-6">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-slate-800 bg-slate-950/40 text-slate-400">
+                <th className="py-2.5 px-3 font-semibold">Model ID</th>
+                <th className="py-2.5 px-3 font-semibold">Arch</th>
+                <th className="py-2.5 px-3 font-semibold text-center">Layers (L)</th>
+                <th className="py-2.5 px-3 font-semibold text-center">Q Heads (H)</th>
+                <th className="py-2.5 px-3 font-semibold text-center">KV Heads (H_kv)</th>
+                <th className="py-2.5 px-3 font-semibold text-center">Head Dim (d_k)</th>
+                <th className="py-2.5 px-3 font-semibold text-center">GQA Ratio</th>
+                <th className="py-2.5 px-3 font-semibold text-right">Bytes / Token</th>
+                <th className="py-2.5 px-3 font-semibold text-right">KB / Token</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60 font-mono">
+              {kvData?.architectures && kvData.architectures.length > 0 ? (
+                kvData.architectures.map((arch) => (
+                  <tr key={arch.model_id} className="hover:bg-slate-800/20">
+                    <td className="py-2.5 px-3 font-semibold text-slate-200">{arch.model_id}</td>
+                    <td className="py-2.5 px-3 text-slate-400 font-sans">{arch.architecture}</td>
+                    <td className="py-2.5 px-3 text-center text-slate-300">{arch.num_layers}</td>
+                    <td className="py-2.5 px-3 text-center text-slate-300">{arch.num_heads}</td>
+                    <td className="py-2.5 px-3 text-center text-sky-400 font-semibold">{arch.num_kv_heads}</td>
+                    <td className="py-2.5 px-3 text-center text-slate-300">{arch.head_dim}</td>
+                    <td className="py-2.5 px-3 text-center text-emerald-400">{arch.gqa_ratio.toFixed(1)}x</td>
+                    <td className="py-2.5 px-3 text-right text-slate-200">{arch.bytes_per_token_kv.toLocaleString()} B</td>
+                    <td className="py-2.5 px-3 text-right font-semibold text-sky-400">{arch.kb_per_token_kv.toFixed(2)} KB</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={9} className="py-4 text-center text-slate-500 font-sans">
+                    Architecture specs loading...
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Dynamic Context & Memory Calculator Widget */}
+        <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Sliders className="w-4 h-4 text-indigo-400" />
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+              Interactive Context & KV Cache Footprint Calculator
+            </h4>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Model Selection</label>
+              <select
+                value={explorerModelId}
+                onChange={(e) => setExplorerModelId(e.target.value)}
+                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+              >
+                <option value="qwen2.5:0.5b">qwen2.5:0.5b (12.0 KB/tok, 398 MB weights)</option>
+                <option value="qwen2.5:1.5b">qwen2.5:1.5b (28.0 KB/tok, 986 MB weights)</option>
+                <option value="llama3.2:1b">llama3.2:1b (32.0 KB/tok, 1321 MB weights)</option>
+              </select>
+            </div>
+
+            <div>
+              <div className="flex justify-between text-xs font-semibold text-slate-300 mb-1">
+                <span>Per-Slot Context Window:</span>
+                <span className="font-mono text-sky-400">{sliderContext} tokens</span>
+              </div>
+              <input
+                type="range"
+                min={512}
+                max={4096}
+                step={256}
+                value={sliderContext}
+                onChange={(e) => setSliderContext(parseInt(e.target.value, 10))}
+                className="w-full accent-sky-500 cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-slate-500 mt-0.5">
+                <span>512 tok</span>
+                <span>1024 tok</span>
+                <span>2048 tok</span>
+                <span>4096 tok</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Parallel Slots (S)</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 2, 4].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSliderSlots(s)}
+                    className={`py-2 rounded-lg text-xs font-mono font-semibold transition-all ${
+                      sliderSlots === s
+                        ? 'bg-indigo-600 text-white shadow-sm'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    {s} {s === 1 ? 'Slot' : 'Slots'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Dynamic Calculated Memory Footprint Breakdown */}
+          {(() => {
+            const arch = kvData?.architectures?.find((a) => a.model_id === explorerModelId) || {
+              bytes_per_token_kv: explorerModelId === 'qwen2.5:0.5b' ? 12288 : explorerModelId === 'qwen2.5:1.5b' ? 28672 : 32768,
+              weight_size_mb: explorerModelId === 'qwen2.5:0.5b' ? 398 : explorerModelId === 'qwen2.5:1.5b' ? 986 : 1321,
+            };
+            const totalTokens = sliderSlots * sliderContext;
+            const kvMb = (totalTokens * arch.bytes_per_token_kv) / (1024 * 1024);
+            const weightsMb = arch.weight_size_mb;
+            const overheadMb = 150.0;
+            const totalMb = weightsMb + kvMb + overheadMb;
+
+            return (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-900/60 p-3 rounded-lg border border-slate-800/60 text-center font-mono">
+                <div>
+                  <div className="text-[10px] text-slate-400 font-sans uppercase font-semibold">Total Context</div>
+                  <div className="text-base font-bold text-slate-100 mt-0.5">{totalTokens.toLocaleString()} tok</div>
+                  <div className="text-[10px] text-slate-500 font-sans">{sliderSlots} × {sliderContext} tok</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-400 font-sans uppercase font-semibold">KV Cache RAM</div>
+                  <div className="text-base font-bold text-sky-400 mt-0.5">{kvMb.toFixed(1)} MB</div>
+                  <div className="text-[10px] text-slate-500 font-sans">{(kvMb / sliderSlots).toFixed(1)} MB / slot</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-400 font-sans uppercase font-semibold">Model Weights</div>
+                  <div className="text-base font-bold text-slate-300 mt-0.5">{weightsMb.toFixed(0)} MB</div>
+                  <div className="text-[10px] text-slate-500 font-sans">Shared in RAM</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-400 font-sans uppercase font-semibold">Total Process RAM</div>
+                  <div className="text-base font-bold text-emerald-400 mt-0.5">{totalMb.toFixed(0)} MB</div>
+                  <div className="text-[10px] text-slate-500 font-sans">Includes 150MB buffer</div>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+
+      {/* Section 7: Context-Aware Parallel Slot Optimizer (Session 28) */}
+      <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-2">
+          <HardDrive className="w-4 h-4 text-emerald-400" />
+          <h3 className="text-sm font-semibold text-slate-200">
+            Context-Aware Parallel Slot Optimizer & Memory Budgeting
+          </h3>
+        </div>
+        <p className="text-xs text-slate-400 mb-4">
+          Determines optimal execution slots <code className="text-sky-300">S*</code> guaranteeing full per-request context windows without silent truncation while meeting latency SLAs.
+        </p>
+
+        <form onSubmit={handleSlotOptimize} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Target Model</label>
+            <select
+              value={slotModelId}
+              onChange={(e) => setSlotModelId(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            >
+              <option value="qwen2.5:0.5b">qwen2.5:0.5b (Q4_K_M)</option>
+              <option value="qwen2.5:1.5b">qwen2.5:1.5b (Q4_K_M)</option>
+              <option value="llama3.2:1b">llama3.2:1b (Q8_0)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Required Per-Request Context (tokens)</label>
+            <input
+              type="number"
+              min={128}
+              max={16384}
+              step={128}
+              value={slotReqContext}
+              onChange={(e) => setSlotReqContext(parseInt(e.target.value, 10) || 512)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Expected Output (tokens)</label>
+            <input
+              type="number"
+              min={1}
+              max={2048}
+              value={slotExpectedOutput}
+              onChange={(e) => setSlotExpectedOutput(parseInt(e.target.value, 10) || 32)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Offered Concurrency (clients)</label>
+            <input
+              type="number"
+              min={1}
+              max={8}
+              value={slotConcurrency}
+              onChange={(e) => setSlotConcurrency(parseInt(e.target.value, 10) || 1)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Latency SLA (ms)</label>
+            <input
+              type="text"
+              value={slotLatencySla}
+              onChange={(e) => setSlotLatencySla(e.target.value)}
+              placeholder="e.g. 2500"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 mb-1">Memory Budget (MB)</label>
+            <input
+              type="text"
+              value={slotMemoryBudget}
+              onChange={(e) => setSlotMemoryBudget(e.target.value)}
+              placeholder="e.g. 8192"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div className="md:col-span-3 flex justify-end">
+            <button
+              type="submit"
+              disabled={slotOptimizing}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-all disabled:opacity-50"
+            >
+              {slotOptimizing ? <LoadingSpinner /> : <Play className="w-3.5 h-3.5" />}
+              Optimize Slot Allocation
+            </button>
+          </div>
+        </form>
+
+        {slotError && <ErrorMessage message={slotError} />}
+
+        {slotRecommendation && (
+          <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
+              <div>
+                <span className="text-[10px] uppercase font-semibold text-slate-400">Context-Fair Optimal Allocation</span>
+                <div className="text-base font-bold text-emerald-400 font-mono flex items-center gap-2">
+                  <Split className="w-4 h-4 text-emerald-400" />
+                  {slotRecommendation.recommended_slots} Execution Slots ({slotRecommendation.recommended_runtime})
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`px-2.5 py-1 rounded text-xs font-semibold border ${
+                  slotRecommendation.feasibility_status === 'FEASIBLE'
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                    : slotRecommendation.feasibility_status === 'MEMORY_CONSTRAINED'
+                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                    : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                }`}>
+                  {slotRecommendation.feasibility_status}
+                </span>
+                <span className={`px-2.5 py-1 rounded text-xs font-semibold border ${
+                  slotRecommendation.tail_latency_risk === 'LOW'
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                    : slotRecommendation.tail_latency_risk === 'MODERATE'
+                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                    : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                }`}>
+                  Risk: {slotRecommendation.tail_latency_risk}
+                </span>
+                <span className="px-2.5 py-1 rounded text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                  {slotRecommendation.evidence_tier} Evidence
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 font-mono">
+              <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-800/60 text-center">
+                <div className="text-[10px] text-slate-400 font-sans uppercase font-semibold">Verified Slot Context</div>
+                <div className="text-base font-bold text-slate-100 mt-0.5">
+                  {slotRecommendation.verified_per_slot_context} tok
+                </div>
+                <div className="text-[10px] text-slate-500 font-sans">Total: {slotRecommendation.recommended_total_context} tok</div>
+              </div>
+              <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-800/60 text-center">
+                <div className="text-[10px] text-slate-400 font-sans uppercase font-semibold">KV Cache RAM</div>
+                <div className="text-base font-bold text-sky-400 mt-0.5">
+                  {slotRecommendation.estimated_kv_cache_mb.toFixed(1)} MB
+                </div>
+                <div className="text-[10px] text-slate-500 font-sans">Total RAM: {slotRecommendation.estimated_total_memory_mb.toFixed(0)} MB</div>
+              </div>
+              <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-800/60 text-center">
+                <div className="text-[10px] text-slate-400 font-sans uppercase font-semibold">Expected P95 Latency</div>
+                <div className="text-base font-bold text-slate-100 mt-0.5">
+                  {slotRecommendation.expected_p95_latency_ms.toFixed(0)} ms
+                </div>
+                <div className="text-[10px] text-slate-500 font-sans">SLA: {slotRecommendation.latency_sla_ms} ms</div>
+              </div>
+              <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-800/60 text-center">
+                <div className="text-[10px] text-slate-400 font-sans uppercase font-semibold">Expected Throughput</div>
+                <div className="text-base font-bold text-emerald-400 mt-0.5">
+                  {slotRecommendation.expected_aggregate_throughput_rps.toFixed(2)} RPS
+                </div>
+                <div className="text-[10px] text-slate-500 font-sans">Concurrent aggregate</div>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <span className="font-semibold text-slate-300">Decision Rationale:</span>
+                <p className="text-slate-400 mt-1">{slotRecommendation.rationale}</p>
+              </div>
+
+              {slotRecommendation.tradeoffs.length > 0 && (
+                <div>
+                  <span className="font-semibold text-slate-300">Operational Tradeoffs:</span>
+                  <ul className="list-disc list-inside text-slate-400 mt-1 space-y-0.5">
+                    {slotRecommendation.tradeoffs.map((t, i) => (
+                      <li key={i}>{t}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div>
+                <span className="font-semibold text-slate-300">Execution Command Line Guidance:</span>
+                <pre className="mt-1 p-3 bg-slate-900 rounded-lg text-emerald-300 font-mono text-[11px] overflow-x-auto border border-slate-800">
+                  {slotRecommendation.actionable_setup_guidance}
                 </pre>
               </div>
             </div>

@@ -1,0 +1,86 @@
+{
+  "manifest_id": "session_28_prospective_predictions",
+  "created_at_utc": "2026-10-30T06:37:00Z",
+  "locking_status": "PRE_REGISTERED_LOCKED",
+  "hardware_id": "cpu-intel-i7-14700",
+  "total_scenarios": 4,
+  "scenarios": [
+    {
+      "scenario_id": "scenario_1_short_context_interactive",
+      "name": "Short-Context Interactive Serving (Single Stream)",
+      "model_id": "qwen2.5:0.5b",
+      "required_per_request_context_tokens": 512,
+      "expected_output_tokens": 32,
+      "offered_concurrency": 1,
+      "latency_sla_ms": 1500.0,
+      "memory_budget_mb": 8192.0,
+      "hypothesized_recommended_slots": 1,
+      "hypothesized_kv_cache_mb": 6.0,
+      "hypothesized_sla_compliance_pct": 100.0,
+      "hypothesized_context_validity": true,
+      "acceptance_criteria": {
+        "recommended_slots": 1,
+        "max_e2e_latency_ms": 1500.0,
+        "context_truncation_occurred": false
+      }
+    },
+    {
+      "scenario_id": "scenario_2_moderate_context_concurrent",
+      "name": "Moderate-Context Concurrent Serving (C=2)",
+      "model_id": "qwen2.5:0.5b",
+      "required_per_request_context_tokens": 1024,
+      "expected_output_tokens": 64,
+      "offered_concurrency": 2,
+      "latency_sla_ms": 2500.0,
+      "memory_budget_mb": 8192.0,
+      "hypothesized_recommended_slots": 2,
+      "hypothesized_total_context": 2048,
+      "hypothesized_kv_cache_mb": 24.0,
+      "hypothesized_throughput_gain_pct_min": 35.0,
+      "acceptance_criteria": {
+        "recommended_slots": 2,
+        "verified_per_slot_context": 1024,
+        "llama_server_concurrency_overlap_pct_min": 80.0,
+        "throughput_gain_pct_min": 35.0
+      }
+    },
+    {
+      "scenario_id": "scenario_3_long_context_memory_constrained",
+      "name": "Long-Context Memory-Constrained Serving (C=4, Budget 1600 MB)",
+      "model_id": "llama3.2:1b",
+      "required_per_request_context_tokens": 2048,
+      "expected_output_tokens": 64,
+      "offered_concurrency": 4,
+      "latency_sla_ms": 8000.0,
+      "memory_budget_mb": 1600.0,
+      "hypothesized_recommended_slots": 2,
+      "hypothesized_kv_cache_mb": 128.0,
+      "hypothesized_feasibility": "FEASIBLE",
+      "acceptance_criteria": {
+        "slots_capped_by_memory": true,
+        "recommended_slots": 2,
+        "estimated_total_memory_mb_max": 1600.0,
+        "per_slot_context_preserved": 2048
+      }
+    },
+    {
+      "scenario_id": "scenario_4_mixed_context_competing_requests",
+      "name": "Mixed-Context Workload with Competing Short and Long Requests",
+      "model_id": "qwen2.5:1.5b",
+      "antecedent_context_tokens": 1024,
+      "consequent_context_tokens": 512,
+      "consequent_sla_ms": 1200.0,
+      "offered_concurrency": 2,
+      "memory_budget_mb": 8192.0,
+      "hypothesized_recommended_slots": 2,
+      "hypothesized_sla_rescued": true,
+      "acceptance_criteria": {
+        "ollama_consequent_wait_ms_min": 3000.0,
+        "ollama_consequent_sla_met": false,
+        "llama_server_consequent_wait_ms_max": 300.0,
+        "llama_server_consequent_sla_met": true,
+        "sla_rescued_by_parallelism": true
+      }
+    }
+  ]
+}

@@ -212,3 +212,193 @@ class Session27Manifest(BaseModel):
     comparisons: list[ServingArchitectureComparison]
     hol_comparisons: list[HeadOfLineComparisonObservation]
     raw_observations_file: str
+
+
+# ==============================================================================
+# Session 28: Context-Fair Parallel Serving & KV-Cache Modeling Types
+# ==============================================================================
+
+class ModelEquivalenceVerdict(str, Enum):
+    """Assessment of model file, tokenizer, and weight equivalence between runtimes."""
+
+    EXACT_EQUIVALENT = "EXACT_EQUIVALENT"
+    APPROXIMATE_EQUIVALENT = "APPROXIMATE_EQUIVALENT"
+    NON_EQUIVALENT = "NON_EQUIVALENT"
+    UNKNOWN = "UNKNOWN"
+
+
+class SlotFeasibilityStatus(str, Enum):
+    """Feasibility outcome for slot and context configuration."""
+
+    FEASIBLE = "FEASIBLE"
+    MEMORY_CONSTRAINED = "MEMORY_CONSTRAINED"
+    LATENCY_UNFEASIBLE = "LATENCY_UNFEASIBLE"
+    CONTEXT_UNSUPPORTED = "CONTEXT_UNSUPPORTED"
+
+
+class TailLatencyRisk(str, Enum):
+    """Categorical risk score for tail latency inflation under multi-slot concurrency."""
+
+    LOW = "LOW"
+    MODERATE = "MODERATE"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class ModelArchitectureSpec(BaseModel):
+    """Transformer architecture hyperparameters relevant to KV-cache memory scaling."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    model_id: str
+    architecture: str
+    num_layers: int
+    num_heads: int
+    num_kv_heads: int
+    head_dim: int
+    embedding_length: int
+    max_context_length: int
+    weight_quantization: str
+    weight_size_mb: float
+    kv_cache_precision_bytes: int = Field(default=2, description="Bytes per KV element (FP16 = 2, Q8_0 = 1)")
+    gqa_ratio: float = Field(description="Ratio of query heads to KV heads (GQA)")
+    bytes_per_token_kv: float = Field(description="Theoretical bytes consumed in KV cache per token across all layers")
+    kb_per_token_kv: float = Field(description="Theoretical KB consumed per token across all layers")
+
+
+class KVCacheEstimate(BaseModel):
+    """Breakdown of theoretical, reported, and observed memory for a context/slot setup."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    model_id: str
+    slots: int
+    per_slot_context_tokens: int
+    total_context_tokens: int
+    kv_cache_precision_bytes: int
+    theoretical_kv_cache_mb: float
+    model_weights_mb: float
+    runtime_overhead_mb: float
+    estimated_total_memory_mb: float
+    runtime_reported_kv_cache_mb: float | None = None
+    observed_process_memory_mb: float | None = None
+    empirical_residual_mb: float | None = None
+    is_within_budget: bool = True
+    memory_budget_mb: float | None = None
+
+
+class ModelEquivalenceRecord(BaseModel):
+    """Audit record comparing model representation across Ollama and llama.cpp server."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    model_id: str
+    runtime_name: str
+    digest: str
+    file_path: str
+    quantization: str
+    tokenizer_identity: str
+    prompt_template: str
+    sampling_temperature: float
+    sampling_top_p: float
+    verified_usable_per_request_context: int
+    total_context_allocation: int
+    slots_count: int
+    runtime_version: str
+    equivalence_verdict: ModelEquivalenceVerdict
+    equivalence_notes: str
+
+
+class ContextFairObservation(BaseModel):
+    """Empirical measurement capturing context-fair parallel execution telemetry."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    observation_id: str
+    session_id: str = Field(default="session_28")
+    timestamp_utc: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
+    runtime_architecture: ServingRuntimeArchitecture
+    model_id: str
+    num_threads: int = Field(default=8)
+
+    # Context & Slot Geometry
+    slots: int
+    per_slot_context_tokens: int
+    total_context_tokens: int
+    prompt_tokens: int
+    output_tokens: int
+    effective_context_used: int
+    context_fairness_verified: bool
+    context_truncation_occurred: bool
+
+    # Timestamps & Durations
+    client_dispatch_mono_s: float
+    client_completion_mono_s: float
+    client_duration_ms: float
+    server_prefill_ms: float
+    server_decode_ms: float
+    queue_wait_ms: float
+    ttft_ms: float
+    decode_tokens_per_second: float
+
+    # Memory Telemetry
+    theoretical_kv_mb: float
+    observed_memory_mb: float
+    memory_residual_mb: float
+
+    # SLA and Parallelism
+    effective_server_concurrency: float
+    latency_sla_ms: float
+    sla_met: bool
+
+
+class SlotContextRecommendation(BaseModel):
+    """Context-aware parallel serving recommendation."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    recommendation_id: str
+    created_at_utc: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
+    model_id: str
+    required_context_tokens: int
+    expected_output_tokens: int
+    offered_concurrency: int
+    latency_sla_ms: float
+    memory_budget_mb: float | None
+
+    # Recommendations
+    recommended_runtime: str
+    recommended_slots: int
+    recommended_total_context: int
+    verified_per_slot_context: int
+    estimated_kv_cache_mb: float
+    estimated_total_memory_mb: float
+    expected_p95_latency_ms: float
+    expected_aggregate_throughput_rps: float
+
+    # Feasibility and Risk
+    tail_latency_risk: TailLatencyRisk
+    feasibility_status: SlotFeasibilityStatus
+    evidence_tier: str
+    rationale: str
+    tradeoffs: list[str]
+    actionable_setup_guidance: str
+
+
+class Session28Manifest(BaseModel):
+    """Versioned experiment manifest for Session 28."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    manifest_id: str = Field(default="manifest-session-28-context-fair")
+    session_id: str = Field(default="session_28")
+    created_at_utc: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
+    hardware_id: str = Field(default="cpu-intel-i7-14700")
+    total_benchmark_duration_s: float
+    model_architectures: list[ModelArchitectureSpec]
+    equivalence_records: list[ModelEquivalenceRecord]
+    kv_cache_estimates: list[KVCacheEstimate]
+    observations_count: int
+    observations_file: str
+    slot_recommendations: list[SlotContextRecommendation]
+

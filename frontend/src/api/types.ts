@@ -1266,4 +1266,132 @@ export interface ServingArchitectureRecommendation {
   actionable_setup_guidance: string;
 }
 
+// --------------------------------------------------------------------------
+// Session 28: Context-Fair Parallel Serving & Slot Optimization Types
+// --------------------------------------------------------------------------
+
+export type ModelEquivalenceVerdict =
+  | 'EXACT_EQUIVALENT'
+  | 'APPROXIMATE_EQUIVALENT'
+  | 'NON_EQUIVALENT'
+  | 'UNKNOWN';
+
+export type SlotFeasibilityStatus =
+  | 'FEASIBLE'
+  | 'MEMORY_CONSTRAINED'
+  | 'LATENCY_UNFEASIBLE'
+  | 'CONTEXT_UNSUPPORTED';
+
+export type TailLatencyRisk = 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
+
+export interface ModelArchitectureSpec {
+  model_id: string;
+  architecture: string;
+  num_layers: number;
+  num_heads: number;
+  num_kv_heads: number;
+  head_dim: number;
+  embedding_length: number;
+  max_context_length: number;
+  weight_quantization: string;
+  weight_size_mb: number;
+  kv_cache_precision_bytes: number;
+  gqa_ratio: number;
+  bytes_per_token_kv: number;
+  kb_per_token_kv: number;
+}
+
+export interface KVCacheEstimate {
+  model_id: string;
+  slots: number;
+  per_slot_context_tokens: number;
+  total_context_tokens: number;
+  kv_cache_precision_bytes: number;
+  theoretical_kv_cache_mb: number;
+  model_weights_mb: number;
+  runtime_overhead_mb: number;
+  estimated_total_memory_mb: number;
+  runtime_reported_kv_cache_mb?: number | null;
+  observed_process_memory_mb?: number | null;
+  empirical_residual_mb?: number | null;
+  is_within_budget: boolean;
+  memory_budget_mb?: number | null;
+}
+
+export interface KVEstimatesResponse {
+  architectures: ModelArchitectureSpec[];
+  estimates: KVCacheEstimate[];
+}
+
+export interface ModelEquivalenceRecord {
+  model_id: string;
+  runtime_name: string;
+  digest: string;
+  file_path: string;
+  quantization: string;
+  tokenizer_identity: string;
+  prompt_template: string;
+  sampling_temperature: number;
+  sampling_top_p: number;
+  verified_usable_per_request_context: number;
+  total_context_allocation: number;
+  slots_count: number;
+  runtime_version: string;
+  equivalence_verdict: ModelEquivalenceVerdict;
+  equivalence_notes: string;
+}
+
+export interface ModelEquivalenceResponse {
+  records: ModelEquivalenceRecord[];
+}
+
+export interface SlotOptimizationRequest {
+  model_id: string;
+  required_context_tokens: number;
+  expected_output_tokens?: number;
+  offered_concurrency: number;
+  latency_sla_ms: number;
+  memory_budget_mb?: number;
+}
+
+export interface SlotContextRecommendation {
+  recommendation_id: string;
+  created_at_utc: string;
+  model_id: string;
+  required_context_tokens: number;
+  expected_output_tokens: number;
+  offered_concurrency: number;
+  latency_sla_ms: number;
+  memory_budget_mb?: number | null;
+  recommended_runtime: string;
+  recommended_slots: number;
+  recommended_total_context: number;
+  verified_per_slot_context: number;
+  estimated_kv_cache_mb: number;
+  estimated_total_memory_mb: number;
+  expected_p95_latency_ms: number;
+  expected_aggregate_throughput_rps: number;
+  tail_latency_risk: TailLatencyRisk;
+  feasibility_status: SlotFeasibilityStatus;
+  evidence_tier: string;
+  rationale: string;
+  tradeoffs: string[];
+  actionable_setup_guidance: string;
+}
+
+export interface Session28ManifestResponse {
+  manifest_id: string;
+  session_id: string;
+  created_at_utc: string;
+  hardware_id: string;
+  total_benchmark_duration_s: number;
+  model_architectures: ModelArchitectureSpec[];
+  equivalence_records: ModelEquivalenceRecord[];
+  kv_cache_estimates: KVCacheEstimate[];
+  observations_count: number;
+  observations_file: string;
+  slot_recommendations: SlotContextRecommendation[];
+}
+
+
 

@@ -51,6 +51,11 @@ import {
   ServingHolComparisonsResponse,
   ArchitectureRecommendationRequest,
   ServingArchitectureRecommendation,
+  KVEstimatesResponse,
+  ModelEquivalenceResponse,
+  SlotOptimizationRequest,
+  SlotContextRecommendation,
+  Session28ManifestResponse,
 } from './types';
 
 export class ApiError extends Error {
@@ -686,6 +691,42 @@ export class EngineApiClient {
     signal?: AbortSignal
   ): Promise<ServingArchitectureRecommendation> {
     return this.request<ServingArchitectureRecommendation>('/api/v1/serving/recommend', {
+      method: 'POST',
+      body: JSON.stringify(request),
+      signal,
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Session 28 Context-Fair Parallel Serving & Slot Optimization
+  // --------------------------------------------------------------------------
+
+  public async getKvEstimates(signal?: AbortSignal): Promise<KVEstimatesResponse> {
+    return this.request<KVEstimatesResponse>('/api/v1/serving/kv-estimates', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async getModelEquivalence(signal?: AbortSignal): Promise<ModelEquivalenceResponse> {
+    return this.request<ModelEquivalenceResponse>('/api/v1/serving/model-equivalence', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async getContextFairManifest(signal?: AbortSignal): Promise<Session28ManifestResponse> {
+    return this.request<Session28ManifestResponse>('/api/v1/serving/context-fair-manifest', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async optimizeServingSlots(
+    request: SlotOptimizationRequest,
+    signal?: AbortSignal
+  ): Promise<SlotContextRecommendation> {
+    return this.request<SlotContextRecommendation>('/api/v1/serving/optimize-slots', {
       method: 'POST',
       body: JSON.stringify(request),
       signal,
