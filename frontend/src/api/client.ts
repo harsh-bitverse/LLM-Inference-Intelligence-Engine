@@ -46,6 +46,11 @@ import {
   HeadOfLineBlockingObservation,
   ModelSwitchingObservation,
   PolicyEvaluationReport,
+  ServingCapabilitiesResponse,
+  ServingComparisonsResponse,
+  ServingHolComparisonsResponse,
+  ArchitectureRecommendationRequest,
+  ServingArchitectureRecommendation,
 } from './types';
 
 export class ApiError extends Error {
@@ -637,6 +642,52 @@ export class EngineApiClient {
   ): Promise<{ policy_reports: PolicyEvaluationReport[] }> {
     return this.request<{ policy_reports: PolicyEvaluationReport[] }>('/api/v1/capacity/admission-policies', {
       method: 'GET',
+      signal,
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Session 27 Serving Architecture & Parallelism
+  // --------------------------------------------------------------------------
+
+  public async getServingCapabilities(
+    signal?: AbortSignal
+  ): Promise<ServingCapabilitiesResponse> {
+    return this.request<ServingCapabilitiesResponse>('/api/v1/serving/capabilities', {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async getArchitectureComparisons(
+    modelId?: string,
+    signal?: AbortSignal
+  ): Promise<ServingComparisonsResponse> {
+    const query = modelId ? `?model_id=${encodeURIComponent(modelId)}` : '';
+    return this.request<ServingComparisonsResponse>(`/api/v1/serving/comparison${query}`, {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async getServingHolComparisons(
+    modelId?: string,
+    signal?: AbortSignal
+  ): Promise<ServingHolComparisonsResponse> {
+    const query = modelId ? `?model_id=${encodeURIComponent(modelId)}` : '';
+    return this.request<ServingHolComparisonsResponse>(`/api/v1/serving/hol-comparison${query}`, {
+      method: 'GET',
+      signal,
+    });
+  }
+
+  public async recommendServingArchitecture(
+    request: ArchitectureRecommendationRequest,
+    signal?: AbortSignal
+  ): Promise<ServingArchitectureRecommendation> {
+    return this.request<ServingArchitectureRecommendation>('/api/v1/serving/recommend', {
+      method: 'POST',
+      body: JSON.stringify(request),
       signal,
     });
   }

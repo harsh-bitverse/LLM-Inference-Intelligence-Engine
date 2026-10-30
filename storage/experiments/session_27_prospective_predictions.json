@@ -1,0 +1,56 @@
+{
+  "session_id": "session_27",
+  "registration_timestamp_utc": "2026-10-30T11:33:00Z",
+  "status": "LOCKED_PRE_REGISTRATION",
+  "hardware_id": "cpu-intel-i7-14700",
+  "scenarios": [
+    {
+      "scenario_id": "SCENARIO_1_HOL_BLOCKING_RESCUE",
+      "name": "Head-of-Line Blocking Rescue under Competing Long Generation",
+      "model_id": "llama3.2:1b",
+      "antecedent_task": "LONG_FORM_GENERATION (160 tokens)",
+      "consequent_task": "INTERACTIVE_QA (16 tokens)",
+      "consequent_sla_ms": 1500.0,
+      "forecast": {
+        "ollama_consequent_wait_min_ms": 5000.0,
+        "ollama_consequent_e2e_min_ms": 5100.0,
+        "ollama_sla_met": false,
+        "llama_server_consequent_wait_max_ms": 250.0,
+        "llama_server_consequent_e2e_max_ms": 1200.0,
+        "llama_server_sla_met": true,
+        "queue_wait_reduction_min_ms": 4500.0,
+        "sla_rescued": true
+      },
+      "pass_criteria": "llama-server must rescue Consequent SLA by reducing queue wait > 4,500ms and achieving SLA compliance while Ollama breaches SLA."
+    },
+    {
+      "scenario_id": "SCENARIO_2_BALANCED_CONCURRENT_THROUGHPUT",
+      "name": "Balanced Mixed-Workload Throughput Gain (C=2)",
+      "model_id": "qwen2.5:0.5b",
+      "client_concurrency": 2,
+      "tasks": ["INTERACTIVE_QA", "STRUCTURED_JSON"],
+      "forecast": {
+        "ollama_effective_concurrency_max": 1.15,
+        "ollama_overlapping_execution": false,
+        "llama_server_effective_concurrency_min": 1.60,
+        "llama_server_overlapping_execution": true,
+        "throughput_gain_min_pct": 30.0
+      },
+      "pass_criteria": "llama-server must demonstrate genuine parallel execution overlap (effective concurrency >= 1.60) and throughput gain >= 30% over Ollama."
+    },
+    {
+      "scenario_id": "SCENARIO_3_TAIL_LATENCY_SATURATION",
+      "name": "Tail Latency Reduction under Multi-Client Load (C=4)",
+      "model_id": "qwen2.5:0.5b",
+      "client_concurrency": 4,
+      "tasks": ["INTERACTIVE_QA_x4"],
+      "forecast": {
+        "ollama_p95_min_ms": 1500.0,
+        "llama_server_p95_max_ms": 1100.0,
+        "latency_p95_speedup_min_factor": 1.5,
+        "queue_wait_reduction_min_ms": 400.0
+      },
+      "pass_criteria": "4-slot continuous batching must reduce P95 latency by at least 1.5x and drop mean queue delay by >= 400ms compared to serialized Ollama queue."
+    }
+  ]
+}

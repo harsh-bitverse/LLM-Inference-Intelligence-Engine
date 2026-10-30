@@ -18,6 +18,7 @@ from llm_ii_engine.api.routes import (
     optimization_router,
     predictions_router,
     recommendation_router,
+    serving_router,
 )
 from llm_ii_engine.storage.database import DatabaseManager
 
@@ -105,5 +106,6 @@ def create_app(
     app.include_router(recommendation_router, prefix="/api/v1")
     app.include_router(models_router, prefix="/api/v1")
     app.include_router(capacity_router, prefix="/api/v1")
+    app.include_router(serving_router, prefix="/api/v1")
 
     return app

@@ -9,6 +9,7 @@ from llm_ii_engine.api.routes.models import router as models_router
 from llm_ii_engine.api.routes.optimization import router as optimization_router
 from llm_ii_engine.api.routes.predictions import router as predictions_router
 from llm_ii_engine.api.routes.recommendations import router as recommendation_router
+from llm_ii_engine.api.routes.serving import router as serving_router
 
 __all__ = [
     "benchmarks_router",
@@ -20,4 +21,5 @@ __all__ = [
     "optimization_router",
     "predictions_router",
     "recommendation_router",
+    "serving_router",
 ]

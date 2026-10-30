@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Zap,
   Cpu,
+  Server,
 } from 'lucide-react';
 import { apiClient } from '../api/client';
 import {
@@ -26,9 +27,10 @@ import { MetricCard } from '../components/common/MetricCard';
 import { MultiModelComparisonView } from '../components/recommendations/MultiModelComparisonView';
 import { RuntimeOptimizationView } from '../components/recommendations/RuntimeOptimizationView';
 import { CapacityPlanningView } from '../components/recommendations/CapacityPlanningView';
+import { ServingArchitectureView } from '../components/recommendations/ServingArchitectureView';
 
 export const RecommendationsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'single' | 'multi' | 'runtime' | 'capacity'>('single');
+  const [activeTab, setActiveTab] = useState<'single' | 'multi' | 'runtime' | 'capacity' | 'serving'>('single');
 
   // Workload Form State
   const [modelId, setModelId] = useState('llama3.2:1b');
@@ -218,9 +220,23 @@ export const RecommendationsPage: React.FC = () => {
           <Activity className="w-3.5 h-3.5" />
           Capacity Planning & Admission
         </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('serving')}
+          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all flex items-center gap-1.5 ${
+            activeTab === 'serving'
+              ? 'border-sky-500 text-sky-400 bg-sky-500/10'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Server className="w-3.5 h-3.5" />
+          Serving Architecture & Parallelism
+        </button>
       </div>
 
-      {activeTab === 'capacity' ? (
+      {activeTab === 'serving' ? (
+        <ServingArchitectureView />
+      ) : activeTab === 'capacity' ? (
         <CapacityPlanningView />
       ) : activeTab === 'runtime' ? (
         <RuntimeOptimizationView />

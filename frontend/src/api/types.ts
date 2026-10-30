@@ -1139,4 +1139,131 @@ export interface MixedCapacityEstimateResponse {
   };
 }
 
+// ==========================================
+// Session 27 Serving Architecture & Parallelism Types
+// ==========================================
+
+export type ServingRuntimeArchitecture =
+  | 'OLLAMA_SINGLE_SLOT'
+  | 'OLLAMA_CLIENT_QUEUED'
+  | 'LLAMA_CPP_PARALLEL_2_SLOTS'
+  | 'LLAMA_CPP_PARALLEL_4_SLOTS';
+
+export type CapabilityVerificationStatus =
+  | 'VERIFIED'
+  | 'ADVERTISED_UNVERIFIED'
+  | 'NOT_SUPPORTED'
+  | 'UNKNOWN';
+
+export interface ServingCapabilityMatrix {
+  runtime_name: string;
+  runtime_version: string;
+  architecture_type: ServingRuntimeArchitecture;
+  model_id: string;
+  quantization: string;
+  available_cpu_threads: number;
+  configurable_slots: number;
+  parallel_request_support: CapabilityVerificationStatus;
+  batching_support: CapabilityVerificationStatus;
+  continuous_batching_support: CapabilityVerificationStatus;
+  kv_cache_memory_behavior: string;
+  model_residency_behavior: string;
+  evidence_source: string;
+  verification_notes: string;
+}
+
+export interface ServingCapabilitiesResponse {
+  host_hardware: {
+    cpu: string;
+    hardware_threads: number;
+    ram_gb: number;
+  };
+  llama_server_binary_installed: boolean;
+  llama_server_binary_path: string | null;
+  ollama_server_active: boolean;
+  ollama_port: number;
+  capability_matrix: ServingCapabilityMatrix[];
+}
+
+export interface ServingArchitectureComparison {
+  comparison_id: string;
+  model_id: string;
+  workload_description: string;
+  client_concurrency: number;
+  baseline_architecture: ServingRuntimeArchitecture;
+  target_architecture: ServingRuntimeArchitecture;
+  baseline_p50_ms: number;
+  baseline_p90_ms: number;
+  baseline_p95_ms: number;
+  target_p50_ms: number;
+  target_p90_ms: number;
+  target_p95_ms: number;
+  latency_p95_speedup_factor: number;
+  baseline_throughput_rps: number;
+  target_throughput_rps: number;
+  throughput_gain_pct: number;
+  baseline_mean_queue_wait_ms: number;
+  target_mean_queue_wait_ms: number;
+  queue_wait_reduction_ms: number;
+  hol_blocking_eliminated: boolean;
+  baseline_sla_compliance_pct: number;
+  target_sla_compliance_pct: number;
+  baseline_memory_mb: number;
+  target_memory_mb: number;
+  memory_overhead_mb: number;
+  scientific_provenance_summary: string;
+}
+
+export interface ServingComparisonsResponse {
+  manifest_id?: string;
+  hardware_id?: string;
+  total_duration_s?: number;
+  comparisons: ServingArchitectureComparison[];
+}
+
+export interface HeadOfLineComparisonObservation {
+  experiment_id: string;
+  model_id: string;
+  antecedent_workload: string;
+  consequent_workload: string;
+  consequent_sla_ms: number;
+  ollama_consequent_wait_ms: number;
+  ollama_consequent_e2e_ms: number;
+  ollama_sla_met: boolean;
+  llama_server_consequent_wait_ms: number;
+  llama_server_consequent_e2e_ms: number;
+  llama_server_sla_met: boolean;
+  queue_wait_reduction_ms: number;
+  latency_reduction_factor: number;
+  sla_rescued_by_parallelism: boolean;
+}
+
+export interface ServingHolComparisonsResponse {
+  hol_comparisons: HeadOfLineComparisonObservation[];
+}
+
+export interface ArchitectureRecommendationRequest {
+  model_id: string;
+  workload_type?: string;
+  client_concurrency?: number;
+  arrival_rate_rps?: number;
+  latency_sla_ms?: number;
+  memory_budget_mb?: number | null;
+}
+
+export interface ServingArchitectureRecommendation {
+  recommendation_id: string;
+  created_at_utc: string;
+  recommended_architecture: ServingRuntimeArchitecture;
+  recommended_slots: number;
+  recommended_runtime_name: string;
+  expected_throughput_rps: number;
+  expected_p95_latency_ms: number;
+  expected_sla_compliance_pct: number;
+  evidence_tier: string;
+  rationale: string;
+  tradeoffs: string[];
+  actionable_setup_guidance: string;
+}
+
 
